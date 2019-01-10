@@ -1,12 +1,21 @@
-#ifndef SECRETENTRY_H
-#define SECRETENTRY_H
+#ifndef KEYENTRY_H
+#define KEYENTRY_H
 
 #include <QString>
 
-class SecretEntry
+#define KEYENTRY_KEYTYPE_HEX      0
+#define KEYENTRY_KEYTYPE_BASE32   1
+
+#define KEYENTRY_OTPTYPE_TOTP     0
+#define KEYENTRY_OTPTYPE_HOTP     1
+
+
+class KeyEntry
 {
 public:
-    SecretEntry();
+    KeyEntry();
+
+    void clear();
 
     bool valid() const;
 
@@ -34,4 +43,4 @@ private:
     int mOutNumberCount;
 };
 
-#endif // SECRETENTRY_H
+#endif // KEYENTRY_H

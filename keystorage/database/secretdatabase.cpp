@@ -66,48 +66,20 @@ bool SecretDatabase::close()
 }
 
 /**
- * @brief SecretDatabase::add - Convenience call for adding a secret entry to the database using
- *      discrete values.
+ * @brief SecretDatabase::add - Add a new KeyEntry to the database.
  *
- * @param identifier - The 'identifier' (usually the name of the service for this secret) for the key.
- * @param secret - The secret value that is used to generate OTP values.
- * @param keyType - One of the DATABASE_KEYTYPE_* values which indicates how the secret is encoded.
- * @param otpType - One of the DATABASE_OTPTPYE_* values which indicates the algorithm that should be used
- *      to generate the OTP value.
- * @param outNumberCount - The number of digits that should be shown using this secret value.
- *
- * @return true if the key entry was added.  false on error.
- */
-bool SecretDatabase::add(const QString &identifier, const QString &secret, int keyType, int otpType, int outNumberCount)
-{
-    SecretEntry toWrite;
-
-    // Store the values in to our SecretEntry.
-    toWrite.setIdentifier(identifier);
-    toWrite.setSecert(secret);
-    toWrite.setKeyType(keyType);
-    toWrite.setOtpType(otpType);
-    toWrite.setOutNumberCount(outNumberCount);
-
-    // Then, call the other add instance.
-    return add(toWrite);
-}
-
-/**
- * @brief SecretDatabase::add - Add a new SecretEntry to the database.
- *
- * @param entry - The SecretEntry to write to the database.
+ * @param entry - The KeyEntry to write to the database.
  *
  * @return true if the entry was written to the database.  false on error.
  */
-bool SecretDatabase::add(const SecretEntry &entry)
+bool SecretDatabase::add(const KeyEntry &entry)
 {
     QSqlQuery query;
-    SecretEntry foundEntry;
+    KeyEntry foundEntry;
 
     // Make sure the entry we are going to write is valid.
     if (!entry.valid()) {
-        qDebug("The SecretEntry provided is invalid!");
+        qDebug("The KeyEntry provided is invalid!");
         return false;
     }
 
@@ -137,15 +109,28 @@ bool SecretDatabase::add(const SecretEntry &entry)
 }
 
 /**
+ * @brief SecretDatabase::update - Update the database entry with the new KeyEntry data.
+ *
+ * @param currentEntry - The current entry in the database that we will look for to update.
+ * @param newEntry - How the entry should look after being updated in the database.
+ *
+ * @return true if the entry was updated.  false on error.
+ */
+bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEntry)
+{
+
+}
+
+/**
  * @brief SecretDatabase::getByIdentifier - Query the database for a specific identifier.
  *
  * @param identifier - The identifier to look for.
- * @param result[OUT] - If this function returns true, this SecretEntry will contain the data
+ * @param result[OUT] - If this function returns true, this KeyEntry will contain the data
  *      for the identifier.
  *
  * @return true if the identifier was found and returned.  false on error.
  */
-bool SecretDatabase::getByIdentifier(const QString &identifier, SecretEntry &result)
+bool SecretDatabase::getByIdentifier(const QString &identifier, KeyEntry &result)
 {
     QSqlQuery query;
 
@@ -160,8 +145,13 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, SecretEntry &res
         return false;
     }
 
-    // Convert the query data to the resulting SecretEntry object.
-    return queryToSecretEntry(query, result);
+    if (!query.next()) {
+        qDebug("No entries returned when searching for the identifier '%s'.", identifier.toStdString().c_str());
+        return false;
+    }
+
+    // Convert the query data to the resulting KeyEntry object.
+    return queryToKeyEntry(query, result);
 }
 
 /**
@@ -169,14 +159,14 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, SecretEntry &res
  *      them.
  *
  * @param result[OUT] - If this method returns true, this vector will contain all of the
- *      SecretEntry rows from the database.
+ *      KeyEntry rows from the database.
  *
  * @return true if the rows were read.  false on error.
  */
-bool SecretDatabase::getAll(std::vector<SecretEntry> &result)
+bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 {
     QSqlQuery query;
-    SecretEntry entry;
+    KeyEntry entry;
 
     // Clear out the result vector.
     result.clear();
@@ -186,9 +176,15 @@ bool SecretDatabase::getAll(std::vector<SecretEntry> &result)
         return false;
     }
 
-    // Iterate each row, convert it to a SecretEntry, and stuff it in the result vector.
+    // Iterate each row, convert it to a KeyEntry, and stuff it in the result vector.
     while (query.next()) {
-        // XXX FINISH!
+        if (!queryToKeyEntry(query, entry)) {
+            qDebug("Unable to convert a database result to a KeyEntry.");
+            return false;
+        }
+
+        // Add it to the result list.
+        result.push_back(entry);
     }
 
     return true;
@@ -262,10 +258,10 @@ int SecretDatabase::schemaVersion(bool logError)
 
 /**
  * @brief SecretDatabase::createBoundQuery - Update a QSqlQuery object using the provided
- *      query string, and bound with the values from the provided SecretEntry.
+ *      query string, and bound with the values from the provided KeyEntry.
  *
  * @param query - The SQL query to execute using the data in the 'toBind' variable.
- * @param toBind - A SecretEntry that contains the data we want to bind using the
+ * @param toBind - A KeyEntry that contains the data we want to bind using the
  *      query defined in 'query'.
  * @param sqlQuery[OUT] - If this method returns true, this variable will be updated with
  *      the query and binding data provided.
@@ -273,7 +269,7 @@ int SecretDatabase::schemaVersion(bool logError)
  * @return true if the QSqlQuery was updated with the query and binding data.  false on
  *      error.
  */
-bool SecretDatabase::createBoundQuery(const QString &query, const SecretEntry &toBind, QSqlQuery &sqlQuery)
+bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBind, QSqlQuery &sqlQuery)
 {
     if (!sqlQuery.prepare(query)) {
         qDebug("Unable to prepare the query : %s", query.toStdString().c_str());
@@ -291,21 +287,112 @@ bool SecretDatabase::createBoundQuery(const QString &query, const SecretEntry &t
 }
 
 /**
- * @brief SecretDatabase::queryToSecretEntry - Read the SecretEntry values from the provided
- *      QSqlQuery object, and store them in to a SecretEntry object.
+ * @brief SecretDatabase::queryToKeyEntry - Read the KeyEntry values from the provided
+ *      QSqlQuery object, and store them in to a KeyEntry object.
  *
  * @param query - The QSqlQuery object to read the data from.
  * @param result[OUT] - If this method returns true, this variable will contain the values
  *      read from the QSqlQuery.
  *
- * @return true if the values were read from the QSqlQuery and stored in the SecretEntry.
+ * @return true if the values were read from the QSqlQuery and stored in the KeyEntry.
  *      false on error.
  */
-bool SecretDatabase::queryToSecretEntry(const QSqlQuery &query, SecretEntry &result)
+bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
+{
+    QString tempStr;
+    int tempInt;
+
+    if (!queryEntryToString(query, "identifier", tempStr)) {
+        qDebug("Failed to get the identifier from the database query row!");
+        return false;
+    }
+
+    result.setIdentifier(tempStr);
+
+    if (!queryEntryToString(query, "secret", tempStr)) {
+        qDebug("Failed to get the secret from the database query row!");
+        return false;
+    }
+
+    result.setSecert(tempStr);
+
+    if (!queryEntryToInt(query, "keyType", tempInt)) {
+        qDebug("Failed to get the key type from the database query row!");
+        return false;
+    }
+
+    result.setKeyType(tempInt);
+
+    if (!queryEntryToInt(query, "otpType", tempInt)) {
+        qDebug("Failed to get the OTP type from the database query row!");
+        return false;
+    }
+
+    result.setOtpType(tempInt);
+
+    if (!queryEntryToInt(query, "outNumberCount", tempInt)) {
+        qDebug("Failed to get the number of numbers to return from the database query row!");
+        return false;
+    }
+
+    result.setOutNumberCount(tempInt);
+
+    return true;
+}
+
+/**
+ * @brief SecretDatabase::queryEntryToString - Read a string entry from the specified column.
+ *
+ * @param query - The QSqlQuery that we want to read a string from.
+ * @param column - The name of the column that we want to read.
+ * @param result[OUT] - If this function returns true, this variable will contain the string that
+ *      was read.
+ *
+ * @return true if the column data was read.  false on error.
+ */
+bool SecretDatabase::queryEntryToString(const QSqlQuery &query, const QString &column, QString &result)
 {
     int idx;
 
-    return false;
+    idx = query.record().indexOf(column);
+    if (idx < 0) {
+        qDebug("Failed to get the index for the %s field of a query!", column.toStdString().c_str());
+        return false;
+    }
+
+    result = query.value(idx).toString();
+
+    return true;
+}
+
+/**
+ * @brief SecretDatabase::queryEntryToInt - Read an integer entry from the specified column.
+ *
+ * @param query - The QSqlQuery that we want to read a string from.
+ * @param column - The name of the column that we want to read.
+ * @param result[OUT] - If this function returns true, this variable will contain the string that
+ *      was read.
+ *
+ * @return true if the column data was read.  false on error.
+ */
+bool SecretDatabase::queryEntryToInt(const QSqlQuery &query, const QString &column, int &result)
+{
+    int idx;
+    bool ok;
+
+    idx = query.record().indexOf(column);
+    if (idx < 0) {
+        qDebug("Failed to get the index for the %s field of a query!", column.toStdString().c_str());
+        return false;
+    }
+
+    result = query.value(idx).toInt(&ok);
+    if (!ok) {
+        qDebug("Unable to determine the integer value of the %s field.", column.toStdString().c_str());
+        return false;
+    }
+
+    return true;
 }
 
 /**

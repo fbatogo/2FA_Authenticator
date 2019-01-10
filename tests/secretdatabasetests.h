@@ -2,7 +2,7 @@
 #define SECRETDATABASETESTS_H
 
 #include <QObject>
-#include <secretdatabase.h>
+#include "../keystorage/database/secretdatabase.h"
 
 class SecretDatabaseTests : public QObject
 {
@@ -16,7 +16,7 @@ private:
     void openDatabaseTest();
     void closeDatabaseTest();
     void addDatabaseEntryDiscreteTest();
-    void addDatabaseEntrySecretEntryTest();
+    void addDatabaseEntryKeyEntryTest();
     void getAllEntriesTest();
 
     SecretDatabase mTestDatabase;

@@ -14,13 +14,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     otphandler.cpp \
-    secretdatabase.cpp \
-    secretentry.cpp
+    keystorage/database/secretdatabase.cpp \
+    keystorage/keyentry.cpp \
+    keystorage/keystorage.cpp
 
 HEADERS += \
     otphandler.h \
-    secretdatabase.h \
-    secretentry.h
+    keystorage/database/secretdatabase.h \
+    keystorage/keystoragebase.h \
+    keystorage/keyentry.h \
+    keystorage/keystorage.h
 
 RESOURCES += qml.qrc
 

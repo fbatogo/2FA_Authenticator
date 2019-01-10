@@ -2,8 +2,8 @@
 
 #include <QTest>
 #include <QFileInfo>
-#include <secretdatabase.h>
-#include <secretentry.h>
+#include "../keystorage/database/secretdatabase.h"
+#include "../keystorage/keyentry.h"
 
 #define TEST_DB "./test.db"
 
@@ -20,8 +20,8 @@ void SecretDatabaseTests::databaseTests()
     // Test the discrete adding of a record.
     addDatabaseEntryDiscreteTest();
 
-    // And the SecretEntry version.
-    addDatabaseEntrySecretEntryTest();
+    // And the KeyEntry version.
+    addDatabaseEntryKeyEntryTest();
 
     // Try getting all of the entries.
     getAllEntriesTest();
@@ -71,7 +71,7 @@ void SecretDatabaseTests::closeDatabaseTest()
 
 void SecretDatabaseTests::addDatabaseEntryDiscreteTest()
 {
-    SecretEntry readBack;
+    KeyEntry readBack;
 
     // Attempt to write an entry to the database.
     QVERIFY(mTestDatabase.add("id1", "mysecret", SECRETDATABASE_KEYTYPE_HEX, SECRETDATABASE_OTPTYPE_TOTP, 6));
@@ -79,13 +79,13 @@ void SecretDatabaseTests::addDatabaseEntryDiscreteTest()
     // Attempt to locate an entry that doesn't exist.
     QCOMPARE(mTestDatabase.getByIdentifier("invalidid", readBack), false);
 
-    // Make sure the SecretEntry indicates it is invalid.
+    // Make sure the KeyEntry indicates it is invalid.
     QCOMPARE(readBack.valid(), false);
 
     // Read back what we just wrote.
     QVERIFY(mTestDatabase.getByIdentifier("id1", readBack));
 
-    // Make sure the SecretEntry indicates it is valid.
+    // Make sure the KeyEntry indicates it is valid.
     QVERIFY(readBack.valid());
 
     // And, make sure all the expected values are set.
@@ -96,10 +96,10 @@ void SecretDatabaseTests::addDatabaseEntryDiscreteTest()
     QCOMPARE(readBack.outNumberCount(), 6);
 }
 
-void SecretDatabaseTests::addDatabaseEntrySecretEntryTest()
+void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 {
-    SecretEntry toWrite;
-    SecretEntry readBack;
+    KeyEntry toWrite;
+    KeyEntry readBack;
 
     // Make sure our toWrite value is invalid to start with.
     QCOMPARE(toWrite.valid(), false);
@@ -120,7 +120,7 @@ void SecretDatabaseTests::addDatabaseEntrySecretEntryTest()
     // Read back what we just wrote.
     QVERIFY(mTestDatabase.getByIdentifier("id2", readBack));
 
-    // Make sure the SecretEntry indicates it is valid.
+    // Make sure the KeyEntry indicates it is valid.
     QVERIFY(readBack.valid());
 
     // And, make sure all the expected values are set.
@@ -133,8 +133,8 @@ void SecretDatabaseTests::addDatabaseEntrySecretEntryTest()
 
 void SecretDatabaseTests::getAllEntriesTest()
 {
-    std::vector<SecretEntry> allEntries;
-    SecretEntry currentEntry;
+    std::vector<KeyEntry> allEntries;
+    KeyEntry currentEntry;
 
     // Attempt to read all of the entries.
     QVERIFY(mTestDatabase.getAll(allEntries));
