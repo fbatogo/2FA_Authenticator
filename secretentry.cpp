@@ -10,6 +10,42 @@ SecretEntry::SecretEntry()
     mOutNumberCount = -1;
 }
 
+/**
+ * @brief SecretEntry::valid - Check to see that all of the values in this object appear
+ *      to be legal.
+ *
+ * @return false if the values aren't legal.  true otherwise.
+ */
+bool SecretEntry::valid() const
+{
+    // The identifier and secret can't be empty.
+    if (mIdentifier.isEmpty() || mSecret.isEmpty()) {
+        qDebug("Either the identifier or secret is empty.");
+        return false;
+    }
+
+    // The key type needs to be 0 or 1.
+    if ((mKeyType < 0) || (mKeyType > 1)) {
+        qDebug("Invalid key type! (%d)", mKeyType);
+        return false;
+    }
+
+    // The OTP type needs to be 0 or 1.
+    if ((mOtpType < 0) || (mOtpType > 1)) {
+        qDebug("Invalid OTP type! (%d)", mOtpType);
+        return false;
+    }
+
+    // The out number count needs to be between 6 and 8.
+    if ((mOutNumberCount < 6) || (mOutNumberCount > 8)) {
+        qDebug("Out number count is invalid! (%d)", mOutNumberCount);
+        return false;
+    }
+
+    // Everything appears to be valid!
+    return true;
+}
+
 QString SecretEntry::identifier() const
 {
     return mIdentifier;

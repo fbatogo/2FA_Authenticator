@@ -8,6 +8,8 @@ class SecretEntry
 public:
     SecretEntry();
 
+    bool valid() const;
+
     QString identifier() const;
     void setIdentifier(const QString &newvalue);
 
@@ -24,6 +26,7 @@ public:
     void setOutNumberCount(int newvalue);
 
 private:
+    bool mValid;
     QString mIdentifier;
     QString mSecret;
     int mKeyType;
