@@ -1,6 +1,11 @@
-#include "secretentry.h"
+#include "keyentry.h"
 
-SecretEntry::SecretEntry()
+KeyEntry::KeyEntry()
+{
+    clear();
+}
+
+void KeyEntry::clear()
 {
     // Set default values.
     mIdentifier.clear();
@@ -11,12 +16,12 @@ SecretEntry::SecretEntry()
 }
 
 /**
- * @brief SecretEntry::valid - Check to see that all of the values in this object appear
+ * @brief KeyEntry::valid - Check to see that all of the values in this object appear
  *      to be legal.
  *
  * @return false if the values aren't legal.  true otherwise.
  */
-bool SecretEntry::valid() const
+bool KeyEntry::valid() const
 {
     // The identifier and secret can't be empty.
     if (mIdentifier.isEmpty() || mSecret.isEmpty()) {
@@ -46,52 +51,52 @@ bool SecretEntry::valid() const
     return true;
 }
 
-QString SecretEntry::identifier() const
+QString KeyEntry::identifier() const
 {
     return mIdentifier;
 }
 
-void SecretEntry::setIdentifier(const QString &newvalue)
+void KeyEntry::setIdentifier(const QString &newvalue)
 {
     mIdentifier = newvalue;
 }
 
-QString SecretEntry::secret() const
+QString KeyEntry::secret() const
 {
     return mSecret;
 }
 
-void SecretEntry::setSecert(const QString &newvalue)
+void KeyEntry::setSecert(const QString &newvalue)
 {
     mSecret = newvalue;
 }
 
-int SecretEntry::keyType() const
+int KeyEntry::keyType() const
 {
     return mKeyType;
 }
 
-void SecretEntry::setKeyType(int newvalue)
+void KeyEntry::setKeyType(int newvalue)
 {
     mKeyType = newvalue;
 }
 
-int SecretEntry::otpType() const
+int KeyEntry::otpType() const
 {
     return mOtpType;
 }
 
-void SecretEntry::setOtpType(int newvalue)
+void KeyEntry::setOtpType(int newvalue)
 {
     mOtpType = newvalue;
 }
 
-int SecretEntry::outNumberCount() const
+int KeyEntry::outNumberCount() const
 {
     return mOutNumberCount;
 }
 
-void SecretEntry::setOutNumberCount(int newvalue)
+void KeyEntry::setOutNumberCount(int newvalue)
 {
     mOutNumberCount = newvalue;
 }
