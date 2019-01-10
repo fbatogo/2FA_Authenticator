@@ -15,9 +15,9 @@ private:
     void removeOldDatabaseFile();
     void openDatabaseTest();
     void closeDatabaseTest();
-    void addDatabaseEntryDiscreteTest();
     void addDatabaseEntryKeyEntryTest();
     void getAllEntriesTest();
+    void updateDatabaseEntryTest();
 
     SecretDatabase mTestDatabase;
 };
