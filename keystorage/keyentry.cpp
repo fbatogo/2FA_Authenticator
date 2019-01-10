@@ -1,5 +1,7 @@
 #include "keyentry.h"
 
+#include <logger.h>
+
 KeyEntry::KeyEntry()
 {
     clear();
@@ -25,25 +27,25 @@ bool KeyEntry::valid() const
 {
     // The identifier and secret can't be empty.
     if (mIdentifier.isEmpty() || mSecret.isEmpty()) {
-        qDebug("Either the identifier or secret is empty.");
+        LOG_DEBUG("Either the identifier or secret is empty.");
         return false;
     }
 
     // The key type needs to be 0 or 1.
     if ((mKeyType < 0) || (mKeyType > 1)) {
-        qDebug("Invalid key type! (%d)", mKeyType);
+        LOG_DEBUG("Invalid key type! (" + QString::number(mKeyType) + ")");
         return false;
     }
 
     // The OTP type needs to be 0 or 1.
     if ((mOtpType < 0) || (mOtpType > 1)) {
-        qDebug("Invalid OTP type! (%d)", mOtpType);
+        LOG_DEBUG("Invalid OTP type! (" + QString::number(mOtpType) + ")");
         return false;
     }
 
     // The out number count needs to be between 6 and 8.
     if ((mOutNumberCount < 6) || (mOutNumberCount > 8)) {
-        qDebug("Out number count is invalid! (%d)", mOutNumberCount);
+        LOG_DEBUG("Out number count is invalid! (" + QString::number(mOutNumberCount) + ")");
         return false;
     }
 

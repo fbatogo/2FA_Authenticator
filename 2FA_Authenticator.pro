@@ -16,14 +16,18 @@ SOURCES += \
     otphandler.cpp \
     keystorage/database/secretdatabase.cpp \
     keystorage/keyentry.cpp \
-    keystorage/keystorage.cpp
+    keystorage/keystorage.cpp \
+    logger.cpp \
+    keystorage/database/databasekeystorage.cpp
 
 HEADERS += \
     otphandler.h \
     keystorage/database/secretdatabase.h \
     keystorage/keystoragebase.h \
     keystorage/keyentry.h \
-    keystorage/keystorage.h
+    keystorage/keystorage.h \
+    logger.h \
+    keystorage/database/databasekeystorage.h
 
 RESOURCES += qml.qrc
 

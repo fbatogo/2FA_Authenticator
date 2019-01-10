@@ -17,14 +17,14 @@ void SecretDatabaseTests::databaseTests()
     // Test that we can open the database.
     openDatabaseTest();
 
-    // Test the discrete adding of a record.
-    addDatabaseEntryDiscreteTest();
-
     // And the KeyEntry version.
     addDatabaseEntryKeyEntryTest();
 
     // Try getting all of the entries.
     getAllEntriesTest();
+
+    // Test updating entries in the database.
+    updateDatabaseEntryTest();
 
     // Test that we can close the database.
     closeDatabaseTest();
@@ -69,33 +69,6 @@ void SecretDatabaseTests::closeDatabaseTest()
     QVERIFY(QFile(TEST_DB).remove());
 }
 
-void SecretDatabaseTests::addDatabaseEntryDiscreteTest()
-{
-    KeyEntry readBack;
-
-    // Attempt to write an entry to the database.
-    QVERIFY(mTestDatabase.add("id1", "mysecret", SECRETDATABASE_KEYTYPE_HEX, SECRETDATABASE_OTPTYPE_TOTP, 6));
-
-    // Attempt to locate an entry that doesn't exist.
-    QCOMPARE(mTestDatabase.getByIdentifier("invalidid", readBack), false);
-
-    // Make sure the KeyEntry indicates it is invalid.
-    QCOMPARE(readBack.valid(), false);
-
-    // Read back what we just wrote.
-    QVERIFY(mTestDatabase.getByIdentifier("id1", readBack));
-
-    // Make sure the KeyEntry indicates it is valid.
-    QVERIFY(readBack.valid());
-
-    // And, make sure all the expected values are set.
-    QCOMPARE(readBack.identifier(), "id1");
-    QCOMPARE(readBack.secret(), "mysecret");
-    QCOMPARE(readBack.keyType(), SECRETDATABASE_KEYTYPE_HEX);
-    QCOMPARE(readBack.otpType(), SECRETDATABASE_OTPTYPE_TOTP);
-    QCOMPARE(readBack.outNumberCount(), 6);
-}
-
 void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 {
     KeyEntry toWrite;
@@ -107,8 +80,8 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     // Build the secret entry that we want to write.
     toWrite.setIdentifier("id2");
     toWrite.setSecert("mysecret2");
-    toWrite.setKeyType(SECRETDATABASE_KEYTYPE_BASE32);
-    toWrite.setOtpType(SECRETDATABASE_OTPTYPE_HOTP);
+    toWrite.setKeyType(KEYENTRY_KEYTYPE_BASE32);
+    toWrite.setOtpType(KEYENTRY_OTPTYPE_HOTP);
     toWrite.setOutNumberCount(7);
 
     // Make sure the object appears to be valid.
@@ -126,8 +99,8 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     // And, make sure all the expected values are set.
     QCOMPARE(readBack.identifier(), "id2");
     QCOMPARE(readBack.secret(), "mysecret2");
-    QCOMPARE(readBack.keyType(), SECRETDATABASE_KEYTYPE_BASE32);
-    QCOMPARE(readBack.otpType(), SECRETDATABASE_OTPTYPE_HOTP);
+    QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
+    QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
 }
 
@@ -140,7 +113,7 @@ void SecretDatabaseTests::getAllEntriesTest()
     QVERIFY(mTestDatabase.getAll(allEntries));
 
     // There should be two entries in the database.
-    QCOMPARE(allEntries.size(), 2);
+    QCOMPARE(allEntries.size(), 1);
 
     // Make sure they look how we expect them to.
     for (size_t i = 0; i < allEntries.size(); i++) {
@@ -149,21 +122,69 @@ void SecretDatabaseTests::getAllEntriesTest()
         // Make sure it indicates it is valid.
         QVERIFY(currentEntry.valid());
 
-        if (currentEntry.identifier() == "id1") {
-            // Make sure everything is set how we expect.
-            QCOMPARE(currentEntry.secret(), "mysecret");
-            QCOMPARE(currentEntry.keyType(), SECRETDATABASE_KEYTYPE_HEX);
-            QCOMPARE(currentEntry.otpType(), SECRETDATABASE_OTPTYPE_TOTP);
-            QCOMPARE(currentEntry.outNumberCount(), 6);
-        } else if (currentEntry.identifier() == "id2") {
+        if (currentEntry.identifier() == "id2") {
             QCOMPARE(currentEntry.secret(), "mysecret2");
-            QCOMPARE(currentEntry.keyType(), SECRETDATABASE_KEYTYPE_BASE32);
-            QCOMPARE(currentEntry.otpType(), SECRETDATABASE_OTPTYPE_HOTP);
+            QCOMPARE(currentEntry.keyType(), KEYENTRY_KEYTYPE_BASE32);
+            QCOMPARE(currentEntry.otpType(), KEYENTRY_OTPTYPE_HOTP);
             QCOMPARE(currentEntry.outNumberCount(), 7);
         } else {
             // Unexpected entry!
             QFAIL("Unexpected entry in the database!");
         }
     }
+}
+
+void SecretDatabaseTests::updateDatabaseEntryTest()
+{
+    KeyEntry readBack;
+    KeyEntry newEntry;
+
+    // Find the id2 entry in the database.
+    QVERIFY(mTestDatabase.getByIdentifier("id2", readBack));
+
+    // Make sure the data is what we expect.
+    QCOMPARE(readBack.identifier(), "id2");
+    QCOMPARE(readBack.secret(), "mysecret2");
+    QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
+    QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
+    QCOMPARE(readBack.outNumberCount(), 7);
+
+    // Copy the data, and update the identifier name.
+    newEntry = readBack;
+
+    newEntry.setIdentifier("id3");
+
+    QVERIFY(mTestDatabase.update(readBack, newEntry));
+
+    // Then, attempt to locate the record that should now have an identifier of "id3".
+    QVERIFY(mTestDatabase.getByIdentifier("id3", readBack));
+
+    // Make sure the data is what we expect.
+    QCOMPARE(readBack.identifier(), "id3");
+    QCOMPARE(readBack.secret(), "mysecret2");
+    QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
+    QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
+    QCOMPARE(readBack.outNumberCount(), 7);
+
+    // Then copy the data and update all of the values.
+    newEntry = readBack;
+
+    newEntry.setIdentifier("id4");
+    newEntry.setSecert("mysecret4");
+    newEntry.setKeyType(KEYENTRY_KEYTYPE_HEX);
+    newEntry.setOtpType(KEYENTRY_OTPTYPE_TOTP);
+    newEntry.setOutNumberCount(6);
+
+    QVERIFY(mTestDatabase.update(readBack, newEntry));
+
+    // Then, attempt to locate the newly updated record.
+    QVERIFY(mTestDatabase.getByIdentifier("id4", readBack));
+
+    // Make sure the data is what we expect.
+    QCOMPARE(readBack.identifier(), "id4");
+    QCOMPARE(readBack.secret(), "mysecret4");
+    QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
+    QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
+    QCOMPARE(readBack.outNumberCount(), 6);
 }
 
