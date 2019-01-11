@@ -4,11 +4,15 @@
 #include "../keystoragebase.h"
 #include "secretdatabase.h"
 
+#define KEYSTORAGE_METHOD_DATABASE      1       // Store key entries in a local database.
+
 class DatabaseKeyStorage : public KeyStorageBase
 {
 public:
     DatabaseKeyStorage();
     ~DatabaseKeyStorage();
+
+    int storageId();
 
     bool initKeyStorage();
     bool keyByIdentifier(const QString &identifier, KeyEntry &result);

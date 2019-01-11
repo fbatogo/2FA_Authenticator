@@ -12,10 +12,12 @@ class KeyStorage
 public:
     KeyStorage();
 
+    bool initStorage();
     bool keyByIdentifier(const QString &identifier, KeyEntry &result);
     bool getAllKeys(std::vector<KeyEntry> &result);
     bool addKey(const KeyEntry &entry);
     bool updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry);
+    bool freeStorage();
 
 private:
     std::vector<KeyStorageBase *> mKeyStorageDrivers;

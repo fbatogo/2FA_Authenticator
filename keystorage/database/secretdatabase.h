@@ -15,6 +15,7 @@ public:
 
     bool open(const QString &path);
     bool close();
+    bool isOpen();
 
     bool add(const KeyEntry &entry);
 

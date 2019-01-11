@@ -68,6 +68,16 @@ bool SecretDatabase::close()
 }
 
 /**
+ * @brief SecretDatabase::isOpen - Check to see if the database is open,
+ *
+ * @return true if the database is open.  false if it is not.
+ */
+bool SecretDatabase::isOpen()
+{
+    return mDatabase.isOpen();
+}
+
+/**
  * @brief SecretDatabase::add - Add a new KeyEntry to the database.
  *
  * @param entry - The KeyEntry to write to the database.

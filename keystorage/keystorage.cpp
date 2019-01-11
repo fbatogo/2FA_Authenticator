@@ -1,8 +1,34 @@
 #include "keystorage.h"
 
+#include <logger.h>
+
+#include "database/databasekeystorage.h"
+
 KeyStorage::KeyStorage()
 {
+    mKeyStorageDrivers.clear();
 
+    // Add all of the available storage methods to our vector.
+    mKeyStorageDrivers.push_back(new DatabaseKeyStorage());
+}
+
+/**
+ * @brief KeyStorage::initStorage - Iterate through all of the key storage drivers and
+ *      initialize them.
+ *
+ * @return true if all of the key storage methods were initialized.  false
+ *      otherwise.
+ */
+bool KeyStorage::initStorage()
+{
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (!mKeyStorageDrivers.at(i)->initKeyStorage()) {
+            LOG_ERROR("Failed to initialize key storage driver with an id of " + QString::number(mKeyStorageDrivers.at(i)->storageId()) + ".");
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -16,7 +42,13 @@ KeyStorage::KeyStorage()
  */
 bool KeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
 {
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->keyByIdentifier(identifier, result)) {
+            return true;        // We found it.
+        }
+    }
 
+    return false;
 }
 
 /**
@@ -56,6 +88,17 @@ bool KeyStorage::addKey(const KeyEntry &entry)
  * @return true if the key entry was updated.  false on error.
  */
 bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry)
+{
+
+}
+
+/**
+ * @brief KeyStorage::freeStorage - Iterate through the key storage methods and free
+ *      any resources they may have used.
+ *
+ * @return true if all of the key storage methods were freed.  false otherwise.
+ */
+bool KeyStorage::freeStorage()
 {
 
 }
