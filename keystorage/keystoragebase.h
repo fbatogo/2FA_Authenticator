@@ -20,6 +20,8 @@ public:
     KeyStorageBase() = default;
     virtual ~KeyStorageBase() = default;
 
+    virtual int storageId() = 0;
+
     virtual bool initKeyStorage() = 0;
     virtual bool keyByIdentifier(const QString &identifier, KeyEntry &result) = 0;
     virtual bool getAllKeys(std::vector<KeyEntry> &result) = 0;
