@@ -39,7 +39,6 @@ ApplicationWindow {
 
             anchors.centerIn: parent
             text: "2 Factor Authenticator"
-            font.pointSize: 12
             font.bold: true
         }
     }
@@ -47,11 +46,50 @@ ApplicationWindow {
     Drawer {
         id: drawer
 
-        //y: topToolbar.height
         width: window.width / 2
         height: window.height // - topToolbar.height
         interactive: true
 
+        ScrollView {
+            anchors.fill: parent
+
+            ListView {
+                width: parent.width
+                height: parent.height
+                model: drawerModel
+                delegate: drawerDelegate
+            }
+
+            Component {
+                id: drawerDelegate
+
+                Item {
+                    //width: parent.width
+                    Row {
+                    Text {
+                        text: name
+                    }
+                    }
+                }
+            }
+
+            ListModel {
+                id: drawerModel
+
+                ListElement {
+                    name: qsTr("New...")
+                }
+
+                ListElement {
+                    name: qsTr("Delete...")
+                }
+
+                ListElement {
+                    name: qsTr("About...")
+                }
+            }
+        }
+/*
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -61,22 +99,19 @@ ApplicationWindow {
                 }
             }
         }
+        */
     }
 
     ScrollView {
-        anchors.fill: parent
-        anchors.topMargin: topToolbar.height
+        width: parent.width
+        height: parent.height - topToolbar.height
+        anchors.top: topToolbar.bottom
 
         ListView {
             width: parent.width
             //model: 20
             model: otpListModel
             delegate: otpListDelegate
-            /*
-            delegate: ItemDelegate {
-                text: "Item " + (index + 1)
-                width: parent.width
-            }*/
         }
 
         Component {
@@ -84,70 +119,88 @@ ApplicationWindow {
 
             Item {
                 width: parent.width
-                height: 50
+                height: entryRow.height
 
                 Row {
+                    id: entryRow
+
                     width: parent.width
                     height: keyContainerFrame.height
 
                     Rectangle {
                         id: keyContainerFrame
-                        width: parent.width
+                        width: parent.width - clockFrame.width
                         height: rowColumnItem.height
 
                         border.color: "red"
-                        border.width: 2
+                        border.width: 1
 
-                    Column {
-                        Item {
-                            id: rowColumnItem
-                            width: parent.width
-                            height: identifierText.height + otpNumberLabel.height
+                        Column {
+                            Item {
+                                id: rowColumnItem
+                                width: parent.width
+                                height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
 
-                            FontMetrics {
-                                id: identifierCodeMetrics
-                                font.pointSize: 12
-                            }
+                                Text {
+                                    /*
+                                    TextMetrics {
+                                        id: identifierCodeMetrics
+                                        font.pointSize: 12
+                                        text: identifier
+                                    }*/
 
-                            Text {
-                                width: identifierCodeMetrics.tightBoundingRect(identifier).width
-                                height: identifierCodeMetrics.tightBoundingRect(identifier).height
+                                    id: identifierText
+                                    width: parent.width
 
-                                // The name of the site the key is for.
-                                anchors.top: rowColumnItem.top
-                                anchors.topMargin: 5
-                                anchors.left: rowColumnItem.left
-                                anchors.leftMargin: 5
-                                id: identifierText
-                                text: identifier
-                                font.pointSize: 12
-                            }
-
-                            FontMetrics {
-                                id: otpCodeMetrics
-                                font.bold: true
-                                font.pointSize: 32
-                            }
-
-                            Text {
-                                id: otpNumberLabel
-                                width: otpCodeMetrics.tightBoundingRect(otpCode).width
-                                height: {
-                                    console.log("Width : " + otpCodeMetrics.tightBoundingRect(otpCode).height);
-                                    return otpCodeMetrics.tightBoundingRect(otpCode).height
+                                    // The name of the site the key is for.
+                                    anchors.top: rowColumnItem.top
+                                    anchors.topMargin: 5
+                                    anchors.left: rowColumnItem.left
+                                    anchors.leftMargin: 5
+                                    text: identifier
+                                    font.pointSize: 12
                                 }
 
-                                anchors.top: identifierText.bottom
-                                anchors.topMargin: 5
-                                anchors.left: identifierText.left
-                                anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
-                                text: otpCode
-                                color: "blue"
-                                font.pointSize: 32
-                                font.bold: true
+
+                                Text {
+                                    /*
+                                    TextMetrics {
+                                        id: otpCodeMetrics
+                                        font.bold: true
+                                        font.pointSize: 32
+                                        //text: otpCode
+                                    }*/
+
+                                    id: otpNumberLabel
+                                    width: parent.width
+
+                                    anchors.top: identifierText.bottom
+                                    anchors.topMargin: 5
+                                    anchors.left: identifierText.left
+                                    anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
+                                    text: otpCode
+                                    color: "blue"
+                                    font.pointSize: 32
+                                    font.bold: true
+                                }
                             }
                         }
                     }
+
+                    // Show the clock icon.
+                    Rectangle {
+                        id: clockFrame
+
+                        width: keyContainerFrame.height
+                        height: keyContainerFrame.height
+
+                        Image {
+                            source: "resources/quarter-of-an-hour.svg"
+                            width: clockFrame.width * 0.8
+                            height: clockFrame.height * 0.8
+                            anchors.centerIn: parent
+                        }
+
                     }
                 }
             }
