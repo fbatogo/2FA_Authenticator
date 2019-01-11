@@ -42,13 +42,9 @@ bool KeyStorage::initStorage()
  */
 bool KeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
 {
-    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
-        if (mKeyStorageDrivers.at(i)->keyByIdentifier(identifier, result)) {
-            return true;        // We found it.
-        }
-    }
+    int driverId;
 
-    return false;
+    return findKeyByIdentifier(identifier, result, driverId);
 }
 
 /**
@@ -61,7 +57,24 @@ bool KeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
  */
 bool KeyStorage::getAllKeys(std::vector<KeyEntry> &result)
 {
+    std::vector<KeyEntry> readKeys;
 
+    // Make sure the return vector is empty to start with.
+    result.clear();
+
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->getAllKeys(readKeys)) {
+            LOG_ERROR("Failed to read all keys from the key storage driver with an id of " + QString::number(mKeyStorageDrivers.at(i)->storageId()) + ".");
+            return false;
+        }
+
+        // Iterate the latest results, and add them to the result variable.
+        for (size_t i = 0; i < readKeys.size(); i++) {
+            result.push_back(readKeys.at(i));
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -73,9 +86,30 @@ bool KeyStorage::getAllKeys(std::vector<KeyEntry> &result)
  *
  * @return true if the key data was stored in the specified key storage method.  false on error.
  */
-bool KeyStorage::addKey(const KeyEntry &entry)
+bool KeyStorage::addKey(const KeyEntry &entry, int keyStorageMethod)
 {
+    if (!entry.valid()) {
+        LOG_ERROR("Refusing to add an invalid key entry to key storage.");
+        return false;
+    }
 
+    // XXX Do a search to see if the key exists in any of the providers. (So we don't have it show up twice.)
+
+    if (keyStorageMethod == KEYSTORAGE_METHOD_DEFAULT) {
+        // Just use the first one in the list.
+        return mKeyStorageDrivers.at(0)->addKey(entry);
+    }
+
+    // Otherwise, search for the driver we want to use.
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->storageId() == keyStorageMethod) {
+            // Found it.  Add it to this storage method.
+            return mKeyStorageDrivers.at(i)->addKey(entry);
+        }
+    }
+
+    LOG_ERROR("Unable to locate a key storage method for id " + QString::number(keyStorageMethod) + ".");
+    return false;
 }
 
 /**
@@ -89,7 +123,10 @@ bool KeyStorage::addKey(const KeyEntry &entry)
  */
 bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry)
 {
-
+    if ((!currentEntry.valid()) || (!newEntry.valid())) {
+        LOG_ERROR("Refusing to update in invalid key entry in the key storage!");
+        return false;
+    }
 }
 
 /**
@@ -100,5 +137,39 @@ bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntr
  */
 bool KeyStorage::freeStorage()
 {
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (!mKeyStorageDrivers.at(i)->freeKeyStorage()) {
+            LOG_ERROR("Failed to clean up the key storage driver with an id of " + QString::number(mKeyStorageDrivers.at(i)->storageId()) + ".");
+            return false;
+        }
+    }
 
+    return true;
+}
+
+/**
+ * @brief KeyStorage::findKeyByIdentifier - Search all providers and return the key entry for the identifier along with
+ *      the storage id for the method that stored it.
+ *
+ * @param identifier - The identifier to look for in all of the storage providers.
+ * @param result[OUT] - If this method returns true, this variable will contain the key entry that was found.
+ * @param storageDriverId[OUT] - If this method returns true, this variable will contain the storage ID for the
+ *      storage driver that has stored the found key.
+ *
+ * @return true if the key was found in a storage provider.  false otherwise.
+ */
+bool KeyStorage::findKeyByIdentifier(const QString &identifier, KeyEntry &result, int &storageDriverId)
+{
+    result.clear();
+    storageDriverId = -1;
+
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->keyByIdentifier(identifier, result)) {
+            storageDriverId = i;
+            return true;        // We found it.
+        }
+    }
+
+    LOG_DEBUG("Unable to locate the key with identifier '" + identifier + "'.");
+    return false;
 }
