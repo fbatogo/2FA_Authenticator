@@ -50,46 +50,69 @@ ApplicationWindow {
         height: window.height // - topToolbar.height
         interactive: true
 
-        ScrollView {
-            anchors.fill: parent
+        ListView {
+            width: parent.width
+            height: parent.height
+            model: drawerModel
+            delegate: drawerDelegate
+            spacing: 0
+        }
 
-            ListView {
+        Component {
+            id: drawerDelegate
+
+            Item {
                 width: parent.width
-                height: parent.height
-                model: drawerModel
-                delegate: drawerDelegate
-            }
+                height: itemRow.height
 
-            Component {
-                id: drawerDelegate
+                Row {
+                    id: itemRow
+                    width: parent.width
+                    height: itemColumn.height
 
-                Item {
-                    //width: parent.width
-                    Row {
-                    Text {
-                        text: name
+                    Column {
+                        id: itemColumn
+                        width: parent.width
+                        height: menuName.height + 2
+
+                        Rectangle {
+                            color: "black"
+                            width: parent.width
+                            height: 1
+                        }
+
+                        Text {
+                            id: menuName
+                            text: name
+                            font.pointSize: 24
+                        }
+
+                        Rectangle {
+                            color: "black"
+                            width: parent.width
+                            height: 1
+                        }
                     }
-                    }
-                }
-            }
-
-            ListModel {
-                id: drawerModel
-
-                ListElement {
-                    name: qsTr("New...")
-                }
-
-                ListElement {
-                    name: qsTr("Delete...")
-                }
-
-                ListElement {
-                    name: qsTr("About...")
                 }
             }
         }
-/*
+
+        ListModel {
+            id: drawerModel
+
+            ListElement {
+                name: qsTr("New...")
+            }
+
+            ListElement {
+                name: qsTr("Delete...")
+            }
+
+            ListElement {
+                name: qsTr("About...")
+            }
+        }
+        /*
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -102,120 +125,137 @@ ApplicationWindow {
         */
     }
 
-    ScrollView {
+    ListView {
         width: parent.width
         height: parent.height - topToolbar.height
         anchors.top: topToolbar.bottom
+        model: otpListModel
+        delegate: otpListDelegate
+    }
 
-        ListView {
+    Component {
+        id: otpListDelegate
+
+        Item {
             width: parent.width
-            //model: 20
-            model: otpListModel
-            delegate: otpListDelegate
-        }
+            height: entryRow.height
 
-        Component {
-            id: otpListDelegate
+            Row {
+                id: entryRow
 
-            Item {
                 width: parent.width
-                height: entryRow.height
+                height: keyContainerFrame.height
 
-                Row {
-                    id: entryRow
+                Rectangle {
+                    id: keyContainerFrame
+                    width: parent.width - clockFrame.width
+                    height: rowColumnItem.height
 
-                    width: parent.width
-                    height: keyContainerFrame.height
+                    border.color: "red"
+                    border.width: 1
 
-                    Rectangle {
-                        id: keyContainerFrame
-                        width: parent.width - clockFrame.width
-                        height: rowColumnItem.height
+                    Column {
+                        Item {
+                            id: rowColumnItem
+                            width: parent.width
+                            height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
 
-                        border.color: "red"
-                        border.width: 1
-
-                        Column {
-                            Item {
-                                id: rowColumnItem
+                            Text {
+                                id: identifierText
                                 width: parent.width
-                                height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
 
-                                Text {
-                                    /*
-                                    TextMetrics {
-                                        id: identifierCodeMetrics
-                                        font.pointSize: 12
-                                        text: identifier
-                                    }*/
-
-                                    id: identifierText
-                                    width: parent.width
-
-                                    // The name of the site the key is for.
-                                    anchors.top: rowColumnItem.top
-                                    anchors.topMargin: 5
-                                    anchors.left: rowColumnItem.left
-                                    anchors.leftMargin: 5
-                                    text: identifier
-                                    font.pointSize: 12
-                                }
+                                // The name of the site the key is for.
+                                anchors.top: rowColumnItem.top
+                                anchors.topMargin: 5
+                                anchors.left: rowColumnItem.left
+                                anchors.leftMargin: 5
+                                text: identifier
+                                font.pointSize: 12
+                            }
 
 
-                                Text {
-                                    /*
-                                    TextMetrics {
-                                        id: otpCodeMetrics
-                                        font.bold: true
-                                        font.pointSize: 32
-                                        //text: otpCode
-                                    }*/
+                            Text {
+                                id: otpNumberLabel
+                                width: parent.width
 
-                                    id: otpNumberLabel
-                                    width: parent.width
-
-                                    anchors.top: identifierText.bottom
-                                    anchors.topMargin: 5
-                                    anchors.left: identifierText.left
-                                    anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
-                                    text: otpCode
-                                    color: "blue"
-                                    font.pointSize: 32
-                                    font.bold: true
-                                }
+                                anchors.top: identifierText.bottom
+                                anchors.topMargin: 5
+                                anchors.left: identifierText.left
+                                anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
+                                text: otpCode
+                                color: "blue"
+                                font.pointSize: 32
+                                font.bold: true
                             }
                         }
                     }
+                }
 
-                    // Show the clock icon.
-                    Rectangle {
-                        id: clockFrame
+                // Show the clock icon.
+                Rectangle {
+                    id: clockFrame
 
-                        width: keyContainerFrame.height
-                        height: keyContainerFrame.height
+                    width: keyContainerFrame.height
+                    height: keyContainerFrame.height
 
-                        Image {
-                            source: "resources/quarter-of-an-hour.svg"
-                            width: clockFrame.width * 0.8
-                            height: clockFrame.height * 0.8
-                            anchors.centerIn: parent
-                        }
-
+                    Image {
+                        source: "resources/quarter-of-an-hour.svg"
+                        width: clockFrame.width * 0.8
+                        height: clockFrame.height * 0.8
+                        anchors.centerIn: parent
                     }
+
                 }
             }
         }
+    }
 
-        ListModel {
-            id: otpListModel
+    ListModel {
+        id: otpListModel
 
-            ListElement {
-                identifier: "2FA Secured Website"; otpCode: 123456;
-            }
-
-            ListElement {
-                identifier: "Other 2FA Secured Website"; otpCode: 654321;
-            }
+        ListElement {
+            identifier: "2FA Secured Website"; otpCode: 123456;
         }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
+        ListElement {
+            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+        }
+
     }
 }
