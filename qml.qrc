@@ -4,5 +4,10 @@
         <file>qtquickcontrols2.conf</file>
         <file>resources/menubutton.png</file>
         <file>resources/quarter-of-an-hour.svg</file>
+        <file>ProgressCircle.qml</file>
+        <file>SecretScreen.qml</file>
+        <file>AboutScreen.qml</file>
+        <file>NewEntryScreen.qml</file>
+        <file>DeleteEntryScreen.qml</file>
     </qresource>
 </RCC>
