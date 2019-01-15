@@ -344,7 +344,7 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
         return false;
     }
 
-    result.setSecert(tempStr);
+    result.setSecret(tempStr);
 
     if (!queryEntryToInt(query, "keyType", tempInt)) {
         LOG_ERROR("Failed to get the key type from the database query row!");

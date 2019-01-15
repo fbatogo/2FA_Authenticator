@@ -5,14 +5,16 @@
 #include <QQmlEngine>
 #include <QJSEngine>
 
+#include "keystorage/keystorage.h"
 #include "keystorage/keyentry.h"
+#include "uikeyentries.h"
 
 class InterfaceSingleton : public QObject
 {
     Q_OBJECT
 
 public:
-    virtual ~InterfaceSingleton() = default;
+    virtual ~InterfaceSingleton();
 
     static InterfaceSingleton *getInstance();
     static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
@@ -24,11 +26,13 @@ public:
     Q_INVOKABLE void logError(QString logline);
 
     Q_INVOKABLE QString version();
-    Q_INVOKABLE QList<KeyEntry> keyEntries();
+    Q_INVOKABLE UiKeyEntries *keyEntries();
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
 
 private:
     InterfaceSingleton();
+
+    KeyStorage mKeyStorage;
 
     QQmlEngine *mQmlEngine;
 };
