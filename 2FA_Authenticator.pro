@@ -18,7 +18,8 @@ SOURCES += \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
     logger.cpp \
-    keystorage/database/databasekeystorage.cpp
+    keystorage/database/databasekeystorage.cpp \
+    interfacesingleton.cpp
 
 HEADERS += \
     otphandler.h \
@@ -27,7 +28,8 @@ HEADERS += \
     keystorage/keyentry.h \
     keystorage/keystorage.h \
     logger.h \
-    keystorage/database/databasekeystorage.h
+    keystorage/database/databasekeystorage.h \
+    interfacesingleton.h
 
 RESOURCES += qml.qrc
 

@@ -1,8 +1,6 @@
 import QtQuick 2.0
 
 Item {
-//    id: secretScreen
-
     ListView {
         width: parent.width
         height: parent.height
@@ -81,13 +79,10 @@ Item {
                         anchors.leftMargin: 10
 
                         ProgressCircle {
+                            id: timer
                             size: clockFrame.width - 20
-                            colorCircle: "#779933"
-                            colorBackground: "#E6E6E6"
-                            showBackground: true
-                            isPie: true
                             arcBegin: 90
-                            arcEnd: 200
+                            arcEnd: 360
                         }
                     }
                     /*                    Image {

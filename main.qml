@@ -45,92 +45,77 @@ ApplicationWindow {
         Drawer {
             id: drawer
 
-            width: window.width / 2
+            width: window.width / 3
             height: window.height
             interactive: true
 
+            background: Rectangle {
+                color: "black"
+            }
+
             ListView {
-                width: parent.width
-                height: parent.height
+                width: parent.width - 2
+                height: parent.height - 2
+                anchors.centerIn: parent
                 model: drawerModel
                 delegate: drawerDelegate
-                spacing: 0
+                spacing: 1
+                anchors.leftMargin: 1
+                anchors.rightMargin: 0
+                anchors.topMargin: 1
+                anchors.bottomMargin: 1
             }
 
             Component {
                 id: drawerDelegate
 
-                Item {
-                    width: parent.width
-                    height: itemRow.height
+                Rectangle {
+                    //anchors.centerIn: parent
+                    width: parent.width //- 2
+                    //height: parent.height - 2
+                    height: menuName.height
+                    color: "#f0f0f0"
 
-                    Row {
-                        id: itemRow
-                        width: parent.width
-                        height: itemColumn.height
+                    Text {
+                        id: menuName
+                        anchors.leftMargin: 10
+                        text: name
+                        color: "black"
+                        font.pointSize: 24
+                    }
 
-                        Column {
-                            id: itemColumn
-                            width: parent.width
-                            height: singleItem.height
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (drawer.opened) {
+                                drawer.close();
+                            }
 
-                            Item {
-                                id: singleItem
-                                width: parent.width
-                                height: menuName.height + 2
+                            // Figure out what was clicked based on the index.
+                            switch(index) {
+                            case 0:
+                                // New Key Entry screen.
+                                console.info("Ney key entry clicked...");
+                                screenStack.push(Qt.resolvedUrl("NewEntryScreen.qml"));
+                                break;
 
-                                Rectangle {
-                                    color: "black"
-                                    width: parent.width
-                                    height: 1
-                                }
+                            case 1:
+                                // Delete Key Entry screen.
+                                console.info("Delete key entry clicked...");
+                                screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
+                                break;
 
-                                Text {
-                                    id: menuName
-                                    text: name
-                                    font.pointSize: 24
-                                }
+                            case 2:
+                                // Setting screen
+                                console.info("Settings entry clicked...");
+                                screenStack.push(Qt.resolvedUrl("Settings.qml"));
+                                break;
 
-                                Rectangle {
-                                    color: "black"
-                                    width: parent.width
-                                    height: 1
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        if (drawer.opened) {
-                                            drawer.close();
-                                        }
-
-                                        // Figure out what was clicked based on the index.
-                                        switch(index) {
-                                        case 0:
-                                            // New Key Entry screen.
-                                            console.info("Ney key entry clicked...");
-                                            screenStack.push(Qt.resolvedUrl("NewEntryScreen.qml"));
-                                            break;
-
-                                        case 1:
-                                            // Delete Key Entry screen.
-                                            console.info("Delete key entry clicked...");
-                                            screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
-                                            break;
-
-                                        case 2:
-                                            // Setting screen
-                                            console.info("Settings entry clicked...");
-                                            break;
-
-                                        case 3:
-                                            // About screen.
-                                            console.info("About screen clicked...");
-                                            screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
-                                            break;
-                                        }
-                                    }
-                                }
+                            case 3:
+                                // About screen.
+                                console.info("About screen clicked...");
+                                screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
+                                break;
                             }
                         }
                     }
@@ -165,7 +150,11 @@ ApplicationWindow {
         initialItem: secretScreen
         anchors.fill: parent
 
-        SecretScreen {
+/*        SecretScreen {
+            id: secretScreen
+        }*/
+
+        Settings {
             id: secretScreen
         }
     }
