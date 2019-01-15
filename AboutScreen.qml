@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import InterfaceSingleton 1.0
 
 Item {
     Rectangle {
@@ -23,7 +24,7 @@ Item {
                 Text {
                     width: parent.width
                     horizontalAlignment: Text.Center
-                    text: "2FA Authenticator"
+                    text: "2FA Authenticator Version " + InterfaceSingleton.version()
                 }
 
                 Rectangle {
