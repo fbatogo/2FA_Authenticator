@@ -7,7 +7,9 @@
 InterfaceSingleton::InterfaceSingleton() :
     QObject(nullptr)
 {
-
+    if (!mKeyStorage.initStorage()) {
+        LOG_ERROR("Unable to initialize the key storage!");
+    }
 }
 
 /**
@@ -15,6 +17,13 @@ InterfaceSingleton::InterfaceSingleton() :
  *
  * @return InterfaceSingleton pointer.
  */
+InterfaceSingleton::~InterfaceSingleton()
+{
+    if (!mKeyStorage.freeStorage()) {
+        LOG_ERROR("Unable to free the key storage!");
+    }
+}
+
 InterfaceSingleton *InterfaceSingleton::getInstance()
 {
     static InterfaceSingleton singleton;
@@ -89,12 +98,32 @@ QString InterfaceSingleton::version()
 /**
  * @brief InterfaceSingleton::keyEntries - Get the list of all key entries.
  *
- * @return QList<KeyEntry> containing all of the secret key entries store in the
+ * @return UiKeyEntries object containing all of the secret key entries store in the
  *      data store.
  */
-QList<KeyEntry> InterfaceSingleton::keyEntries()
+UiKeyEntries *InterfaceSingleton::keyEntries()
 {
+    QList<KeyEntry> allKeys;
+    UiKeyEntries *result = nullptr;
 
+    allKeys.clear();
+
+    if (!mKeyStorage.getAllKeys(allKeys)) {
+        LOG_ERROR("Unable to get all of the keys stored in key storage!");
+    } else {
+        // We need to convert all of the KeyEntries in to dynamic allocations.
+        result = new UiKeyEntries();
+
+        if (!result->populateEntries(allKeys)) {
+            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI!");
+
+            // Clean up.
+            delete result;
+            result = nullptr;
+        }
+    }
+
+    return result;
 }
 
 /**
@@ -110,6 +139,8 @@ QList<KeyEntry> InterfaceSingleton::keyEntries()
  */
 bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount)
 {
+    KeyEntry toAdd;
+
     LOG_DEBUG("Attempting to save key data for '" + identifier + "'...");
 
     if (secret.isEmpty()) {
@@ -122,6 +153,26 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
     LOG_DEBUG("  - OTP Type is : " + QString::number(otpType));
     LOG_DEBUG("  - Number Count is : " + QString::number(numberCount));
 
-    return false;
+    // Populate the KeyEntry object that we want to write to the key storage method.
+    toAdd.clear();
+    toAdd.setIdentifier(identifier);
+    toAdd.setSecret(secret);
+    toAdd.setKeyType(keyType);
+    toAdd.setOtpType(otpType);
+    toAdd.setOutNumberCount(numberCount);
+
+    if (!toAdd.valid()) {
+        LOG_ERROR("Failed to create a valid KeyEntry object from the provided data!");
+        return false;
+    }
+
+    // Pass it in to be handled.
+    if (!mKeyStorage.addKey(toAdd)) {
+        LOG_ERROR("Unable to add the key data to the key storage method!");
+        return false;
+    }
+    LOG_DEBUG("Key was written to the key storage!");
+
+    return true;
 }
 

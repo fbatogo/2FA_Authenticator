@@ -1,6 +1,14 @@
 import QtQuick 2.0
+import InterfaceSingleton 1.0
 
 Item {
+    Component.onCompleted: {
+        console.log("SecretScreen is ready!");
+        var keys = InterfaceSingleton.keyEntries();
+
+        console.log("Have " + keys.count() + " keys...");
+    }
+
     ListView {
         width: parent.width
         height: parent.height
@@ -26,8 +34,8 @@ Item {
                     width: parent.width - clockFrame.width
                     height: rowColumnItem.height
 
-                    border.color: "red"
-                    border.width: 1
+                    //border.color: "red"
+                    //border.width: 1
 
                     Column {
                         Item {

@@ -2,9 +2,20 @@
 
 #include <logger.h>
 
-KeyEntry::KeyEntry()
+KeyEntry::KeyEntry() :
+    QObject(nullptr)
 {
     clear();
+}
+
+KeyEntry::KeyEntry(const KeyEntry &toCopy) :
+    QObject(nullptr)
+{
+    setIdentifier(toCopy.identifier());
+    setSecret(toCopy.secret());
+    setKeyType(toCopy.keyType());
+    setOtpType(toCopy.otpType());
+    setOutNumberCount(toCopy.outNumberCount());
 }
 
 void KeyEntry::clear()
@@ -68,7 +79,7 @@ QString KeyEntry::secret() const
     return mSecret;
 }
 
-void KeyEntry::setSecert(const QString &newvalue)
+void KeyEntry::setSecret(const QString &newvalue)
 {
     mSecret = newvalue;
 }
@@ -76,6 +87,11 @@ void KeyEntry::setSecert(const QString &newvalue)
 int KeyEntry::keyType() const
 {
     return mKeyType;
+}
+
+void KeyEntry::keyType(int &value)
+{
+    value = mKeyType;
 }
 
 void KeyEntry::setKeyType(int newvalue)
@@ -86,6 +102,11 @@ void KeyEntry::setKeyType(int newvalue)
 int KeyEntry::otpType() const
 {
     return mOtpType;
+}
+
+void KeyEntry::otpType(int &value)
+{
+    value = mOtpType;
 }
 
 void KeyEntry::setOtpType(int newvalue)
@@ -101,4 +122,22 @@ int KeyEntry::outNumberCount() const
 void KeyEntry::setOutNumberCount(int newvalue)
 {
     mOutNumberCount = newvalue;
+}
+
+/**
+ * @brief KeyEntry::operator = - Handle copying data when using the = operator.
+ *
+ * @param toCopy - The object to copy from.
+ *
+ * @return KeyEntry & containing the data from the 'toCopy' object.
+ */
+KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
+{
+    setIdentifier(toCopy.identifier());
+    setSecret(toCopy.secret());
+    setKeyType(toCopy.keyType());
+    setOtpType(toCopy.otpType());
+    setOutNumberCount(toCopy.outNumberCount());
+
+    return *this;
 }

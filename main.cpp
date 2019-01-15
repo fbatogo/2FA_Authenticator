@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 
 #include "interfacesingleton.h"
+#include "keystorage/keyentry.h"
+#include "uikeyentries.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +14,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterSingletonType<InterfaceSingleton>("InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
+
+    qmlRegisterType<KeyEntry>("KeyEntry", 1, 0, "KeyEntry");
+    qmlRegisterType<UiKeyEntries>("UiKeyEntries", 1, 0, "UiKeyEntries");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

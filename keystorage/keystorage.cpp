@@ -10,6 +10,19 @@ KeyStorage::KeyStorage()
 
     // Add all of the available storage methods to our vector.
     mKeyStorageDrivers.push_back(new DatabaseKeyStorage());
+
+    mAvailable = false;
+}
+
+/**
+ * @brief KeyStorage::available - Return the flag that indicates if we should be able to read/write
+ *      KeyEntry objects using the key storage.
+ *
+ * @return true if the key storage is available.  false otherwise.
+ */
+bool KeyStorage::available()
+{
+    return mAvailable;
 }
 
 /**
@@ -55,7 +68,7 @@ bool KeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
  *
  * @return true if all key entries were returned.  false if all key entries couldn't be returned.
  */
-bool KeyStorage::getAllKeys(std::vector<KeyEntry> &result)
+bool KeyStorage::getAllKeys(QList<KeyEntry> &result)
 {
     std::vector<KeyEntry> readKeys;
 
