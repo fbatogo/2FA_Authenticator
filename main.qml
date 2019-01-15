@@ -150,11 +150,7 @@ ApplicationWindow {
         initialItem: secretScreen
         anchors.fill: parent
 
-/*        SecretScreen {
-            id: secretScreen
-        }*/
-
-        Settings {
+        SecretScreen {
             id: secretScreen
         }
     }

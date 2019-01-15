@@ -1,6 +1,8 @@
 #include "interfacesingleton.h"
 
-#define APP_VERSION "0.1"
+#include "logger.h"
+
+#define APP_VERSION "0.01"
 
 InterfaceSingleton::InterfaceSingleton() :
     QObject(nullptr)
@@ -54,6 +56,26 @@ void InterfaceSingleton::updateEngine(QQmlEngine *engine)
 }
 
 /**
+ * @brief InterfaceSingleton::logDebug - Write a debug level log line from QML to our logger.
+ *
+ * @param logline - The log line to write.
+ */
+void InterfaceSingleton::logDebug(QString logline)
+{
+    LOG_DEBUG("[UI] " + logline);
+}
+
+/**
+ * @brief InterfaceSingleton::logError - Write an error level log line from QML to our logger.
+ *
+ * @param logline - The log line to write.
+ */
+void InterfaceSingleton::logError(QString logline)
+{
+    LOG_ERROR("[UI] " + logline);
+}
+
+/**
  * @brief InterfaceSingleton::version - Return the version string for this version of
  *      the app.
  *
@@ -73,5 +95,33 @@ QString InterfaceSingleton::version()
 QList<KeyEntry> InterfaceSingleton::keyEntries()
 {
 
+}
+
+/**
+ * @brief InterfaceSingleton::addKeyEntry - Add a new key entry to the key storage.
+ *
+ * @param identifier - The identifier (name of the site) that this key is for.
+ * @param secret - The secret code that is used for the site named by the 'identifier'.
+ * @param keyType - One of the KEYENTRY_KEYTYPE_* values from keyentry.h
+ * @param otpType - One of the KEYENTRY_OTPTYPE_* values from keyentry.h
+ * @param numberCount - The number of digits of the secret to show 6, 7, or 8.
+ *
+ * @return true if the key entry was stored to the data store.  false on error.
+ */
+bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount)
+{
+    LOG_DEBUG("Attempting to save key data for '" + identifier + "'...");
+
+    if (secret.isEmpty()) {
+        LOG_DEBUG("  - Secret is *NOT* set.");
+    } else {
+        LOG_DEBUG("  - Secret is set.");
+    }
+
+    LOG_DEBUG("  - Key Type is : " + QString::number(keyType));
+    LOG_DEBUG("  - OTP Type is : " + QString::number(otpType));
+    LOG_DEBUG("  - Number Count is : " + QString::number(numberCount));
+
+    return false;
 }
 
