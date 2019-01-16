@@ -2,9 +2,11 @@
 
 #include "logger.h"
 
+#ifndef _WIN32
 extern "C" {
 #include <oath.h>
 }
+#endif
 
 OtpHandler::OtpHandler()
 {
@@ -113,6 +115,9 @@ QString OtpHandler::decodeHexKey(const KeyEntry &keydata)
  */
 QString OtpHandler::decodeBase32Key(const KeyEntry &keydata)
 {
+#ifdef _WIN32
+    return "";
+#else
     int rc;
     char *result;
     size_t resultSize;
@@ -127,6 +132,7 @@ QString OtpHandler::decodeBase32Key(const KeyEntry &keydata)
 
     // Otherwise, stuff the result in our QString and return it.
     return QString::fromLocal8Bit(result, resultSize);
+#endif
 }
 
 /**
@@ -184,6 +190,9 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, QString decodedSecret
  */
 QString OtpHandler::calculateTotp(const KeyEntry &keydata, QString decodedSecret)
 {
+#ifdef _WIN32
+    return "";
+#else
     time_t now;
     int rc;
     char otp[10];
@@ -201,4 +210,5 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, QString decodedSecret
 
     // Return the calculated value.
     return QString::fromLocal8Bit(otp);
+#endif
 }

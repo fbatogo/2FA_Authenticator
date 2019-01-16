@@ -39,9 +39,11 @@ HEADERS += \
 
 RESOURCES += qml.qrc
 
+!win32 {
 # Link to liboath.
 CONFIG += link_pkgconfig
 PKGCONFIG += liboath
+}
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
