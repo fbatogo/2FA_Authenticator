@@ -7,9 +7,30 @@ Item {
         var keys = InterfaceSingleton.keyEntries();
 
         console.log("Have " + keys.count() + " keys...");
+
+        // Start the timer.
+        updateTimer.start();
+    }
+
+    Timer {
+        id: updateTimer
+
+        // Tick once a second, and update all of the timer graphics, along with
+        // updating the codes when the timers hit 0.
+        interval: 1000
+        repeat: true
+
+        onTriggered: {
+            console.info("Tick!");
+            for(var child in otpList.contentItem.children) {
+                console.log(otpList.contentItem.children[child].Item.objectName)
+            }
+        }
     }
 
     ListView {
+        id: otpList
+
         width: parent.width
         height: parent.height
         model: otpListModel
@@ -109,47 +130,47 @@ Item {
         id: otpListModel
 
         ListElement {
-            identifier: "2FA Secured Website"; otpCode: 123456;
+            identifier: "2FA Secured Website"; otpCode: 123456; timer: 1
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321;
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
         }
 
     }
