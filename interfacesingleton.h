@@ -8,6 +8,8 @@
 #include "keystorage/keystorage.h"
 #include "keystorage/keyentry.h"
 #include "uikeyentries.h"
+#include "otp/otpentry.h"
+#include "uiotpentries.h"
 
 class InterfaceSingleton : public QObject
 {
@@ -27,6 +29,7 @@ public:
 
     Q_INVOKABLE QString version();
     Q_INVOKABLE UiKeyEntries *keyEntries();
+    Q_INVOKABLE UiOtpEntries *otpEntries();
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
 
 private:
