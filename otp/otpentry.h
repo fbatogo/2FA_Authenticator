@@ -25,10 +25,14 @@ public:
     int timeRemaining() const;
     void setTimeRemaining(int newvalue);
 
+    int timeStep() const;
+    void setTimeStep(int newvalue);
+
 private:
     QString mIdentifier;
     QString mCurrentCode;
     int mTimeRemaining;
+    int mTimeStep;
 };
 
 #endif // OTPENTRY_H

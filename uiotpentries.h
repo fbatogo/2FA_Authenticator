@@ -12,6 +12,7 @@ class UiOtpEntries : public QObject
 
 public:
     explicit UiOtpEntries(QObject *parent = nullptr);
+    ~UiOtpEntries();
 
     bool populateEntries(QList<KeyEntry> &toCalculate);
 
@@ -19,6 +20,8 @@ public:
     Q_INVOKABLE OtpEntry *at(int i);
 
 private:
+    OtpEntry *calculateEntry(const KeyEntry &calc);
+
     QList<OtpEntry *> mEntryList;
 };
 

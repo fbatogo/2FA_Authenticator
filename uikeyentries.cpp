@@ -8,6 +8,16 @@ UiKeyEntries::UiKeyEntries(QObject *parent) :
 
 }
 
+UiKeyEntries::~UiKeyEntries()
+{
+    // Clean up the memory used in our internal list.
+    for (int i = 0; i < mEntryList.size(); i++) {
+        if (mEntryList.at(i) != nullptr) {
+            delete mEntryList.at(i);
+        }
+    }
+}
+
 bool UiKeyEntries::populateEntries(QList<KeyEntry> &toCopy)
 {
     // We need to convert all of the KeyEntries in to dynamic allocations.
@@ -25,5 +35,9 @@ int UiKeyEntries::count()
 
 KeyEntry *UiKeyEntries::at(int i)
 {
+    if (i >= mEntryList.count()) {
+        return nullptr;
+    }
+
     return mEntryList.at(i);
 }

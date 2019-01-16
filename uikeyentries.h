@@ -11,6 +11,7 @@ class UiKeyEntries : public QObject
 
 public:
     explicit UiKeyEntries(QObject *parent = 0);
+    ~UiKeyEntries();
 
     bool populateEntries(QList<KeyEntry> &toCopy);
 

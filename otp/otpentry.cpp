@@ -44,3 +44,13 @@ void OtpEntry::setTimeRemaining(int newvalue)
 {
     mTimeRemaining = newvalue;
 }
+
+int OtpEntry::timeStep() const
+{
+    return mTimeStep;
+}
+
+void OtpEntry::setTimeStep(int newvalue)
+{
+    mTimeStep = newvalue;
+}

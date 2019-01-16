@@ -21,9 +21,32 @@ Item {
         repeat: true
 
         onTriggered: {
+            var updatedOtps = false;
+
             console.info("Tick!");
-            for(var child in otpList.contentItem.children) {
-                console.log(otpList.contentItem.children[child].Item.objectName)
+
+            // Increment the clock image.
+            for(var i = 0; i < otpListModel.count; i++) {
+                var listItem = otpListModel.get(i);
+
+                listItem.currentTimer++;
+
+                if (listItem.currentTimer > listItem.timeStep) {
+                    // Reset the timer to 0.
+                    listItem.currentTimer = 0;
+
+                    if (!updatedOtps) {
+                        // XXX Get a new OTP value.
+                        console.log("Get all OTP values...");
+                        updatedOtps = true;
+                    }
+                }
+
+                // Calculate the percentage of time that has passed.
+                var timePercent = listItem.currentTimer / listItem.timeStep;
+
+                // Then, figure out how much of the circle to draw.
+                listItem.circleShown = 360 * timePercent;
             }
         }
     }
@@ -54,9 +77,6 @@ Item {
                     id: keyContainerFrame
                     width: parent.width - clockFrame.width
                     height: rowColumnItem.height
-
-                    //border.color: "red"
-                    //border.width: 1
 
                     Column {
                         Item {
@@ -110,8 +130,8 @@ Item {
                         ProgressCircle {
                             id: timer
                             size: clockFrame.width - 20
-                            arcBegin: 90
-                            arcEnd: 360
+                            arcBegin: 0
+                            arcEnd: circleShown
                         }
                     }
                     /*                    Image {
@@ -130,47 +150,47 @@ Item {
         id: otpListModel
 
         ListElement {
-            identifier: "2FA Secured Website"; otpCode: 123456; timer: 1
+            identifier: "2FA Secured Website"; otpCode: 123456; currentTimer: 1; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
         ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; timer: 10
+            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
     }
