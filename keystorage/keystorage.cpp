@@ -76,7 +76,7 @@ bool KeyStorage::getAllKeys(QList<KeyEntry> &result)
     result.clear();
 
     for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
-        if (mKeyStorageDrivers.at(i)->getAllKeys(readKeys)) {
+        if (!mKeyStorageDrivers.at(i)->getAllKeys(readKeys)) {
             LOG_ERROR("Failed to read all keys from the key storage driver with an id of " + QString::number(mKeyStorageDrivers.at(i)->storageId()) + ".");
             return false;
         }

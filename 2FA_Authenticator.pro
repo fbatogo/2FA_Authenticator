@@ -13,17 +13,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    otphandler.cpp \
     keystorage/database/secretdatabase.cpp \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
     logger.cpp \
     keystorage/database/databasekeystorage.cpp \
     interfacesingleton.cpp \
-    uikeyentries.cpp
+    uikeyentries.cpp \
+    otp/otpentry.cpp \
+    uiotpentries.cpp \
+    otp/otphandler.cpp
 
 HEADERS += \
-    otphandler.h \
     keystorage/database/secretdatabase.h \
     keystorage/keystoragebase.h \
     keystorage/keyentry.h \
@@ -31,9 +32,16 @@ HEADERS += \
     logger.h \
     keystorage/database/databasekeystorage.h \
     interfacesingleton.h \
-    uikeyentries.h
+    uikeyentries.h \
+    otp/otpentry.h \
+    uiotpentries.h \
+    otp/otphandler.h
 
 RESOURCES += qml.qrc
+
+# Link to liboath.
+CONFIG += link_pkgconfig
+PKGCONFIG += liboath
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

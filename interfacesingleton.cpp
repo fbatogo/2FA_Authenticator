@@ -127,6 +127,37 @@ UiKeyEntries *InterfaceSingleton::keyEntries()
 }
 
 /**
+ * @brief InterfaceSingleton::otpEntries - Get the list of all key entries, calculate the
+ *      OTP value, and add it to the resulting list.
+ *
+ * @return UiOtpEntries pointer for all of the KeyEntry objects.
+ */
+UiOtpEntries *InterfaceSingleton::otpEntries()
+{
+    QList<KeyEntry> allKeys;
+    UiOtpEntries *result = nullptr;
+
+    allKeys.clear();
+
+    if (!mKeyStorage.getAllKeys(allKeys)) {
+        LOG_ERROR("Unable to get all of the keys stored in key storage!");
+    } else {
+        // We need to convert all of the KeyEntries in to dynamic allocations.
+        result = new UiOtpEntries();
+
+        if (!result->populateEntries(allKeys)) {
+            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI!");
+
+            // Clean up.
+            delete result;
+            result = nullptr;
+        }
+    }
+
+    return result;
+}
+
+/**
  * @brief InterfaceSingleton::addKeyEntry - Add a new key entry to the key storage.
  *
  * @param identifier - The identifier (name of the site) that this key is for.

@@ -1,5 +1,7 @@
 #include "uikeyentries.h"
 
+#include "logger.h"
+
 UiKeyEntries::UiKeyEntries(QObject *parent) :
     QObject(parent)
 {
@@ -9,7 +11,7 @@ UiKeyEntries::UiKeyEntries(QObject *parent) :
 bool UiKeyEntries::populateEntries(QList<KeyEntry> &toCopy)
 {
     // We need to convert all of the KeyEntries in to dynamic allocations.
-    for (int i = 0; i < mEntryList.size(); i++) {
+    for (int i = 0; i < toCopy.size(); i++) {
         mEntryList.push_back(new KeyEntry(toCopy.at(i)));
     }
 
