@@ -100,7 +100,7 @@ QString OtpHandler::decodeSecret(const KeyEntry &keydata)
  */
 QString OtpHandler::decodeHexKey(const KeyEntry &keydata)
 {
-
+    return "";
 }
 
 /**
@@ -174,7 +174,7 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, QString decodedSecret
  */
 QString OtpHandler::calculateHotp(const KeyEntry &keydata, QString decodedSecret)
 {
-
+    return "";
 }
 
 /**
