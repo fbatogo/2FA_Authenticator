@@ -16,6 +16,8 @@ KeyEntry::KeyEntry(const KeyEntry &toCopy) :
     setKeyType(toCopy.keyType());
     setOtpType(toCopy.otpType());
     setOutNumberCount(toCopy.outNumberCount());
+    setTimeStep(toCopy.timeStep());
+    setTimeOffset(toCopy.timeOffset());
 }
 
 void KeyEntry::clear()
@@ -26,6 +28,8 @@ void KeyEntry::clear()
     mKeyType = -1;
     mOtpType = -1;
     mOutNumberCount = -1;
+    mTimeStep = 30;             // Recommended default.
+    mTimeOffset = 0;            // Recommended default.
 }
 
 /**
@@ -119,9 +123,44 @@ int KeyEntry::outNumberCount() const
     return mOutNumberCount;
 }
 
+void KeyEntry::outNumberCount(int &value)
+{
+    value = mOutNumberCount;
+}
+
 void KeyEntry::setOutNumberCount(int newvalue)
 {
     mOutNumberCount = newvalue;
+}
+
+int KeyEntry::timeStep() const
+{
+    return mTimeStep;
+}
+
+void KeyEntry::timeStep(int &value)
+{
+    value = mTimeStep;
+}
+
+void KeyEntry::setTimeStep(int newvalue)
+{
+    mTimeStep = newvalue;
+}
+
+int KeyEntry::timeOffset() const
+{
+    return mTimeOffset;
+}
+
+void KeyEntry::timeOffset(int &value)
+{
+    value = mTimeOffset;
+}
+
+void KeyEntry::setTimeOffset(int newvalue)
+{
+    mTimeOffset = newvalue;
 }
 
 /**
@@ -138,6 +177,8 @@ KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
     setKeyType(toCopy.keyType());
     setOtpType(toCopy.otpType());
     setOutNumberCount(toCopy.outNumberCount());
+    setTimeStep(toCopy.timeStep());
+    setTimeOffset(toCopy.timeOffset());
 
     return *this;
 }

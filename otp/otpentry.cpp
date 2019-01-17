@@ -5,14 +5,15 @@ OtpEntry::OtpEntry(QObject *parent) :
 {
     mIdentifier.clear();
     mCurrentCode.clear();
-    mTimeRemaining = -1;
+    mStartTime = -1;
+    mTimeStep = -1;
 }
 
 OtpEntry::OtpEntry(const OtpEntry &toCopy)
 {
     setIdentifier(toCopy.identifier());
     setCurrentCode(toCopy.currentCode());
-    setTimeRemaining(toCopy.timeRemaining());
+    setStartTime(toCopy.startTime());
 }
 
 QString OtpEntry::identifier() const
@@ -35,14 +36,14 @@ void OtpEntry::setCurrentCode(const QString &newvalue)
     mCurrentCode = newvalue;
 }
 
-int OtpEntry::timeRemaining() const
+int OtpEntry::startTime() const
 {
-    return mTimeRemaining;
+    return mStartTime;
 }
 
-void OtpEntry::setTimeRemaining(int newvalue)
+void OtpEntry::setStartTime(int newvalue)
 {
-    mTimeRemaining = newvalue;
+    mStartTime = newvalue;
 }
 
 int OtpEntry::timeStep() const

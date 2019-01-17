@@ -9,16 +9,16 @@ class OtpHandler
 public:
     OtpHandler();
 
-    OtpEntry *calculateFromKeyEntry(const KeyEntry &keydata);
+    static OtpEntry *calculateFromKeyEntry(const KeyEntry &keydata);
 
 protected:
-    QString decodeSecret(const KeyEntry &keydata);
-    QString decodeHexKey(const KeyEntry &keydata);
-    QString decodeBase32Key(const KeyEntry &keydata);
+    static bool decodeSecret(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize);
+    static bool decodeHexKey(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize);
+    static bool decodeBase32Key(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize);
 
-    QString calculateCode(const KeyEntry &keydata, QString decodedSecret);
-    QString calculateHotp(const KeyEntry &keydata, QString decodedSecret);
-    QString calculateTotp(const KeyEntry &keydata, QString decodedSecret);
+    static QString calculateCode(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
+    static QString calculateHotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
+    static QString calculateTotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
 };
 
 #endif // OTPHANDLER_H
