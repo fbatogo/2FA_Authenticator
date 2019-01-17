@@ -19,6 +19,8 @@ protected:
     static QString calculateCode(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
     static QString calculateHotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
     static QString calculateTotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize);
+
+    static int getStartTime(int timeStep);
 };
 
 #endif // OTPHANDLER_H

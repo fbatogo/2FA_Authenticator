@@ -2,6 +2,8 @@
 
 #include "logger.h"
 
+#include <time.h>
+
 #ifndef _WIN32
 extern "C" {
 #include <oath.h>
@@ -29,6 +31,7 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     size_t dSize;
     QString calculatedCode;
     OtpEntry *result;
+    int startTime;
 
     // Make sure the key entry provided is valid.
     if (!keydata.valid()) {
@@ -54,15 +57,16 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
         return nullptr;
     }
 
-    // XXX Need to calculate the remaining time this code is valid.
+    // Calculate the number of seconds in to the lifetime of the OTP that we are.
+    startTime = getStartTime(keydata.timeStep());
 
     // Take the resulting OTP code and data from the KeyEntry and create the
     // OtpEntry.
     result = new OtpEntry();
     result->setIdentifier(keydata.identifier());
     result->setCurrentCode(calculatedCode);
-    result->setStartTime(1);
-    result->setTimeStep(30);
+    result->setStartTime(startTime);
+    result->setTimeStep(keydata.timeStep());
 
     return result;
 }
@@ -210,4 +214,29 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const char *decodedSe
 
     // Return the calculated value.
     return QString::fromLocal8Bit(otp);
+}
+
+/**
+ * @brief OtpHandler::getStartTime - Get the number of seconds in to the lifetime of the OTP
+ *      that have elapsed.
+ *
+ * @param timeStep - The 'time step' for the OTP.
+ *
+ * @return int containing the number of seconds in to the lifetime of the current OTP.
+ */
+int OtpHandler::getStartTime(int timeStep)
+{
+    time_t t;
+    tm *now;
+    int seconds;
+
+    t = time(nullptr);
+    now = localtime(&t);
+
+    seconds = now->tm_sec;
+
+    LOG_DEBUG("Elapsed seconds : " + QString::number((seconds & timeStep)));
+
+    // Return the number of seconds beyond the time step that have elapsed.
+    return (seconds & timeStep);
 }

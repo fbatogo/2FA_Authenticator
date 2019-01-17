@@ -6,8 +6,8 @@ ApplicationWindow {
     id: window
 
     visible: true
-    width: 640
-    height: 480
+    width: 240
+    height: 320
     title: qsTr("2 Factor Authenticator")
     header: ToolBar {
         id: topToolbar
@@ -18,7 +18,7 @@ ApplicationWindow {
         Image {
             id: menuButton
             anchors.leftMargin: 5
-            source: "resources/menubutton.png"
+            source: "resources/menu.svg"
             width: topToolbar.height
             height: topToolbar.height
 

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import InterfaceSingleton 1.0
+import QtQuick.Layouts 1.3
 
 Item {
     Component.onCompleted: {
@@ -39,17 +40,22 @@ Item {
                         updatedOtps = true;
 
                         populateListModel();
+                        return;
                     }
                 }
 
-                if (listItem.currentTimer === 0) {
-                    listItem.circleShown = 0;
+                if (listItem.timeStep <= 0) {
+                    console.error("Time step is <= 0.  Ignoring!");
                 } else {
-                    // Calculate the percentage of time that has passed.
-                    var timePercent = listItem.currentTimer / listItem.timeStep;
+                    if (listItem.currentTimer === 0) {
+                        listItem.circleShown = 0;
+                    } else {
+                        // Calculate the percentage of time that has passed.
+                        var timePercent = listItem.currentTimer / listItem.timeStep;
 
-                    // Then, figure out how much of the circle to draw.
-                    listItem.circleShown = 360 * timePercent;
+                        // Then, figure out how much of the circle to draw.
+                        listItem.circleShown = 360 * timePercent;
+                    }
                 }
             }
         }
@@ -65,8 +71,36 @@ Item {
         // Iterate each entry, and add it to the list.
         for (var i = 0; i < otpEntryList.count(); i++) {
             var temp = otpEntryList.at(i);
+            var code;
+            var parts;
 
-            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: temp.mCurrentCode, currentTimer: temp.mStartTime,  circleShown: 0 });
+            switch (temp.mCurrentCode.length) {
+            case 6:
+                // Add a space between the first and 2nd 3 characters.
+                parts = temp.mCurrentCode.match(/.{1,3}/g);
+                code = parts[0] + " " + parts[1];
+                break;
+
+            case 7:
+                // Add a space between the first 4 and second 3 characters.
+                parts = temp.mCurrentCode.match(/.{1,4}/g);
+                code = parts[0] + " " + parts[1];
+                break;
+
+            case 8:
+                // Add a space between the first and 2nd 4 characters.
+                parts = temp.mCurrentCode.match(/.{1,4}/g);
+                code = parts[0] + " " + parts[1];
+                break;
+
+            default:
+                // We should only allow 6, 7, and 8, but if we get something else, just
+                // display the number with no spaces.
+                code = temp.mCurrentCode
+                break;
+            }
+
+            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: 0 });
         }
     }
 
@@ -86,7 +120,7 @@ Item {
             width: parent.width
             height: entryRow.height
 
-            Row {
+            RowLayout {
                 id: entryRow
 
                 width: parent.width
@@ -94,7 +128,7 @@ Item {
 
                 Rectangle {
                     id: keyContainerFrame
-                    width: parent.width - clockFrame.width
+                    Layout.fillWidth: true
                     height: rowColumnItem.height
 
                     Column {
@@ -134,6 +168,31 @@ Item {
                     }
                 }
 
+                Rectangle {
+                    id: copyButton
+
+                    width: keyContainerFrame.height
+                    height: keyContainerFrame.height
+
+                    Item {
+                        anchors.fill: parent
+                        anchors.margins: 10
+
+                        Image {
+                            source: "resources/copy.svg"
+                            sourceSize.height: keyContainerFrame.height - 20
+                            sourceSize.width: keyContainerFrame.height - 20
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("Copy icon clicked.");
+                        }
+                    }
+                }
+
                 // Show the clock icon.
                 Rectangle {
                     id: clockFrame
@@ -153,13 +212,6 @@ Item {
                             arcEnd: circleShown
                         }
                     }
-                    /*                    Image {
-                        source: "resources/quarter-of-an-hour.svg"
-                        width: clockFrame.width * 0.8
-                        height: clockFrame.height * 0.8
-                        anchors.centerIn: parent
-                    }*/
-
                 }
             }
         }
@@ -168,50 +220,4 @@ Item {
     ListModel {
         id: otpListModel
     }
-    /*
-        ListElement {
-            identifier: "2FA Secured Website"; otpCode: 123456; currentTimer: 1; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-        ListElement {
-            identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
-        }
-
-    }*/
 }
