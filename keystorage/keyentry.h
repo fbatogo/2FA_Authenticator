@@ -22,6 +22,8 @@ class KeyEntry : public QObject
     Q_PROPERTY(int mKeyType READ keyType WRITE setKeyType)
     Q_PROPERTY(int mOtpType READ otpType WRITE otpType)
     Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount)
+    Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep)
+    Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset)
 
 
 public:
@@ -47,7 +49,16 @@ public:
     void setOtpType(int newvalue);
 
     int outNumberCount() const;
+    void outNumberCount(int &value);
     void setOutNumberCount(int newvalue);
+
+    int timeStep() const;
+    void timeStep(int &value);
+    void setTimeStep(int newvalue);
+
+    int timeOffset() const;
+    void timeOffset(int &value);
+    void setTimeOffset(int newvalue);
 
     KeyEntry& operator=(const KeyEntry& toCopy);
 
@@ -58,6 +69,8 @@ private:
     int mKeyType;
     int mOtpType;
     int mOutNumberCount;
+    int mTimeStep;
+    int mTimeOffset;
 };
 
 #endif // KEYENTRY_H

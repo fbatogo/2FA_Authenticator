@@ -20,8 +20,6 @@ public:
     Q_INVOKABLE OtpEntry *at(int i);
 
 private:
-    OtpEntry *calculateEntry(const KeyEntry &calc);
-
     QList<OtpEntry *> mEntryList;
 };
 

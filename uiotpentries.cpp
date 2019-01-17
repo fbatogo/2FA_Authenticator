@@ -1,6 +1,7 @@
 #include "uiotpentries.h"
 
 #include "logger.h"
+#include "otp/otphandler.h"
 
 UiOtpEntries::UiOtpEntries(QObject *parent) :
     QObject(parent)
@@ -36,11 +37,14 @@ bool UiOtpEntries::populateEntries(QList<KeyEntry> &toCalculate)
     mEntryList.clear();
 
     for (int i = 0; i < toCalculate.size(); i++) {
-        temp = calculateEntry(toCalculate.at(i));
+        temp = OtpHandler::calculateFromKeyEntry(toCalculate.at(i));
         if (temp == nullptr) {
             LOG_ERROR("Unable to calculate the OTP data for identifier : " + toCalculate.at(i).identifier());
             return false;
         }
+
+        LOG_DEBUG("Adding OtpEntry for : " + temp->identifier());
+        LOG_DEBUG("    OTP code : " + temp->currentCode());
 
         // Save it to our internal list.
         mEntryList.push_back(temp);
@@ -73,18 +77,7 @@ OtpEntry *UiOtpEntries::at(int i)
         return nullptr;
     }
 
+    LOG_DEBUG("Returning entry : " + mEntryList.at(i)->identifier());
     return mEntryList.at(i);
 }
 
-/**
- * @brief UiOtpEntries::calculateEntry - Calculate the OTP and other useful parameters
- *      from the provided KeyEntry.
- *
- * @param calc - The KeyEntry to calculate values for.
- *
- * @return OtpEntry pointer with the calculated entry.  On failure, nullptr is returned.
- */
-OtpEntry *UiOtpEntries::calculateEntry(const KeyEntry &calc)
-{
-
-}

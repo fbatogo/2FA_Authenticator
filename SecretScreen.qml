@@ -4,9 +4,8 @@ import InterfaceSingleton 1.0
 Item {
     Component.onCompleted: {
         console.log("SecretScreen is ready!");
-        var keys = InterfaceSingleton.keyEntries();
 
-        console.log("Have " + keys.count() + " keys...");
+        populateListModel();
 
         // Start the timer.
         updateTimer.start();
@@ -36,18 +35,38 @@ Item {
                     listItem.currentTimer = 0;
 
                     if (!updatedOtps) {
-                        // XXX Get a new OTP value.
                         console.log("Get all OTP values...");
                         updatedOtps = true;
+
+                        populateListModel();
                     }
                 }
 
-                // Calculate the percentage of time that has passed.
-                var timePercent = listItem.currentTimer / listItem.timeStep;
+                if (listItem.currentTimer === 0) {
+                    listItem.circleShown = 0;
+                } else {
+                    // Calculate the percentage of time that has passed.
+                    var timePercent = listItem.currentTimer / listItem.timeStep;
 
-                // Then, figure out how much of the circle to draw.
-                listItem.circleShown = 360 * timePercent;
+                    // Then, figure out how much of the circle to draw.
+                    listItem.circleShown = 360 * timePercent;
+                }
             }
+        }
+    }
+
+    // Populate the list model.
+    function populateListModel() {
+        var otpEntryList = InterfaceSingleton.otpEntries();
+
+        // Make sure the list model is empty before we start to populate it.
+        otpListModel.clear();
+
+        // Iterate each entry, and add it to the list.
+        for (var i = 0; i < otpEntryList.count(); i++) {
+            var temp = otpEntryList.at(i);
+
+            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: temp.mCurrentCode, currentTimer: temp.mStartTime,  circleShown: 0 });
         }
     }
 
@@ -148,7 +167,8 @@ Item {
 
     ListModel {
         id: otpListModel
-
+    }
+    /*
         ListElement {
             identifier: "2FA Secured Website"; otpCode: 123456; currentTimer: 1; timeStep: 30; circleShown: 0
         }
@@ -193,5 +213,5 @@ Item {
             identifier: "Other 2FA Secured Website"; otpCode: 654321; currentTimer: 10; timeStep: 30; circleShown: 0
         }
 
-    }
+    }*/
 }
