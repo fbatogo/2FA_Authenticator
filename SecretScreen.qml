@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import InterfaceSingleton 1.0
 import QtQuick.Layouts 1.3
+import UiClipboard 1.0
 
 Item {
     Component.onCompleted: {
@@ -10,6 +11,10 @@ Item {
 
         // Start the timer.
         updateTimer.start();
+    }
+
+    UiClipboard {
+        id: clipboard
     }
 
     Timer {
@@ -188,7 +193,8 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Copy icon clicked.");
+                            console.log("Copied to the clipboard.");
+                            clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
                         }
                     }
                 }

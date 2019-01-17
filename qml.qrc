@@ -10,5 +10,6 @@
         <file>Settings.qml</file>
         <file>resources/menu.svg</file>
         <file>resources/copy.svg</file>
+        <file>QRCodeScan.qml</file>
     </qresource>
 </RCC>

@@ -1,4 +1,4 @@
-QT += quick sql
+QT += quick sql multimedia
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -22,7 +22,9 @@ SOURCES += \
     uikeyentries.cpp \
     otp/otpentry.cpp \
     uiotpentries.cpp \
-    otp/otphandler.cpp
+    otp/otphandler.cpp \
+    uiclipboard.cpp \
+    zbar/qrcodevideofilter.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -35,14 +37,16 @@ HEADERS += \
     uikeyentries.h \
     otp/otpentry.h \
     uiotpentries.h \
-    otp/otphandler.h
+    otp/otphandler.h \
+    uiclipboard.h \
+    zbar/qrcodevideofilter.h
 
 RESOURCES += qml.qrc
 
 !win32 {
 # Link to liboath.
 CONFIG += link_pkgconfig
-PKGCONFIG += liboath
+PKGCONFIG += liboath zbar
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
