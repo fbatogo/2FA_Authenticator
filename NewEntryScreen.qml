@@ -202,6 +202,14 @@ Item {
                     id: getFromCameraButton
 
                     text: qsTr("Acquire from camera")
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            // We need to push the QRCodeScan screen on to the screen stack.
+                            screenStack.push(Qt.resolvedUrl("QRCodeScan.qml"));
+                        }
+                    }
                 }
 
                 Rectangle {
