@@ -43,9 +43,6 @@ bool UiOtpEntries::populateEntries(QList<KeyEntry> &toCalculate)
             return false;
         }
 
-        LOG_DEBUG("Adding OtpEntry for : " + temp->identifier());
-        LOG_DEBUG("    OTP code : " + temp->currentCode());
-
         // Save it to our internal list.
         mEntryList.push_back(temp);
     }
@@ -77,7 +74,6 @@ OtpEntry *UiOtpEntries::at(int i)
         return nullptr;
     }
 
-    LOG_DEBUG("Returning entry : " + mEntryList.at(i)->identifier());
     return mEntryList.at(i);
 }
 

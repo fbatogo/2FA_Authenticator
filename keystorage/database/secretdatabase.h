@@ -25,6 +25,8 @@ public:
 
     bool getAll(std::vector<KeyEntry> &result);
 
+    bool deleteByIdentifier(const QString &identifier);
+
     int schemaVersion(bool logError = true);
 
 private:

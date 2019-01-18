@@ -235,8 +235,6 @@ int OtpHandler::getStartTime(int timeStep)
 
     seconds = now->tm_sec;
 
-    LOG_DEBUG("Elapsed seconds : " + QString::number((seconds & timeStep)));
-
     // Return the number of seconds beyond the time step that have elapsed.
     return (seconds & timeStep);
 }

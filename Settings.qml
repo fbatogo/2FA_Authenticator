@@ -53,7 +53,6 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             // Remove ourselves.
-                            console.log("Pop!");
                             screenStack.pop()
                         }
                     }

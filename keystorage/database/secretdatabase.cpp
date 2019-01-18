@@ -229,6 +229,26 @@ bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 }
 
 /**
+ * @brief SecretDatabase::deleteByIdentifier - Delete a key from the database based
+ *      on the identifier provided.
+ *
+ * @param identifier - The identifier for the key that we want to delete.
+ *
+ * @return true if the key was deleted.  false on error.
+ */
+bool SecretDatabase::deleteByIdentifier(const QString &identifier)
+{
+    QSqlQuery query("DELETE from secretData where identifier=\"" + identifier + "\"");
+
+    if (!query.exec()) {
+        LOG_ERROR("Failed to delete the key with identifier : " + identifier);
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief SecretDatabase::schemaVersion - Get the schema version that the database is currently using.
  *
  * @param logError - If true, then error messages will be logged when the schema can't be

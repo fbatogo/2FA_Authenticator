@@ -116,6 +116,7 @@ Item {
         height: parent.height
         model: otpListModel
         delegate: otpListDelegate
+        clip: true
     }
 
     Component {

@@ -172,18 +172,6 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
 {
     KeyEntry toAdd;
 
-    LOG_DEBUG("Attempting to save key data for '" + identifier + "'...");
-
-    if (secret.isEmpty()) {
-        LOG_DEBUG("  - Secret is *NOT* set.");
-    } else {
-        LOG_DEBUG("  - Secret is set.");
-    }
-
-    LOG_DEBUG("  - Key Type is : " + QString::number(keyType));
-    LOG_DEBUG("  - OTP Type is : " + QString::number(otpType));
-    LOG_DEBUG("  - Number Count is : " + QString::number(numberCount));
-
     // Populate the KeyEntry object that we want to write to the key storage method.
     toAdd.clear();
     toAdd.setIdentifier(identifier);
@@ -205,5 +193,18 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
     LOG_DEBUG("Key was written to the key storage!");
 
     return true;
+}
+
+/**
+ * @brief InterfaceSingleton::deleteKey - Given a key identifier, delete it from the
+ *      key storage.
+ *
+ * @param identifier - The identifier of the key to delete.
+ *
+ * @return true if the key was deleted.  false on error.
+ */
+bool InterfaceSingleton::deleteKey(QString identifier)
+{
+    return mKeyStorage.deleteKeyByIdentifier(identifier);
 }
 
