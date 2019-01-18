@@ -19,6 +19,7 @@ public:
     bool getAllKeys(QList<KeyEntry> &result);
     bool addKey(const KeyEntry &entry, int keyStorageMethod = KEYSTORAGE_METHOD_DEFAULT);
     bool updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry);
+    bool deleteKeyByIdentifier(const QString &identifier);
     bool freeStorage();
 
 private:

@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE UiKeyEntries *keyEntries();
     Q_INVOKABLE UiOtpEntries *otpEntries();
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
+    Q_INVOKABLE bool deleteKey(QString identifier);
 
 private:
     InterfaceSingleton();

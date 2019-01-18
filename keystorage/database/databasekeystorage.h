@@ -19,6 +19,7 @@ public:
     bool getAllKeys(std::vector<KeyEntry> &result);
     bool addKey(const KeyEntry &entry);
     bool updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry);
+    bool deleteKeyByIdentifier(const QString &identifier);
     bool freeKeyStorage();
 
 private:

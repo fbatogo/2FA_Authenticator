@@ -143,6 +143,28 @@ bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntr
 }
 
 /**
+ * @brief KeyStorage::deleteKeyByIdentifier - Delete a key from the key store(s) based on the identifier
+ *      provided.
+ *
+ * @param identifier - The identifier of the key that we want to delete.
+ *
+ * @return true if the identifier was deleted in at least one key store.  false on error.
+ */
+bool KeyStorage::deleteKeyByIdentifier(const QString &identifier)
+{
+    bool deleted = false;
+
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->deleteKeyByIdentifier(identifier)) {
+            // It was deleted, so set the deleted flag to true.
+            deleted = true;
+        }
+    }
+
+    return deleted;
+}
+
+/**
  * @brief KeyStorage::freeStorage - Iterate through the key storage methods and free
  *      any resources they may have used.
  *

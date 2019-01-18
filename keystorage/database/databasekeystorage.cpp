@@ -100,6 +100,24 @@ bool DatabaseKeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry 
 }
 
 /**
+ * @brief DatabaseKeyStorage::deleteKeyByIdentifier - Delete a key from key storage, based
+ *      on the identifier for the key.
+ *
+ * @param identifier - The identifier for the key to delete.
+ *
+ * @return true if the key was deleted.  false on error.
+ */
+bool DatabaseKeyStorage::deleteKeyByIdentifier(const QString &identifier)
+{
+    if (!mSecretDatabase.isOpen()) {
+        LOG_ERROR("Unable to delete the key with identifier '" + identifier + "'.  The database isn't open!");
+        return false;
+    }
+
+    return mSecretDatabase.deleteByIdentifier(identifier);
+}
+
+/**
  * @brief DatabaseKeyStorage::freeKeyStorage - Clean up the database object by closing the database
  *      file, if it is open.
  *
