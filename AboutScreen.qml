@@ -4,6 +4,33 @@ import QtQuick.Layouts 1.3
 import InterfaceSingleton 1.0
 
 Item {
+
+    Component.onCompleted: {
+        // Load the license text file, and stick it in the license text area.
+        var rawFile = new XMLHttpRequest();
+        var resultData = null;
+
+        console.log("Loading the licenses text...");
+        rawFile.open("GET", "resources/licenses.txt", false);
+
+        // Set up a callback to be called when the data comes in.
+        rawFile.onreadystatechange = function()
+        {
+            if (rawFile.readyState === 4) {
+                if ((rawFile.status === 200) || (rawFile.status === 0)) {
+                    // Pass the data to the callback function provided in the original call.
+                    resultData = rawFile.responseText;
+                }
+            }
+        }
+
+        // Initiate sending the request to get the data.
+        rawFile.send(null);
+
+        licenseText.text = resultData;
+        console.log("License text : " + resultData);
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -91,7 +118,9 @@ Item {
                         flickableDirection: Flickable.VerticalFlick
 
                         TextArea.flickable: TextArea {
+                            id: licenseText
                             readOnly: true
+                            textFormat: TextEdit.RichText
                             text: "License text goes here...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n"
                             wrapMode: TextArea.Wrap
                         }

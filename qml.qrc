@@ -11,5 +11,6 @@
         <file>resources/menu.svg</file>
         <file>resources/copy.svg</file>
         <file>QRCodeScan.qml</file>
+        <file>resources/licenses.txt</file>
     </qresource>
 </RCC>
