@@ -86,30 +86,12 @@ bool OtpHandler::decodeSecret(const KeyEntry &keydata, char **decodedSecret, siz
     // Figure out what type of encoding we have, and make the correct call to
     // handle it.
     switch (keydata.keyType()) {
-    case KEYENTRY_KEYTYPE_HEX:
-        return decodeHexKey(keydata, decodedSecret, decodedSize);
-
     case KEYENTRY_KEYTYPE_BASE32:
         return decodeBase32Key(keydata, decodedSecret, decodedSize);
     }
 
     // If we get here, then we don't know how to decode the key type.
     LOG_ERROR("Unknown key encoding of '" + QString::number(keydata.keyType()) + "' for identifier : " + keydata.identifier());
-    return false;
-}
-
-/**
- * @brief OtpHandler::decodeHexKey - Use liboath to decode the hex key data in to the
- *      format liboath wants to use.
- *
- * @param keydata - A KeyEntry object that contains the information for the secret that
- *      we want to decode.
- *
- * @return QString containing the decoded hex key.  On error, an empty string will be
- *      returned.
- */
-bool OtpHandler::decodeHexKey(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize)
-{
     return false;
 }
 
@@ -154,32 +136,12 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, const char *decodedSe
 {
     // Figure out which type of OTP we need to calculate.
     switch (keydata.otpType()) {
-    case KEYENTRY_OTPTYPE_HOTP:
-        return calculateHotp(keydata, decodedSecret, decodedSize);
-
     case KEYENTRY_OTPTYPE_TOTP:
         return calculateTotp(keydata, decodedSecret, decodedSize);
     }
 
     // If we get here, then we don't know the OTP type to generate.
     LOG_ERROR("Unknown OTP type of '" + QString::number(keydata.otpType()) + "' for identifier : " + keydata.identifier());
-    return "";
-}
-
-/**
- * @brief OtpHandler::calculateHotp - Calculate an HOTP value.
- *
- * @param keydata - A KeyEntry that contains most of the information we need to
- *      calculate an HOTP value.
- * @param decodedSecret - The decoded secret value to use to calculate the HOTP
- *      value.
- * @param decodedSize - The size of the data pointed to by decodedSecret.
- *
- * @return QString containing the calculated HOTP.  On error, an empty string
- *      will be returned.
- */
-QString OtpHandler::calculateHotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize)
-{
     return "";
 }
 

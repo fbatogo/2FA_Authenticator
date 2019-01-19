@@ -44,9 +44,10 @@ Item {
                     Layout.fillWidth: true
 
                     columns: 2
-                    rows: 5
+                    rows: 3
 
                     Text {
+                        id: siteNameLabel
                         Layout.row: 0
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
@@ -57,7 +58,7 @@ Item {
                     Rectangle {
                         Layout.row: 0
                         Layout.column: 1
-                        height: otpTypeInput.height
+                        height: siteNameLabel.height * 2
                         Layout.fillWidth: true
 
                         border.color: "black"
@@ -70,13 +71,14 @@ Item {
                             anchors.bottomMargin: 3
                             anchors.leftMargin: 3
                             anchors.rightMargin: 3
-                            font.pixelSize: height - 6
+                            font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
                         }
                     }
 
                     Text {
+                        id: secretValueLabel
                         Layout.row: 1
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
@@ -89,7 +91,7 @@ Item {
                         Layout.row: 1
                         Layout.column: 1
                         Layout.fillWidth: true
-                        height: otpTypeInput.height
+                        height: secretValueLabel.height * 2
 
                         border.color: "black"
                         border.width: 1
@@ -101,48 +103,15 @@ Item {
                             anchors.bottomMargin: 3
                             anchors.leftMargin: 3
                             anchors.rightMargin: 3
-                            font.pixelSize: height - 6
+                            font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
                         }
                     }
 
                     Text {
+                        id: digitCountLabel
                         Layout.row: 2
-                        Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
-
-                        text: qsTr("OTP Type : ")
-                    }
-
-                    ComboBox {
-                        id: otpTypeInput
-                        Layout.row: 2
-                        Layout.column: 1
-                        Layout.fillWidth: true
-
-                        model: ["TOTP", "HOTP"]
-                    }
-
-                    Text {
-                        Layout.row: 3
-                        Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
-
-                        text: qsTr("Secret Format : ")
-                    }
-
-                    ComboBox {
-                        id: secretFormatInput
-                        Layout.row: 3
-                        Layout.column: 1
-                        Layout.fillWidth: true
-
-                        model: ["Base32", "HEX"]
-                    }
-
-                    Text {
-                        Layout.row: 4
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
 
@@ -151,9 +120,10 @@ Item {
 
                     ComboBox {
                         id: numberCountComboBox
-                        Layout.row: 4
+                        Layout.row: 2
                         Layout.column: 1
                         Layout.fillWidth: true
+                        height: digitCountLabel.height + 2
 
                         model: ["6", "7", "8"]
                     }

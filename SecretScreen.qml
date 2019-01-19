@@ -126,99 +126,116 @@ Item {
             width: parent.width
             height: entryRow.height
 
-            RowLayout {
-                id: entryRow
-
-                width: parent.width
-                height: keyContainerFrame.height
+            ColumnLayout {
+                anchors.fill: parent
 
                 Rectangle {
-                    id: keyContainerFrame
                     Layout.fillWidth: true
-                    height: rowColumnItem.height
+                    height: 1
+                    color: "black"
+                }
 
-                    Column {
+                RowLayout {
+                    id: entryRow
+
+                    width: parent.width
+                    height: keyContainerFrame.height
+
+                    Rectangle {
+                        id: keyContainerFrame
+                        Layout.fillWidth: true
+                        height: rowColumnItem.height
+
+                        Column {
+                            Item {
+                                id: rowColumnItem
+                                width: parent.width
+                                height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
+
+                                Text {
+                                    id: identifierText
+                                    width: parent.width
+
+                                    // The name of the site the key is for.
+                                    anchors.top: rowColumnItem.top
+                                    anchors.topMargin: 5
+                                    anchors.left: rowColumnItem.left
+                                    anchors.leftMargin: 5
+                                    text: identifier
+                                    font.bold: true
+                                    font.pointSize: 12
+                                }
+
+
+                                Text {
+                                    id: otpNumberLabel
+                                    width: parent.width
+
+                                    anchors.top: identifierText.bottom
+                                    anchors.topMargin: 5
+                                    anchors.left: identifierText.left
+                                    anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
+                                    text: otpCode
+                                    color: "blue"
+                                    font.pointSize: 32
+                                    font.bold: true
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: copyButton
+
+                        width: keyContainerFrame.height
+                        height: keyContainerFrame.height
+
                         Item {
-                            id: rowColumnItem
-                            width: parent.width
-                            height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
+                            anchors.fill: parent
+                            anchors.margins: 10
 
-                            Text {
-                                id: identifierText
-                                width: parent.width
-
-                                // The name of the site the key is for.
-                                anchors.top: rowColumnItem.top
-                                anchors.topMargin: 5
-                                anchors.left: rowColumnItem.left
-                                anchors.leftMargin: 5
-                                text: identifier
-                                font.pointSize: 12
+                            Image {
+                                source: "resources/copy.svg"
+                                sourceSize.height: keyContainerFrame.height - 20
+                                sourceSize.width: keyContainerFrame.height - 20
                             }
+                        }
 
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log("Copied to the clipboard.");
+                                clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
+                            }
+                        }
+                    }
 
-                            Text {
-                                id: otpNumberLabel
-                                width: parent.width
+                    // Show the clock icon.
+                    Rectangle {
+                        id: clockFrame
 
-                                anchors.top: identifierText.bottom
-                                anchors.topMargin: 5
-                                anchors.left: identifierText.left
-                                anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
-                                text: otpCode
-                                color: "blue"
-                                font.pointSize: 32
-                                font.bold: true
+                        width: keyContainerFrame.height
+                        height: keyContainerFrame.height
+
+                        Item {
+                            anchors.fill: parent
+                            anchors.topMargin: 10
+                            anchors.leftMargin: 10
+
+                            ProgressCircle {
+                                id: timer
+                                size: clockFrame.width - 20
+                                arcBegin: 0
+                                arcEnd: circleShown
                             }
                         }
                     }
                 }
 
                 Rectangle {
-                    id: copyButton
-
-                    width: keyContainerFrame.height
-                    height: keyContainerFrame.height
-
-                    Item {
-                        anchors.fill: parent
-                        anchors.margins: 10
-
-                        Image {
-                            source: "resources/copy.svg"
-                            sourceSize.height: keyContainerFrame.height - 20
-                            sourceSize.width: keyContainerFrame.height - 20
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            console.log("Copied to the clipboard.");
-                            clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
-                        }
-                    }
-                }
-
-                // Show the clock icon.
-                Rectangle {
-                    id: clockFrame
-
-                    width: keyContainerFrame.height
-                    height: keyContainerFrame.height
-
-                    Item {
-                        anchors.fill: parent
-                        anchors.topMargin: 10
-                        anchors.leftMargin: 10
-
-                        ProgressCircle {
-                            id: timer
-                            size: clockFrame.width - 20
-                            arcBegin: 0
-                            arcEnd: circleShown
-                        }
-                    }
+                    Layout.fillWidth: true
+                    height: 1
+                    color: "black"
                 }
             }
         }

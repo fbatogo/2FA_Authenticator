@@ -47,6 +47,8 @@ RESOURCES += qml.qrc
 # Link to liboath.
 CONFIG += link_pkgconfig
 PKGCONFIG += liboath zbar
+
+LIBS += /usr/lib/x86_64-linux-gnu/libzbarqt.a
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -70,4 +72,7 @@ contains(QT, testlib) {
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    resources/licenses.txt
 
