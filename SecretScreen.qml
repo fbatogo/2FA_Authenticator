@@ -73,6 +73,12 @@ Item {
         // Make sure the list model is empty before we start to populate it.
         otpListModel.clear();
 
+        // If the list is empty, don't try to populate it.
+        if (otpEntryList === null) {
+            // Nothing to do.
+            return;
+        }
+
         // Iterate each entry, and add it to the list.
         for (var i = 0; i < otpEntryList.count(); i++) {
             var temp = otpEntryList.at(i);

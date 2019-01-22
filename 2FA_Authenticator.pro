@@ -23,8 +23,7 @@ SOURCES += \
     otp/otpentry.cpp \
     uiotpentries.cpp \
     otp/otphandler.cpp \
-    uiclipboard.cpp \
-    zbar/qrcodevideofilter.cpp
+    uiclipboard.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -38,8 +37,7 @@ HEADERS += \
     otp/otpentry.h \
     uiotpentries.h \
     otp/otphandler.h \
-    uiclipboard.h \
-    zbar/qrcodevideofilter.h
+    uiclipboard.h
 
 RESOURCES += qml.qrc
 
