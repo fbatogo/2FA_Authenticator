@@ -7,7 +7,6 @@
 #include "otp/otpentry.h"
 #include "uiotpentries.h"
 #include "uiclipboard.h"
-#include "zbar/qrcodevideofilter.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +14,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+#ifndef FULLSCREEN
     QQmlApplicationEngine engine;
+#endif // FULLSCREEN
 
     qmlRegisterSingletonType<InterfaceSingleton>("InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
 
@@ -27,11 +28,10 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<UiClipboard>("UiClipboard", 1, 0, "UiClipboard");
 
-    qmlRegisterType<QRCodeVideoFilter>("QRCode", 1, 0, "QRCodeVideoFilter");
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty())
+    if (engine.rootObjects().isEmpty()) {
         return -1;
+    }
 
     return app.exec();
 }

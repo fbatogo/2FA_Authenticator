@@ -9,6 +9,7 @@ ApplicationWindow {
     width: 240
     height: 320
     title: qsTr("2 Factor Authenticator")
+    visibility: "FullScreen"
     header: ToolBar {
         id: topToolbar
 
@@ -116,6 +117,12 @@ ApplicationWindow {
                                 console.info("About screen clicked...");
                                 screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
                                 break;
+
+                            case 4:
+                                // Quit option
+                                console.info("Quit selected.");
+                                Qt.quit();
+                                break;
                             }
                         }
                     }
@@ -140,6 +147,10 @@ ApplicationWindow {
 
                 ListElement {
                     name: qsTr("About")
+                }
+
+                ListElement {
+                    name: qsTr("Quit")
                 }
             }
         }
