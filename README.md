@@ -1,2 +1,4 @@
-# 2FA_Authenticator
-Qt based 2 factor (OTP) application
+# Rollin
+
+Rollin' 2 Factor (TOTP) Authentication value generator
+
