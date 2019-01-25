@@ -8,8 +8,8 @@ ApplicationWindow {
     visible: true
     width: 240
     height: 320
-    title: qsTr("2 Factor Authenticator")
-    visibility: "FullScreen"
+    title: "Rollin'"
+    //visibility: "FullScreen"
     header: ToolBar {
         id: topToolbar
 
@@ -38,9 +38,9 @@ ApplicationWindow {
 
             anchors.centerIn: parent
 
-            text: "2 Factor Authenticator"
+            text: "Rollin'"
             font.bold: true
-            font.pointSize: 24
+            font.pointSize: 12
         }
 
         Drawer {
