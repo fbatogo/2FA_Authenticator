@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import QtMultimedia 5.9
 import QtQuick.Layouts 1.3
-import QRCode 1.0
 import QtQuick.Controls 2.4
 
 Item {
@@ -15,14 +14,6 @@ Item {
             id: camera
             viewfinder {
                 resolution: "160x160"
-            }
-        }
-
-        QRCodeVideoFilter {
-            id: videoFilter
-            onDetected: {
-                // XXX When this is triggered, we need to close this view and return the data to the parent screen.
-                readText = code
             }
         }
 

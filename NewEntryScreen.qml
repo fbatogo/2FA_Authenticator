@@ -1,12 +1,18 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import QtMultimedia 5.11
 import InterfaceSingleton 1.0
 
 Item {
     Rectangle {
         anchors.fill: parent
         color: "white"
+
+        // Create a camera widget so that we can determine if any cameras are available.
+        Camera {
+            id: camera
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -171,7 +177,18 @@ Item {
                 Button {
                     id: getFromCameraButton
 
-                    text: qsTr("Acquire from camera")
+                    text: {
+                        console.log("Status : " + camera.availability);
+                        if (camera.availability === Camera.Unavailable) {
+
+                            // Disable the button.
+                            getFromCameraButton.enabled = false;
+
+                            return qsTr("Camera not available");
+                        } else {
+                            return qsTr("Acquire from camera");
+                        }
+                    }
 
                     MouseArea {
                         anchors.fill: parent
