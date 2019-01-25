@@ -5,8 +5,6 @@ import UiClipboard 1.0
 
 Item {
     Component.onCompleted: {
-        console.log("SecretScreen is ready!");
-
         populateListModel();
 
         // Start the timer.
@@ -27,8 +25,6 @@ Item {
 
         onTriggered: {
             var updatedOtps = false;
-
-            console.info("Tick!");
 
             // Increment the clock image.
             for(var i = 0; i < otpListModel.count; i++) {
@@ -190,6 +186,28 @@ Item {
                         }
                     }
 
+                    // Show the clock icon.
+                    Rectangle {
+                        id: clockFrame
+
+                        width: keyContainerFrame.height
+                        height: keyContainerFrame.height
+
+                        Item {
+                            anchors.fill: parent
+                            anchors.topMargin: 10
+                            anchors.leftMargin: 10
+
+                            ProgressCircle {
+                                id: timer
+                                size: clockFrame.width - 20
+                                arcBegin: 0
+                                arcEnd: circleShown
+                            }
+                        }
+                    }
+
+                    // Show a copy button to copy the current value.
                     Rectangle {
                         id: copyButton
 
@@ -212,27 +230,6 @@ Item {
                             onClicked: {
                                 console.log("Copied to the clipboard.");
                                 clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
-                            }
-                        }
-                    }
-
-                    // Show the clock icon.
-                    Rectangle {
-                        id: clockFrame
-
-                        width: keyContainerFrame.height
-                        height: keyContainerFrame.height
-
-                        Item {
-                            anchors.fill: parent
-                            anchors.topMargin: 10
-                            anchors.leftMargin: 10
-
-                            ProgressCircle {
-                                id: timer
-                                size: clockFrame.width - 20
-                                arcBegin: 0
-                                arcEnd: circleShown
                             }
                         }
                     }
