@@ -7,6 +7,7 @@
 #include "otp/otpentry.h"
 #include "uiotpentries.h"
 #include "uiclipboard.h"
+#include "zbar/qrcodefilter.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,6 +28,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<UiOtpEntries>("UiOtpEntries", 1, 0, "UiOtpEntries");
 
     qmlRegisterType<UiClipboard>("UiClipboard", 1, 0, "UiClipboard");
+
+    qmlRegisterType<QRCodeFilter>("QRFilter", 1, 0, "QRFilter");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

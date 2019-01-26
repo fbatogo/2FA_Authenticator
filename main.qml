@@ -96,7 +96,7 @@ ApplicationWindow {
                             switch(index) {
                             case 0:
                                 // New Key Entry screen.
-                                console.info("Ney key entry clicked...");
+                                console.info("New key entry clicked...");
                                 screenStack.push(Qt.resolvedUrl("NewEntryScreen.qml"));
                                 break;
 

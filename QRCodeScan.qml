@@ -2,20 +2,26 @@ import QtQuick 2.0
 import QtMultimedia 5.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
+import QRFilter 1.0
 
 Item {
     property string readText: ""
 
+    Component.onCompleted: {
+        camera.start();
+    }
+
+    Camera {
+        id: camera
+    }
+
+    QRFilter {
+        id: videoFilter
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
-
-        Camera {
-            id: camera
-            viewfinder {
-                resolution: "160x160"
-            }
-        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -25,42 +31,40 @@ Item {
             }
 
             RowLayout {
+                id: videoRow
                 Layout.fillWidth: true
+                Layout.fillHeight: true
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    width: 9
                 }
 
                 Rectangle {
+                    id: videoContainer
                     border.color: "black"
                     border.width: 1
 
-                    width: 161
-                    height: 161
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
                     // Show the video that we are scanning.
                     VideoOutput {
                         source: camera
                         filters: [ videoFilter ]
-                        width: 160
-                        height: 160
+                        x: 1
+                        y: 1
+                        width: videoContainer.width - 2
+                        height: videoContainer.height - 2
                     }
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    width: 9
                 }
             }
 
-            Text {
-                id: codeText
-                Layout.fillWidth: true
-                font.pointSize: 20
-                horizontalAlignment: Text.AlignHCenter
-            }
-
             Rectangle {
-                Layout.fillHeight: true
+                height: 10
                 Layout.fillWidth: true
             }
 
@@ -76,6 +80,8 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            camera.stop();
+
                             screenStack.pop();
                         }
                     }
