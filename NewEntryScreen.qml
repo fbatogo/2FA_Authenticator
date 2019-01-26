@@ -9,11 +9,6 @@ Item {
         anchors.fill: parent
         color: "white"
 
-        // Create a camera widget so that we can determine if any cameras are available.
-        Camera {
-            id: camera
-        }
-
         ColumnLayout {
             anchors.fill: parent
 
@@ -177,18 +172,7 @@ Item {
                 Button {
                     id: getFromCameraButton
 
-                    text: {
-                        console.log("Status : " + camera.availability);
-                        if (camera.availability === Camera.Unavailable) {
-
-                            // Disable the button.
-                            getFromCameraButton.enabled = false;
-
-                            return qsTr("Camera not available");
-                        } else {
-                            return qsTr("Acquire from camera");
-                        }
-                    }
+                    text: qsTr("Acquire from camera");
 
                     MouseArea {
                         anchors.fill: parent

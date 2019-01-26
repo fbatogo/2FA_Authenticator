@@ -110,14 +110,14 @@ bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, char **decodedSecret, 
 {
     int rc;
     const char *error;
-
+#ifndef _WIN32
     rc = oath_base32_decode(keydata.secret().toStdString().c_str(), keydata.secret().length(), decodedSecret, decodedSize);
     if (rc != OATH_OK) {
         error = oath_strerror(rc);
         LOG_ERROR("Unable to decode a base32 secret value!  Error : " + QString::fromLocal8Bit(error));
         return false;
     }
-
+#endif
     return true;
 }
 
@@ -166,7 +166,7 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const char *decodedSe
 
     // Get the current time, so we can calculate the OTP.
     now = time(nullptr);
-
+#ifndef _WIN32
     rc = oath_totp_generate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.timeOffset(), keydata.outNumberCount(), (char *)&otp);
     if (rc != OATH_OK) {
         error = oath_strerror(rc);
@@ -176,6 +176,8 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const char *decodedSe
 
     // Return the calculated value.
     return QString::fromLocal8Bit(otp);
+#endif
+    return "";
 }
 
 /**
