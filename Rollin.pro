@@ -25,7 +25,8 @@ SOURCES += \
     otp/otphandler.cpp \
     uiclipboard.cpp \
     zbar/qrcodefilter.cpp \
-    zbar/qrvideorunnable.cpp
+    zbar/qrvideorunnable.cpp \
+    zbar/zbarscanthread.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -41,7 +42,8 @@ HEADERS += \
     otp/otphandler.h \
     uiclipboard.h \
     zbar/qrcodefilter.h \
-    zbar/qrvideorunnable.h
+    zbar/qrvideorunnable.h \
+    zbar/zbarscanthread.h
 
 RESOURCES += qml.qrc
 
