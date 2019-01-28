@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "../keystorage/database/secretdatabase.h"
+#include "autotest.h"
 
 class SecretDatabaseTests : public QObject
 {
@@ -21,5 +22,7 @@ private:
 
     SecretDatabase mTestDatabase;
 };
+
+DECLARE_TEST(SecretDatabaseTests)
 
 #endif // SECRETDATABASETESTS_H

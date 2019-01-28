@@ -56,7 +56,8 @@ QVideoFilterRunnable *QRCodeFilter::createFilterRunnable()
  *      TOTP code.
  * @param codeRead - The actual code that was read from the QR code.
  */
-void QRCodeFilter::slotCodeFound(bool expectedFormat, const QString &codeRead)
+void QRCodeFilter::slotCodeFound(const QString &codeRead)
 {
-
+    // Check to see if the code we got is one that we can use.
+    // XXX FINISH!
 }

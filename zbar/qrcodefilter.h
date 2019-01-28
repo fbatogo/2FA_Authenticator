@@ -20,7 +20,7 @@ signals:
     void signalFinished(const QString &code);
 
 private slots:
-    void slotCodeFound(bool expectedFormat, const QString &codeRead);
+    void slotCodeFound(const QString &codeRead);
 
 private:
     bool mSlotsConnected;

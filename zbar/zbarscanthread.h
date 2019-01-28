@@ -6,6 +6,9 @@
 #include <QMutex>
 #include <QImage>
 
+#include "qzbarimage.h"
+#include <zbar.h>
+
 class ZBarScanThread : public QThread
 {
     Q_OBJECT
@@ -13,21 +16,24 @@ class ZBarScanThread : public QThread
 public:
     ZBarScanThread(QObject *parent = nullptr);
 
-    void queueFrameToProcess(const QImage &toProcess);
+    void queueFrameToProcess(const zbar::QZBarImage &toProcess);
 
     void requestThreadTerminate();
 
 signals:
     // Signal indicating that a code was found, and if it is
     // in the formamt expected.
-    void signalCodeFound(bool expectedFormat, const QString &codeRead);
+    void signalCodeFound(const QString &codeRead);
 
 protected:
     void run();
 
 private:
-    QQueue<QImage> mToProcessQueue;
+    void emitCode(const QString &foundCode);
+
+    QQueue<zbar::QZBarImage> mToProcessQueue;
     QMutex mQueueLock;
+    zbar::ImageScanner mImageScanner;
     bool mShouldTerminate;
 };
 

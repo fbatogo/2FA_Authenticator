@@ -14,7 +14,6 @@ public:
     QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
 
 private:
-    bool processed;
     ZBarScanThread *mScanThread;
 };
 
