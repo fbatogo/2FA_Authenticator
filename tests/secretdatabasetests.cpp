@@ -2,7 +2,6 @@
 
 #include <QTest>
 #include <QFileInfo>
-#include "../keystorage/database/secretdatabase.h"
 #include "../keystorage/keyentry.h"
 
 #define TEST_DB "./test.db"
@@ -79,7 +78,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 
     // Build the secret entry that we want to write.
     toWrite.setIdentifier("id2");
-    toWrite.setSecert("mysecret2");
+    toWrite.setSecret("mysecret2");
     toWrite.setKeyType(KEYENTRY_KEYTYPE_BASE32);
     toWrite.setOtpType(KEYENTRY_OTPTYPE_HOTP);
     toWrite.setOutNumberCount(7);
@@ -170,7 +169,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     newEntry = readBack;
 
     newEntry.setIdentifier("id4");
-    newEntry.setSecert("mysecret4");
+    newEntry.setSecret("mysecret4");
     newEntry.setKeyType(KEYENTRY_KEYTYPE_HEX);
     newEntry.setOtpType(KEYENTRY_OTPTYPE_TOTP);
     newEntry.setOutNumberCount(6);

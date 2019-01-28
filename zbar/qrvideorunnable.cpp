@@ -1,11 +1,12 @@
 #include "qrvideorunnable.h"
 
 #include "logger.h"
+#include <zbar.h>
+#include "qzbarimage.h"
 
 QRVideoRunnable::QRVideoRunnable(ZBarScanThread *scanner)
 {
     mScanThread = scanner;
-    processed = false;
 }
 
 QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, QVideoFilterRunnable::RunFlags flags)
@@ -26,13 +27,8 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
         }
     }
 
-    toProcess = QImage(input->bits(), input->width(), input->height(), input->bytesPerLine(), input->imageFormatFromPixelFormat(input->pixelFormat()));
-
-    if (!processed) {
-        // Queue up the frame for the worker thread to process.
-        mScanThread->queueFrameToProcess(toProcess);
-        processed = true;
-    }
+    // Queue up the frame for the worker thread to process.
+    mScanThread->queueFrameToProcess(QImage(input->bits(), input->width(), input->height(), input->bytesPerLine(), QVideoFrame::imageFormatFromPixelFormat(input->pixelFormat())));
 
     // We don't actually want to change anything, so return what was originally passed in.
     return (*input);

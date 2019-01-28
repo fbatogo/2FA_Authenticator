@@ -26,7 +26,8 @@ SOURCES += \
     uiclipboard.cpp \
     zbar/qrcodefilter.cpp \
     zbar/qrvideorunnable.cpp \
-    zbar/zbarscanthread.cpp
+    zbar/zbarscanthread.cpp \
+    zbar/qrcodestringparser.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -43,7 +44,9 @@ HEADERS += \
     uiclipboard.h \
     zbar/qrcodefilter.h \
     zbar/qrvideorunnable.h \
-    zbar/zbarscanthread.h
+    zbar/zbarscanthread.h \
+    zbar/qzbarimage.h \
+    zbar/qrcodestringparser.h
 
 RESOURCES += qml.qrc
 
@@ -52,7 +55,7 @@ RESOURCES += qml.qrc
 CONFIG += link_pkgconfig
 PKGCONFIG += liboath zbar
 
-LIBS += /usr/lib/x86_64-linux-gnu/libzbarqt.a
+#LIBS += /usr/lib/x86_64-linux-gnu/libzbarqt.a
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

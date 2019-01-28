@@ -2,6 +2,9 @@
 
 #include "logger.h"
 
+#include <QVideoFrame>
+#include <zbar.h>
+
 ZBarScanThread::ZBarScanThread(QObject *parent) :
     QThread(parent)
 {
@@ -14,7 +17,7 @@ ZBarScanThread::ZBarScanThread(QObject *parent) :
  *
  * @param toProcess - The frame that we want to process with the QR code scanner.
  */
-void ZBarScanThread::queueFrameToProcess(const QImage &toProcess)
+void ZBarScanThread::queueFrameToProcess(const zbar::QZBarImage &toProcess)
 {
     // Lock the queue.
     mQueueLock.lock();
@@ -42,7 +45,8 @@ void ZBarScanThread::requestThreadTerminate()
  */
 void ZBarScanThread::run()
 {
-    QImage toProcess;
+    zbar::Image toProcess;
+    zbar::Image tmp;
 
     LOG_DEBUG("Started the frame processing thread.");
 
@@ -58,8 +62,20 @@ void ZBarScanThread::run()
             // Unlock the queue.
             mQueueLock.unlock();
 
-            // XXX Then, convert the image and pass it in to ZBar for processing.
-            LOG_DEBUG("Processed image!");
+            // Clear out any old data in memory.
+            mImageScanner.recycle_image(toProcess);
+
+            tmp = toProcess.convert(*(long*)"Y800");
+
+            // Scan it.
+            mImageScanner.scan(tmp);
+
+            for (auto it = tmp.symbol_begin(), end = tmp.symbol_end(); it != end; ++it) {
+                // We found something.  Pass it along.
+                emit signalCodeFound(QString::fromStdString(it->get_data()));
+            }
+
+            //LOG_DEBUG("Processed image!");
         } else {
             // Nothing to process.  Give up the time slice.
             sleep(0);

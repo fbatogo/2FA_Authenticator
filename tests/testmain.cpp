@@ -1,6 +1,3 @@
-#include <QTest>
+#include "autotest.h"
 
-#include "secretdatabasetests.h"
-
-// This will need to change as we add more test classes.
-QTEST_MAIN(SecretDatabaseTests);
+TEST_MAIN
