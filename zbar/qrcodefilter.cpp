@@ -1,5 +1,6 @@
 #include "qrcodefilter.h"
 
+#include "qrcodestringparser.h"
 #include "qrvideorunnable.h"
 #include "logger.h"
 
@@ -58,6 +59,20 @@ QVideoFilterRunnable *QRCodeFilter::createFilterRunnable()
  */
 void QRCodeFilter::slotCodeFound(const QString &codeRead)
 {
+    QRCodeStringParser parser(codeRead);
+
     // Check to see if the code we got is one that we can use.
-    // XXX FINISH!
+    if (!parser.isOtpCode()) {
+        // Didn't find a valid code.  Emit a "bad code" error, and continue to scan.
+        emit signalBadCodeRead();
+        return;
+    }
+
+    LOG_DEBUG("Found valid QR code!");
+
+    // We found a code.  Terminate the thread, and signal to the UI that we are done.
+    mScanningThread.requestThreadTerminate();
+    mScanningThread.wait();             // Wait for the thread to terminate before moving on.
+
+    emit signalFinished(parser);
 }

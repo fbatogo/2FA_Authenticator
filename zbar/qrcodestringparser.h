@@ -2,6 +2,13 @@
 #define QRCODESTRINGPARSER_H
 
 #include <QString>
+#include <QMap>
+#include <QStringList>
+
+typedef struct {
+    QString result;
+    QString remainder;
+} ResultWithRemainder;
 
 class QRCodeStringParser
 {
@@ -17,12 +24,18 @@ public:
 
 private:
     void parseCode(const QString &toParse);
+    ResultWithRemainder getType(const QString &schemeStripped);
+    ResultWithRemainder getLabel(const QString &typeStripped);
+    void parseParameters(const QString &parameters);
+    QStringList getAvpStringList(const QString &parameters);
+    void splitAndAddAvp(const QString &avpString);
 
     bool mIsOtpCode;
     QString mType;
     QString mLabel;
     QString mParameterString;
-    // XXX Add a MAP for the parsed out parameters.
+
+    QMap<QString, QString> mAttributeValues;
 };
 
 #endif // QRCODESTRINGPARSER_H

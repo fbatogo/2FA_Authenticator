@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAbstractVideoFilter>
 
+#include "qrcodestringparser.h"
 #include "zbarscanthread.h"
 
 class QRCodeFilter : public QAbstractVideoFilter
@@ -17,7 +18,8 @@ public:
     QVideoFilterRunnable *createFilterRunnable();
 
 signals:
-    void signalFinished(const QString &code);
+    void signalFinished(QRCodeStringParser code);
+    void signalBadCodeRead();
 
 private slots:
     void slotCodeFound(const QString &codeRead);
