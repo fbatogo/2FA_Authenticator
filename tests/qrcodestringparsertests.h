@@ -13,6 +13,8 @@ private slots:
     void qrCodeSimpleStringParserTests();
     void qrCodeInvalidStringParserTests();
     void qrCodeFullSetStringParametersTests();
+    void qrCodeFullSetStringWithEqualsInValueTests();
+    void qrCodeFullSetStringWithAmpTests();
 };
 
 DECLARE_TEST(QRCodeStringParserTests)
