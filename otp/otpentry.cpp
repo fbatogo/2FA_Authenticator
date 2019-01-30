@@ -9,7 +9,8 @@ OtpEntry::OtpEntry(QObject *parent) :
     mTimeStep = -1;
 }
 
-OtpEntry::OtpEntry(const OtpEntry &toCopy)
+OtpEntry::OtpEntry(const OtpEntry &toCopy) :
+    QObject(nullptr)
 {
     setIdentifier(toCopy.identifier());
     setCurrentCode(toCopy.currentCode());

@@ -59,10 +59,12 @@ QVideoFilterRunnable *QRCodeFilter::createFilterRunnable()
  */
 void QRCodeFilter::slotCodeFound(const QString &codeRead)
 {
-    QRCodeStringParser parser(codeRead);
+    QRCodeStringParser *parser;
+
+    parser = new QRCodeStringParser(codeRead);
 
     // Check to see if the code we got is one that we can use.
-    if (!parser.isOtpCode()) {
+    if (!parser->isOtpCode()) {
         // Didn't find a valid code.  Emit a "bad code" error, and continue to scan.
         emit signalBadCodeRead();
         return;

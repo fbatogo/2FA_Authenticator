@@ -1,4 +1,4 @@
-QT += quick sql multimedia
+QT += quick sql multimedia svg
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use

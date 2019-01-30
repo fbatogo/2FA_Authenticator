@@ -140,6 +140,8 @@ bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntr
         LOG_ERROR("Refusing to update in invalid key entry in the key storage!");
         return false;
     }
+
+    return true;
 }
 
 /**
@@ -200,7 +202,7 @@ bool KeyStorage::findKeyByIdentifier(const QString &identifier, KeyEntry &result
 
     for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
         if (mKeyStorageDrivers.at(i)->keyByIdentifier(identifier, result)) {
-            storageDriverId = i;
+            storageDriverId = static_cast<int>(i);
             return true;        // We found it.
         }
     }

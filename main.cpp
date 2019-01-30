@@ -8,6 +8,7 @@
 #include "uiotpentries.h"
 #include "uiclipboard.h"
 #include "zbar/qrcodefilter.h"
+#include "zbar/qrcodestringparser.h"
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<UiClipboard>("UiClipboard", 1, 0, "UiClipboard");
 
     qmlRegisterType<QRCodeFilter>("QRFilter", 1, 0, "QRFilter");
+    qmlRegisterType<QRCodeStringParser>("QRCodeStringParser", 1, 0, "QRCodeStringParser");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

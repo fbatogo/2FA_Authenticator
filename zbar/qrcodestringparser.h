@@ -1,6 +1,7 @@
 #ifndef QRCODESTRINGPARSER_H
 #define QRCODESTRINGPARSER_H
 
+#include <QObject>
 #include <QString>
 #include <QMap>
 #include <QStringList>
@@ -10,17 +11,23 @@ typedef struct {
     QString remainder;
 } ResultWithRemainder;
 
-class QRCodeStringParser
+class QRCodeStringParser : public QObject
 {
+    Q_OBJECT
+
 public:
-    QRCodeStringParser(const QString &codeRead);
+    QRCodeStringParser(QObject *parent = nullptr);
+    QRCodeStringParser(const QString &codeRead, QObject *parent = nullptr);
 
-    bool isOtpCode();
+    Q_INVOKABLE bool isOtpCode() const;
 
-    QString type();
-    QString label();
-    QString parametersAsString();
-    QString parameterByKey(const QString &key);
+    Q_INVOKABLE QString type() const;
+    Q_INVOKABLE QString label() const;
+    Q_INVOKABLE QString parametersAsString() const;
+    Q_INVOKABLE QString parameterByKey(const QString &key);
+
+protected:
+    QMap<QString, QString> mAttributeValues;
 
 private:
     void parseCode(const QString &toParse);
@@ -34,8 +41,6 @@ private:
     QString mType;
     QString mLabel;
     QString mParameterString;
-
-    QMap<QString, QString> mAttributeValues;
 };
 
 #endif // QRCODESTRINGPARSER_H

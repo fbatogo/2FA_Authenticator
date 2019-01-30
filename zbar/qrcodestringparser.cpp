@@ -3,7 +3,18 @@
 #include <QUrl>
 #include "logger.h"
 
-QRCodeStringParser::QRCodeStringParser(const QString &codeRead)
+QRCodeStringParser::QRCodeStringParser(QObject *parent) :
+    QObject(parent)
+{
+    mIsOtpCode = false;
+    mType.clear();
+    mLabel.clear();
+    mParameterString.clear();
+    mAttributeValues.clear();
+}
+
+QRCodeStringParser::QRCodeStringParser(const QString &codeRead, QObject *parent) :
+    QObject(parent)
 {
     mIsOtpCode = false;
     mType.clear();
@@ -20,7 +31,7 @@ QRCodeStringParser::QRCodeStringParser(const QString &codeRead)
  *
  * @return true if the code parsed appears to be a valid OTP code.  false if it isn't.
  */
-bool QRCodeStringParser::isOtpCode()
+bool QRCodeStringParser::isOtpCode() const
 {
     return mIsOtpCode;
 }
@@ -30,7 +41,7 @@ bool QRCodeStringParser::isOtpCode()
  *
  * @return QString containing the type, as long as isOtpCode() returns true.
  */
-QString QRCodeStringParser::type()
+QString QRCodeStringParser::type() const
 {
     return mType;
 }
@@ -41,7 +52,7 @@ QString QRCodeStringParser::type()
  *
  * @return QString containing the label.  (May be empty!)
  */
-QString QRCodeStringParser::label()
+QString QRCodeStringParser::label() const
 {
     return mLabel;
 }
@@ -52,7 +63,7 @@ QString QRCodeStringParser::label()
  *
  * @return QString containing the parameters portion.  (May be empty!)
  */
-QString QRCodeStringParser::parametersAsString()
+QString QRCodeStringParser::parametersAsString() const
 {
     return mParameterString;
 }
@@ -78,6 +89,14 @@ QString QRCodeStringParser::parameterByKey(const QString &key)
  *
  *      According to that site, the format we are looking for is :
  *          otpauth://TYPE/LABEL?PARAMETERS
+ *
+ *      Where valid parameters are :
+ *          - secret - (Required) - Base32 encoded secret value.
+ *          - issuer - (Strongly Recommended) - A string indicating the issuer of this secret value.
+ *          - algorithm - SHA1 (default), SHA256, SHA512
+ *          - digits - (Optional) The number of digits the OTP should have.
+ *          - counter - (Required if HOTP) The initial counter value.
+ *          - period - (Optional if TOTP) The period that a TOTP code will be valid for.  The default is 30 seconds.
  *
  * @param toParse - The string that was read by ZBar.
  */
@@ -118,6 +137,13 @@ void QRCodeStringParser::parseCode(const QString &toParse)
 
     // Parse the parameters in to AVPs.
     parseParameters(mParameterString);
+
+    // The secret value is required, so make sure we have it before saying this OTP code is valid.
+    if (parameterByKey("secret").isEmpty()) {
+        LOG_ERROR("No OTP secret was included in the QR code!");
+        mIsOtpCode = false;
+        return;
+    }
 
     // If we get here, then the URI is valid.
     mIsOtpCode = true;
