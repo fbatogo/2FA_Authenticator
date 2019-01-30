@@ -18,7 +18,7 @@ public:
     QVideoFilterRunnable *createFilterRunnable();
 
 signals:
-    void signalFinished(QRCodeStringParser code);
+    void signalFinished(QRCodeStringParser *code);
     void signalBadCodeRead();
 
 private slots:

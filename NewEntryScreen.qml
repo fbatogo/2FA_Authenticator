@@ -5,6 +5,11 @@ import QtMultimedia 5.11
 import InterfaceSingleton 1.0
 
 Item {
+    id: newEntryScreen
+
+    property string siteName: ""
+    property string otpSecret: ""
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -67,6 +72,7 @@ Item {
 
                         TextInput {
                             id: siteNameInput
+                            text: siteName
                             anchors.fill: parent
                             anchors.topMargin: 3
                             anchors.bottomMargin: 3
@@ -107,6 +113,7 @@ Item {
                             font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
+                            text: otpSecret
                         }
                     }
 

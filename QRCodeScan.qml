@@ -17,6 +17,22 @@ Item {
 
     QRFilter {
         id: videoFilter
+
+        onSignalFinished: {
+            if (!code.isOtpCode()) {
+                console.log("Code returned isn't a valid OTP code!?  This shouldn't happen!");
+                return;
+            }
+
+            console.log("Code found!");
+            console.log("Code label : " + code.label());
+            console.log("Code type : " + code.type());
+            console.log("Code secret : " + code.parameterByKey("secret"));
+
+            // Populate the values in the add code screen.
+            newEntryScreen.siteName = code.label();
+            newEntryScreen.otpSecret = code.parameterByKey("secret");
+        }
     }
 
     Rectangle {
