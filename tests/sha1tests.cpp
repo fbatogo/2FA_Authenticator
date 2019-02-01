@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include "testutils.h"
 
 // We only run two test vectors here, because the base SHA1 code is already NIST certified.
 void Sha1Tests::sha1Tests1()
@@ -34,28 +35,12 @@ void Sha1Tests::sha1Tests2()
 
     // Calculate 896 bit string test.
     toTest = strdup("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu");
-    std::cout << "String : " << toTest << "\n";
-    std::cout << "Length : " << strlen(toTest) << "\n";
     result = hashObj.hash(reinterpret_cast<unsigned char *>(toTest), strlen(toTest));
-    std::cout << "Calculated hash : " << binaryToString(result, 20) << "\n";
-    std::cout << "Expected hash   : " << binaryToString(string896bits, 20) << "\n";
+    std::cout << "Calculated hash : " << TestUtils::binaryToString(result, 20) << "\n";
+    std::cout << "Expected hash   : " << TestUtils::binaryToString(string896bits, 20) << "\n";
     QVERIFY(memcmp((void *)result, (void *)&string896bits, 20) == 0);
 
     // Clean up.
     free(toTest);
     toTest = nullptr;
 }
-
-std::string Sha1Tests::binaryToString(unsigned char *bytes, size_t bytesLength)
-{
-    std::stringstream result;
-
-    result.clear();
-
-    for (size_t i = 0; i < bytesLength; i++) {
-        result << std::setfill('0') << std::setw(2) << std::hex << (int)bytes[i] << " ";
-    }
-
-    return result.str();
-}
-
