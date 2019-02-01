@@ -7,6 +7,10 @@ it is licensed under the GPL V3 license (below).<br/>
 liboath is licensed under the terms of the LGPLv2 or higher.<br/>
 zbar is licensed under the terms of the LGPLv2.1 or higher.<br/>
 <br/>
+---- Code Snippets ----<br/>
+<br/>
+SHA1 implementation by Steve Reid from https://github.com/clibs/sha1
+<br/>
 ---- Graphics ----<br/>
 <br/>
 The menu icon was created by Alexander Madyankin and Roman Shamin, and is under the MIT license (below).<br/>

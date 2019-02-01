@@ -27,7 +27,11 @@ SOURCES += \
     zbar/qrcodefilter.cpp \
     zbar/qrvideorunnable.cpp \
     zbar/zbarscanthread.cpp \
-    zbar/qrcodestringparser.cpp
+    zbar/qrcodestringparser.cpp \
+    otpimpl/hotp.cpp \
+    otpimpl/hmac.cpp \
+    otpimpl/sha1impl.c \
+    otpimpl/sha1hash.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -46,7 +50,12 @@ HEADERS += \
     zbar/qrvideorunnable.h \
     zbar/zbarscanthread.h \
     zbar/qzbarimage.h \
-    zbar/qrcodestringparser.h
+    zbar/qrcodestringparser.h \
+    otpimpl/hotp.h \
+    otpimpl/hmac.h \
+    otpimpl/sha1impl.h \
+    otpimpl/hashtypebase.h \
+    otpimpl/sha1hash.h
 
 RESOURCES += qml.qrc
 

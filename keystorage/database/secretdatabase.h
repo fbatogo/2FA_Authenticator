@@ -12,6 +12,7 @@ class SecretDatabase
 {
 public:
     SecretDatabase();
+    ~SecretDatabase();
 
     bool open(const QString &path);
     bool close();
