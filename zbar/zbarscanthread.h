@@ -1,6 +1,7 @@
 #ifndef ZBARSCANTHREAD_H
 #define ZBARSCANTHREAD_H
 
+#ifndef _WIN32
 #include <QThread>
 #include <QQueue>
 #include <QMutex>
@@ -36,5 +37,7 @@ private:
     zbar::ImageScanner mImageScanner;
     bool mShouldTerminate;
 };
+
+#endif // _WIN32
 
 #endif // ZBARSCANTHREAD_H

@@ -1,5 +1,6 @@
 #include "zbarscanthread.h"
 
+#ifndef _WIN32
 #include "logger.h"
 
 #include <QVideoFrame>
@@ -82,3 +83,4 @@ void ZBarScanThread::run()
         }
     }
 }
+#endif // _WIN32

@@ -1,6 +1,7 @@
 #ifndef QRCODEFILTER_H
 #define QRCODEFILTER_H
 
+#ifndef _WIN32
 #include <QObject>
 #include <QAbstractVideoFilter>
 
@@ -29,5 +30,7 @@ private:
     ZBarScanThread mScanningThread;
     QVideoFilterRunnable *mFilterRunnable;
 };
+
+#endif // _WIN32
 
 #endif // QRCODEFILTER_H
