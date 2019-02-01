@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <iostream>
+#include "../logger.h"
 
 Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
 {
@@ -13,10 +14,7 @@ Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
 Hmac::~Hmac()
 {
     // If we have a result stored, free the memory.
-    if (mHashResult != nullptr) {
-        free(mHashResult);
-        mHashResult = nullptr;
-    }
+    freeClassData();
 
     if (mDeleteInCtor) {
         delete mHashType;
@@ -40,75 +38,6 @@ Hmac::~Hmac()
  */
 unsigned char *Hmac::calculate(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize)
 {
-    size_t blocks;
-    size_t bytesIn;
-    unsigned char *oneBlock = nullptr;    // In a multi-block calculation, this variable will hold a single block.
-
-    // Validate inputs.
-    if ((key == nullptr) || (data == nullptr)) {
-        // Can't do anything with this.
-        return nullptr;
-    }
-
-    // If the data length is <= one hash block size, then just calculate it, and return it.
-    if (dataLength <= mHashType->hashBlockLength()) {
-        mHashResult = hmacOneBlock(key, keyLength, data, dataLength, resultSize);
-
-        return mHashResult;
-    }
-
-    // Otherwise, we need to break the data in to appropriate sized data blocks, hash those blocks
-    // one at a time, and return the values concatenated together.  (The caller can know there is
-    // more that one result because the result size will be greater that the value returned from
-    // the hashResultLength() value in the hash object.
-
-    blocks = dataLength / mHashType->hashBlockLength();
-
-    if ((dataLength % mHashType->hashBlockLength()) > 0) {
-        // Add one more block to our count.
-        blocks++;
-    }
-
-    // Allocate enough memory to hold all of the resulting hashes.
-    resultSize = (blocks * mHashType->hashResultLength());
-    // XXX
-
-    for (size_t i = 0; i < blocks; i++) {
-        // Figure out how many bytes in that we want to copy the block from.
-        bytesIn = i * mHashType->hashBlockLength();
-
-        if ((bytesIn + mHashType->hashBlockLength()) > dataLength) {
-            // Handle a piece that is less than the block length long.
-            // XXX
-        } else {
-            // Handle a piece that is one block length long.
-            // XXX
-        }
-
-        // Concatenate the hashed value in to our final result.
-        // XXX
-    }
-
-    // Return the resulting data.
-    return mHashResult;
-}
-
-/**
- * @brief Hmac::hmacOneBlock - Generate an HMAC of a single block of data, using the has method provided when
- *      this object was created.
- *
- * @param key - The key data that should be used to generate the HMAC.
- * @param keyLength - The length of the key data provided.
- * @param data - The data that we want to get the HMAC for.
- * @param dataLength - The length of the data that we want to get the HMAC for.
- * @param resultSize - If this method returns true, this parameter will contain the length of the
- *      HMAC data that was returned.
- *
- * @return unsigned char * containing the calculated HMAC value.  On error, nullptr will be
- *      returned.
- */
-unsigned char *Hmac::hmacOneBlock(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize)
-{
     unsigned char *keyIpad;
     size_t keyIpadLength;
     unsigned char *keyOpad;
@@ -116,11 +45,11 @@ unsigned char *Hmac::hmacOneBlock(unsigned char *key, size_t keyLength, unsigned
     unsigned char *iPadHashed;
     unsigned char *result;
     unsigned char *keyToUse;
-    unsigned char *returnData = nullptr;
 
     // Validate inputs.
     if ((key == nullptr) || (data == nullptr)) {
         // Nothing we can do.
+        LOG_ERROR("Either the key or data block provided to HMAC was NULL!");
         return nullptr;
     }
 
@@ -143,7 +72,18 @@ unsigned char *Hmac::hmacOneBlock(unsigned char *key, size_t keyLength, unsigned
 
     // Allocate the memory for the key XOR i/opad values and the data concatenated together.
     keyIpad = static_cast<unsigned char *>(calloc(1, keyIpadLength));
+    if (keyIpad == nullptr) {
+        // Failed to allocate memory.
+        LOG_ERROR("Failed to allocate memory to store the key ipad value!");
+        return nullptr;
+    }
+
     keyOpad = static_cast<unsigned char *>(calloc(1, keyOpadLength));
+    if (keyOpad == nullptr) {
+        // Failed to allocate memory.
+        LOG_ERROR("Failed to allocate memory to store the key opad value!");
+        return nullptr;
+    }
 
     // Then, copy the key in to the Ipad and Opad buffers.
     memcpy(keyIpad, keyToUse, keyLength);
@@ -172,12 +112,27 @@ unsigned char *Hmac::hmacOneBlock(unsigned char *key, size_t keyLength, unsigned
     resultSize = mHashType->hashResultLength();
 
     // Allocate the memory to store the hash result.
-    returnData = static_cast<unsigned char *>(calloc(1, mHashType->hashResultLength()));
+    mHashResult = static_cast<unsigned char *>(calloc(1, mHashType->hashResultLength()));
+    if (mHashResult == nullptr) {
+        LOG_ERROR("Failed to allocate memory to return the one block of HMAC data!");
+        return nullptr;
+    }
 
     // Copy the result data.
-    memcpy(returnData, result, mHashType->hashResultLength());
+    memcpy(mHashResult, result, mHashType->hashResultLength());
 
     // And, return the result.
-    return returnData;
+    return mHashResult;
+}
+
+/**
+ * @brief Hmac::freeClassData - Free the hash result data buffer.
+ */
+inline void Hmac::freeClassData()
+{
+    if (mHashResult != nullptr) {
+        free(mHashResult);
+        mHashResult = nullptr;
+    }
 }
 
