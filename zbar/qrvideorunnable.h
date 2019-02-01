@@ -1,6 +1,7 @@
 #ifndef QRVIDEORUNNABLE_H
 #define QRVIDEORUNNABLE_H
 
+#ifndef _WIN32
 #include <QObject>
 #include <QVideoFilterRunnable>
 
@@ -16,5 +17,6 @@ public:
 private:
     ZBarScanThread *mScanThread;
 };
+#endif // _WIN32
 
 #endif // QRVIDEORUNNABLE_H

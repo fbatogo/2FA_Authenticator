@@ -1,5 +1,6 @@
 #include "qrvideorunnable.h"
 
+#ifndef _WIN32
 #include "logger.h"
 #include <zbar.h>
 #include "qzbarimage.h"
@@ -33,3 +34,4 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
     // We don't actually want to change anything, so return what was originally passed in.
     return (*input);
 }
+#endif // _WIN32

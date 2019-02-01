@@ -1,5 +1,6 @@
 #include "qrcodefilter.h"
 
+#ifndef _WIN32
 #include "qrcodestringparser.h"
 #include "qrvideorunnable.h"
 #include "logger.h"
@@ -78,3 +79,4 @@ void QRCodeFilter::slotCodeFound(const QString &codeRead)
 
     emit signalFinished(parser);
 }
+#endif // _WIN32

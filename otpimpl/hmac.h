@@ -12,6 +12,8 @@ public:
     unsigned char *calculate(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
 
 private:
+    unsigned char *hmacOneBlock(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
+
     HashTypeBase *mHashType;
     unsigned char *mHashResult;
     bool mDeleteInCtor;             // Should we handle deletion of mHashType?
