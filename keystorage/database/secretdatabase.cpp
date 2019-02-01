@@ -17,6 +17,12 @@ SecretDatabase::SecretDatabase()
     mDatabase = QSqlDatabase::addDatabase("QSQLITE");
 }
 
+SecretDatabase::~SecretDatabase()
+{
+    // Make sure the database is closed.
+    close();
+}
+
 /**
  * @brief SecretDatabase::open - Open the database so that we can work with it.
  *

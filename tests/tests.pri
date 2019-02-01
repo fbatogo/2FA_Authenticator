@@ -7,11 +7,15 @@ message(Building unit test binary...)
 HEADERS += \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
-    $$PWD/autotest.h
+    $$PWD/autotest.h \
+    $$PWD/sha1tests.h \
+    $$PWD/hmacsha1tests.h
 
 SOURCES += \
     $$PWD/secretdatabasetests.cpp \
-    $$PWD/qrcodestringparsertests.cpp
+    $$PWD/qrcodestringparsertests.cpp \
+    $$PWD/sha1tests.cpp \
+    $$PWD/hmacsha1tests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.

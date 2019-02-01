@@ -5,14 +5,49 @@ import QtQuick.Layouts 1.3
 Drawer {
     id: drawer
 
-    Component.onCompleted: {
-        for (var child in menuList.contentItem.children) {
-            var obj = menuList.contentItem.children[child].children[0];
-            for (var innerchild in obj.children) {
-                console.log(innerchild);
-                console.log(obj.children[innerchild]);
+    function findWidgetByName(childrenObject, objectName) {
+        for (var child in childrenObject) {
+            if (childrenObject[child].objectName === objectName) {
+                return childrenObject[child];
             }
         }
+
+        // Didn't find it.
+        return null;
+    }
+
+    function findWidth(object) {
+        for (var prop in object) {
+            if (prop === "width") {
+                return object[prop];
+            }
+        }
+
+        return -1;
+    }
+
+    Component.onCompleted: {
+        var largest = 0;
+
+        for (var child in menuList.contentItem.children) {
+            var obj = menuList.contentItem.children[child];
+            var rowLayout = findWidgetByName(obj.children, "rowLayout");
+            if (rowLayout !== null) {
+                var menuName = findWidgetByName(rowLayout.children, "menuName");
+                if (menuName !== null) {
+                    var width = findWidth(menuName);
+                    if (width > largest) {
+                        largest = width;
+                    }
+                }
+            }
+        }
+
+        if (largest > 0) {
+            // Set the width of the side bar to the largest text width, plus 25 for padding.
+            drawer.width = (largest + 24);
+        }
+        // Otherwise, do nothing and pray 1/3rd of the screen is correct.
     }
 
     width: parent.width / 3
@@ -41,26 +76,23 @@ Drawer {
         id: drawerDelegate
 
         Rectangle {
-            objectName: outerRect
+            objectName: "outerRect"
             width: parent.width
             height: menuName.height
             color: "#f0f0f0"
 
             RowLayout {
-                objectName: rowLayout
+                objectName: "rowLayout"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                Rectangle {
-                    width: 5
-                }
-
                 Text {
-                    objectName: menuName
+                    objectName: "menuName"
                     id: menuName
                     text: name
                     color: "black"
                     font.pointSize: 24
+                    Layout.leftMargin: 10
                 }
             }
 
