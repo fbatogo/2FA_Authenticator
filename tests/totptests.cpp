@@ -32,6 +32,57 @@ void totpTests::totpTestCase2()
     QCOMPARE("07081804", result);
 }
 
+void totpTests::totpTestCase3()
+{
+    char *key;
+    Totp totp(new Hmac(new Sha1Hash(), true), true);
+    std::string result;
+
+    key = strdup("12345678901234567890");
+
+    result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1111111111, 30, 8);
+    std::cout << "Expected : 14050471    Got : " << result << "\n";
+    QCOMPARE("14050471", result);
+}
+
+void totpTests::totpTestCase4()
+{
+    char *key;
+    Totp totp(new Hmac(new Sha1Hash(), true), true);
+    std::string result;
+
+    key = strdup("12345678901234567890");
+
+    result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1234567890, 30, 8);
+    std::cout << "Expected : 89005924    Got : " << result << "\n";
+    QCOMPARE("89005924", result);
+}
+
+void totpTests::totpTestCase5()
+{
+    char *key;
+    Totp totp(new Hmac(new Sha1Hash(), true), true);
+    std::string result;
+
+    key = strdup("12345678901234567890");
+
+    result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 2000000000, 30, 8);
+    std::cout << "Expected : 69279037    Got : " << result << "\n";
+    QCOMPARE("69279037", result);
+}
+
+void totpTests::totpTestCase6()
+{
+    char *key;
+    Totp totp(new Hmac(new Sha1Hash(), true), true);
+    std::string result;
+
+    key = strdup("12345678901234567890");
+
+    result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 20000000000, 30, 8);
+    std::cout << "Expected : 65353130    Got : " << result << "\n";
+    QCOMPARE("65353130", result);
+}
 
 #if 0   // Test vectors from RFC6238 at https://tools.ietf.org/html/rfc6238
 The test token shared secret uses the ASCII string value
