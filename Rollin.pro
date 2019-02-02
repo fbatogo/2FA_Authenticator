@@ -31,7 +31,8 @@ SOURCES += \
     otpimpl/hotp.cpp \
     otpimpl/hmac.cpp \
     otpimpl/sha1impl.c \
-    otpimpl/sha1hash.cpp
+    otpimpl/sha1hash.cpp \
+    otpimpl/totp.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -55,7 +56,8 @@ HEADERS += \
     otpimpl/hmac.h \
     otpimpl/sha1impl.h \
     otpimpl/hashtypebase.h \
-    otpimpl/sha1hash.h
+    otpimpl/sha1hash.h \
+    otpimpl/totp.h
 
 RESOURCES += qml.qrc
 

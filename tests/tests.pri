@@ -10,14 +10,18 @@ HEADERS += \
     $$PWD/autotest.h \
     $$PWD/sha1tests.h \
     $$PWD/hmacsha1tests.h \
-    $$PWD/testutils.h
+    $$PWD/testutils.h \
+    $$PWD/hotptests.h \
+    $$PWD/totptests.h
 
 SOURCES += \
     $$PWD/secretdatabasetests.cpp \
     $$PWD/qrcodestringparsertests.cpp \
     $$PWD/sha1tests.cpp \
     $$PWD/hmacsha1tests.cpp \
-    $$PWD/testutils.cpp
+    $$PWD/testutils.cpp \
+    $$PWD/hotptests.cpp \
+    $$PWD/totptests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.
