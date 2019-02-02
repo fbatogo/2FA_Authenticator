@@ -11,6 +11,10 @@ class totpTests : public QObject
 private slots:
     void totpTestCase1();
     void totpTestCase2();
+    void totpTestCase3();
+    void totpTestCase4();
+    void totpTestCase5();
+    void totpTestCase6();
 };
 
 DECLARE_TEST(totpTests)
