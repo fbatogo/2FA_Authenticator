@@ -9,10 +9,9 @@ public:
     Hmac(HashTypeBase *hashType, bool deleteInCtor = false);
     ~Hmac();
 
-    unsigned char *calculate(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
+    unsigned char *calculate(const unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
 
 private:
-    unsigned char *hmacOneBlock(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
     void freeClassData();
 
     HashTypeBase *mHashType;

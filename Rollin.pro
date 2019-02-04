@@ -38,7 +38,8 @@ SOURCES += \
     otpimpl/sha1impl.c \
     otpimpl/sha1hash.cpp \
     otpimpl/totp.cpp \
-    otpimpl/base32coder.cpp
+    otpimpl/base32coder.cpp \
+    otpimpl/hexdecoder.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -64,7 +65,8 @@ HEADERS += \
     otpimpl/hashtypebase.h \
     otpimpl/sha1hash.h \
     otpimpl/totp.h \
-    otpimpl/base32coder.h
+    otpimpl/base32coder.h \
+    otpimpl/hexdecoder.h
 
 RESOURCES += qml.qrc
 

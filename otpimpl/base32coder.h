@@ -12,6 +12,7 @@ public:
     unsigned char *decode(std::string toDecode, size_t &decodedSize);
 
 private:
+    bool decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize);
     unsigned char decodeChar(unsigned char toDecode);
 };
 

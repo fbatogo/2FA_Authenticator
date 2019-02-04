@@ -36,7 +36,7 @@ Hmac::~Hmac()
  * @return unsigned char * containing the calculated HMAC value.  On error, nullptr will be
  *      returned.
  */
-unsigned char *Hmac::calculate(unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize)
+unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize)
 {
     unsigned char *keyIpad;
     size_t keyIpadLength;
@@ -53,7 +53,7 @@ unsigned char *Hmac::calculate(unsigned char *key, size_t keyLength, unsigned ch
         return nullptr;
     }
 
-    keyToUse = key;
+    keyToUse = const_cast<unsigned char *>(key);
 
     // Calculate the HMAC over the 'data' by using the formula :
     //    Hash(key XOR opad, Hash(key XOR ipad, data))
@@ -62,7 +62,7 @@ unsigned char *Hmac::calculate(unsigned char *key, size_t keyLength, unsigned ch
     // with a key of decreased size.
     if (keyLength > mHashType->hashBlockLength()) {
         // Create a hash of the key to use.
-        keyToUse = mHashType->hash(key, keyLength);
+        keyToUse = mHashType->hash(keyToUse, keyLength);
         keyLength = mHashType->hashResultLength();
     }
 

@@ -122,10 +122,8 @@ std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
 unsigned char *Base32Coder::decode(std::string toDecode, size_t &decodedSize)
 {
     unsigned char *result;
-    uint64_t data;
     size_t blocks;
-    size_t offset;
-    size_t decoded;
+    unsigned char *bytesToDecode;
 
     decodedSize = 0;
 
@@ -150,48 +148,58 @@ unsigned char *Base32Coder::decode(std::string toDecode, size_t &decodedSize)
     // Figure out how many blocks we have.
     blocks = toDecode.length() / 8;
 
-    // Iterate all of the characters we want to decode.
+    // Get the text in to a bytes to decode buffer.
+    bytesToDecode = reinterpret_cast<unsigned char *>(strdup(toDecode.c_str()));
+    decodedSize = 0;
+
+    // Iterate each block, converting it.
     for (size_t i = 0; i < blocks; i++) {
-        // Iterate each character in the block, and add it to the 32 bit number.
-        data = 0;
+        if (decode8Chars(bytesToDecode, (i * 8), result, decodedSize) == false) {
+            LOG_ERROR("Failed to decode 8 bytes!");
 
-        decoded = 0;
-        for (size_t x = 0; x < 8; x++) {
-            // Calculate the offset.
-            offset = ((i * 8) + x);
+            // Free the memory we used.
+            free(bytesToDecode);
+            bytesToDecode = nullptr;
 
-            // Shift the data 5 bits
-            data = (data << 5);
-
-            if (toDecode.at(offset) != '=') {
-                // Then, add in the decoded value.
-                unsigned char d = decodeChar(toDecode.at(offset));
-                data |= d;
-
-                // Count the number of bytes that we decoded.
-                decoded++;
-            }
-        }
-
-        decoded = ((decoded * 5)/8);
-
-        // Then, shift the bytes back to the correct bytes.
-        for (int x = 3; x >= 0; x--) {
-
-            // Move the next set of bits in to place.
-            data = data >> 8;
-
-            if (x < decoded) {
-                // Pull out the 8 bits for this character.
-                unsigned char b = static_cast<unsigned char>(data & 0xff);
-                result[((i * 4) + x)] = b;
-            }
+            return nullptr;
         }
     }
 
-    decodedSize = decoded;
+    // Free the memory we used.
+    free(bytesToDecode);
+    bytesToDecode = nullptr;
 
     return result;
+}
+
+bool Base32Coder::decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize)
+{
+    if ((data == nullptr) || (target == nullptr)) {
+        LOG_ERROR("Invalid inputs to decode8Chars!");
+        return false;
+    }
+
+    // Decode the first byte.
+    target[decodedSize++] = static_cast<unsigned char>((decodeChar(data[dataOffset]) << 3) | ((decodeChar(data[dataOffset + 1]) >> 2)));
+
+    if (data[dataOffset + 2] != '=') {
+        // Then the next.
+        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 1]) << 6) | ((decodeChar(data[dataOffset + 2]) << 1) | ((decodeChar(data[dataOffset + 3]) >> 4)))));
+    }
+
+    if (data[dataOffset + 4] != '=') {
+        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 3]) << 4) | ((decodeChar(data[dataOffset + 4]) >> 1))));
+    }
+
+    if (data[dataOffset + 5] != '=') {
+        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 4]) << 7) | ((decodeChar(data[dataOffset + 5]) << 2) | ((decodeChar(data[dataOffset + 6]) >> 3)))));
+    }
+
+    if (data[dataOffset + 7] != '=') {
+        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 6]) << 5) | ((decodeChar(data[dataOffset + 7])))));
+    }
+
+    return true;
 }
 
 /**

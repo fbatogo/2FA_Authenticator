@@ -50,8 +50,8 @@ void Base32CoderTests::decoderTest1()
         testPtr = decoder.decode(encodedText.at(i), testPtrSize);
         toCompare = reinterpret_cast<unsigned char *>(strdup(clearText.at(i).c_str()));
 
-        qDebug("Expected : %s", TestUtils::binaryToString(toCompare, clearText.at(i).length()).c_str());
-        qDebug("Decoded  : %s", TestUtils::binaryToString(testPtr, testPtrSize).c_str());
+        qDebug("%s  Expected : %s", clearText.at(i).c_str(), TestUtils::binaryToString(toCompare, clearText.at(i).length()).c_str());
+        qDebug("%s  Decoded  : %s", clearText.at(i).c_str(), TestUtils::binaryToString(testPtr, testPtrSize).c_str());
 
         // The first one we compare is an empty string, so if both have a 0 length, everything is good.
         if (i != 0) {
