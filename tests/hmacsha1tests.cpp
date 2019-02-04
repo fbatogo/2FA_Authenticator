@@ -4,9 +4,10 @@
 #include "../otpimpl/sha1hash.h"
 #include "testutils.h"
 
+#include <QDebug>
+
 #include <sstream>
 #include <iomanip>
-#include <iostream>
 
 // Test vectors taken from RFC 2202 at https://tools.ietf.org/html/rfc2202
 
@@ -36,8 +37,8 @@ void HmacSha1Tests::hmacTestCase1()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -65,8 +66,8 @@ void HmacSha1Tests::hmacTestCase2()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -100,8 +101,8 @@ void HmacSha1Tests::hmacTestCase3()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -129,8 +130,8 @@ void HmacSha1Tests::hmacTestCase4()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -161,8 +162,8 @@ void HmacSha1Tests::hmacTestCase5()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -193,8 +194,8 @@ void HmacSha1Tests::hmacTestCase6()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "(6) Expected : " << TestUtils::binaryToString(expectedDigest, 20) << "\n";
-        std::cout << "(6) Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
 }
@@ -226,8 +227,8 @@ void HmacSha1Tests::hmacTestCase7()
     // Make sure the length is what we expect.
     QCOMPARE(resultSize, static_cast<size_t>(20));
     if (result != nullptr) {
-        std::cout << "Expected : " << TestUtils::binaryToString(expectedDigest1, 20) << "\n";
-        std::cout << "Got      : " << TestUtils::binaryToString(result, resultSize) << "\n";
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest1, 20).c_str());
+        qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest1, 20) == 0);
     }
 }

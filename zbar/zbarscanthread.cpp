@@ -83,4 +83,5 @@ void ZBarScanThread::run()
         }
     }
 }
-#endif // _WIN32
+
+#endif

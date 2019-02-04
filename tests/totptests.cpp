@@ -4,7 +4,7 @@
 #include "../otpimpl/sha1hash.h"
 #include "../otpimpl/hmac.h"
 
-#include <iostream>
+#include <QDebug>
 
 void totpTests::totpTestCase1()
 {
@@ -15,7 +15,7 @@ void totpTests::totpTestCase1()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 59, 30, 8);
-    std::cout << "Expected : 94287082    Got : " << result << "\n";
+    qDebug("Expected : 94287082    Got : %s", result.c_str());
     QCOMPARE("94287082", result);
 }
 
@@ -28,7 +28,7 @@ void totpTests::totpTestCase2()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1111111109, 30, 8);
-    std::cout << "Expected : 07081804    Got : " << result << "\n";
+    qDebug("Expected : 07081804    Got : %s", result.c_str());
     QCOMPARE("07081804", result);
 }
 
@@ -41,7 +41,7 @@ void totpTests::totpTestCase3()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1111111111, 30, 8);
-    std::cout << "Expected : 14050471    Got : " << result << "\n";
+    qDebug("Expected : 14050471    Got : %s", result.c_str());
     QCOMPARE("14050471", result);
 }
 
@@ -54,7 +54,7 @@ void totpTests::totpTestCase4()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1234567890, 30, 8);
-    std::cout << "Expected : 89005924    Got : " << result << "\n";
+    qDebug("Expected : 89005924    Got : %s", result.c_str());
     QCOMPARE("89005924", result);
 }
 
@@ -67,7 +67,7 @@ void totpTests::totpTestCase5()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 2000000000, 30, 8);
-    std::cout << "Expected : 69279037    Got : " << result << "\n";
+    qDebug("Expected : 69279037    Got : %s", result.c_str());
     QCOMPARE("69279037", result);
 }
 
@@ -80,7 +80,7 @@ void totpTests::totpTestCase6()
     key = strdup("12345678901234567890");
 
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 20000000000, 30, 8);
-    std::cout << "Expected : 65353130    Got : " << result << "\n";
+    qDebug("Expected : 65353130    Got : %s", result.c_str());
     QCOMPARE("65353130", result);
 }
 

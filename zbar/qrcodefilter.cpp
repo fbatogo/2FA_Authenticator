@@ -79,4 +79,5 @@ void QRCodeFilter::slotCodeFound(const QString &codeRead)
 
     emit signalFinished(parser);
 }
+
 #endif // _WIN32

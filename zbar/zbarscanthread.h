@@ -2,6 +2,7 @@
 #define ZBARSCANTHREAD_H
 
 #ifndef _WIN32
+
 #include <QThread>
 #include <QQueue>
 #include <QMutex>

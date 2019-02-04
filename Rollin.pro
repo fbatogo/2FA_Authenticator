@@ -1,6 +1,11 @@
 QT += quick sql multimedia svg
 CONFIG += c++11
 
+contains(QT, testlib) {
+    message(Will use qDebug for logging...)
+    DEFINES += USE_QDEBUG
+}
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
@@ -32,7 +37,8 @@ SOURCES += \
     otpimpl/hmac.cpp \
     otpimpl/sha1impl.c \
     otpimpl/sha1hash.cpp \
-    otpimpl/totp.cpp
+    otpimpl/totp.cpp \
+    otpimpl/base32coder.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -57,16 +63,18 @@ HEADERS += \
     otpimpl/sha1impl.h \
     otpimpl/hashtypebase.h \
     otpimpl/sha1hash.h \
-    otpimpl/totp.h
+    otpimpl/totp.h \
+    otpimpl/base32coder.h
 
 RESOURCES += qml.qrc
 
-!win32 {
-# Link to liboath.
-CONFIG += link_pkgconfig
-PKGCONFIG += liboath zbar
-
-#LIBS += /usr/lib/x86_64-linux-gnu/libzbarqt.a
+win32 {
+#    INCLUDEPATH += "C:/Program Files (x86)/ZBar/include"
+#    LIBS += "C:/Program Files (x86)/ZBar/lib/libzbar-0.lib"
+} else {
+    # Link to zbar.
+    CONFIG += link_pkgconfig
+    PKGCONFIG += zbar
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

@@ -4,7 +4,7 @@
 #include "../otpimpl/hmac.h"
 #include "../otpimpl/sha1hash.h"
 
-#include <iostream>
+#include <QDebug>
 
 // Test vectors taken from RFC 4226 found at https://tools.ietf.org/html/rfc4226
 
@@ -76,7 +76,7 @@ void hotpTests::hotpTest1()
             QFAIL("Failed to generate an HOTP value!");
         }
 
-        std::cout << "HOTP calculated value " << i << " : " << hotpCalc << " ==? " << expectedResults.at(i) << "\n";
+        qDebug("HOTP calculated value %d : %s ==? %s", i, hotpCalc.c_str(), expectedResults.at(i).c_str());
         QCOMPARE(hotpCalc, expectedResults.at(i));
     }
 }

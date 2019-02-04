@@ -1,14 +1,22 @@
 #include "qrvideorunnable.h"
 
-#ifndef _WIN32
 #include "logger.h"
+#ifndef _WIN32
 #include <zbar.h>
+#endif // _WIN32
 #include "qzbarimage.h"
 
+#ifndef _WIN32
 QRVideoRunnable::QRVideoRunnable(ZBarScanThread *scanner)
 {
     mScanThread = scanner;
 }
+#else
+QRVideoRunnable::QRVideoRunnable()
+{
+
+}
+#endif // _WIN32
 
 QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, QVideoFilterRunnable::RunFlags flags)
 {
@@ -28,10 +36,11 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
         }
     }
 
+#ifndef _WIN32
     // Queue up the frame for the worker thread to process.
     mScanThread->queueFrameToProcess(QImage(input->bits(), input->width(), input->height(), input->bytesPerLine(), QVideoFrame::imageFormatFromPixelFormat(input->pixelFormat())));
+#endif // _WIN32
 
     // We don't actually want to change anything, so return what was originally passed in.
     return (*input);
 }
-#endif // _WIN32

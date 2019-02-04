@@ -21,8 +21,6 @@ private:
     int64_t calcChecksum(int64_t otp, size_t digits);
     unsigned char *dynamicTruncate(unsigned char *hmac, size_t hmacSize, int truncateOffset);
 
-    std::string binaryToString(unsigned char *bytes, size_t bytesLength);
-
     Hmac *mHmacToUse;
     bool mShouldDelete;
 };
