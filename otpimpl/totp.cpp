@@ -2,8 +2,6 @@
 
 #include "hotp.h"
 
-#include <iostream>
-
 Totp::Totp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -25,8 +23,6 @@ std::string Totp::calculate(unsigned char *key, size_t keyLength, uint64_t utcTi
     uint64_t calcTime;
 
     calcTime = (utcTime - initialCounter)/timeStep;
-
-    std::cout << "Calc time : " << calcTime << "\n";
 
     // Then, calculate the HOTP using the key, and the calcTime.
     return hotp.calculate(key, keyLength, calcTime, digits);

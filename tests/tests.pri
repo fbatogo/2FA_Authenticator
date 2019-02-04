@@ -12,7 +12,8 @@ HEADERS += \
     $$PWD/hmacsha1tests.h \
     $$PWD/testutils.h \
     $$PWD/hotptests.h \
-    $$PWD/totptests.h
+    $$PWD/totptests.h \
+    $$PWD/base32codertests.h
 
 SOURCES += \
     $$PWD/secretdatabasetests.cpp \
@@ -21,7 +22,8 @@ SOURCES += \
     $$PWD/hmacsha1tests.cpp \
     $$PWD/testutils.cpp \
     $$PWD/hotptests.cpp \
-    $$PWD/totptests.cpp
+    $$PWD/totptests.cpp \
+    $$PWD/base32codertests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.

@@ -26,7 +26,11 @@ Logger *Logger::getInstance()
  */
 void Logger::log(const QString &logline)
 {
+#ifdef USE_QDEBUG
+    qInfo("%s", logline.toStdString().c_str());
+#else
     std::cout << logline.toStdString() << std::endl;
+#endif // USE_QDEBUG
 }
 
 /**
@@ -36,7 +40,11 @@ void Logger::log(const QString &logline)
  */
 void Logger::logDebug(const QString &logline)
 {
+#ifdef USE_QDEBUG
+    qDebug("%s", logline.toStdString().c_str());
+#else
     std::cout << "*DEBUG* " << logline.toStdString() << std::endl;
+#endif // USE_QDEBUG
 }
 
 /**
@@ -46,7 +54,11 @@ void Logger::logDebug(const QString &logline)
  */
 void Logger::logError(const QString &logline)
 {
+#ifdef USE_QDEBUG
+    qCritical("%s", logline.toStdString().c_str());
+#else
     std::cout << "!ERROR! " << logline.toStdString() << std::endl;
+#endif // USE_QDEBUG
 }
 
 /**
@@ -56,5 +68,9 @@ void Logger::logError(const QString &logline)
  */
 void Logger::logWarning(const QString &logline)
 {
+#ifdef USE_QDEBUG
+    qWarning("%s", logline.toStdString().c_str());
+#else
     std::cout << "<WARNING> " << logline.toStdString() << std::endl;
+#endif // USE_QDEBUG
 }

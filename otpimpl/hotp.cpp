@@ -4,10 +4,6 @@
 #include "sha1hash.h"
 #include "../logger.h"
 
-#include <sstream>
-#include <iomanip>
-#include <iostream>
-
 Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -64,8 +60,6 @@ std::string Hotp::calculate(unsigned char *key, size_t keyLength, uint64_t count
         LOG_ERROR("Failed to caculate HMAC-SHA1 portion of the HOTP!");
         return "";
     }
-
-    std::cout << "HMAC (SHA1) : " << binaryToString(hashValue, resultSize) << "\n";
 
     return calculateHotpFromHmac(hashValue, resultSize, digits, addChecksum, truncationOffset);
 }
@@ -215,17 +209,4 @@ unsigned char *Hotp::dynamicTruncate(unsigned char *hmac, size_t hmacSize, int t
     }
 
     return result;
-}
-
-std::string Hotp::binaryToString(unsigned char *bytes, size_t bytesLength)
-{
-    std::stringstream result;
-
-    result.clear();
-
-    for (size_t i = 0; i < bytesLength; i++) {
-        result << std::setfill('0') << std::setw(2) << std::hex << (int)bytes[i] << " ";
-    }
-
-    return result.str();
 }

@@ -3,7 +3,8 @@
 #include <cstring>
 #include "../otpimpl/sha1hash.h"
 #include "../logger.h"
-#include <iostream>
+
+#include <QDebug>
 #include <iomanip>
 #include <sstream>
 #include "testutils.h"
@@ -36,8 +37,8 @@ void Sha1Tests::sha1Tests2()
     // Calculate 896 bit string test.
     toTest = strdup("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu");
     result = hashObj.hash(reinterpret_cast<unsigned char *>(toTest), strlen(toTest));
-    std::cout << "Calculated hash : " << TestUtils::binaryToString(result, 20) << "\n";
-    std::cout << "Expected hash   : " << TestUtils::binaryToString(string896bits, 20) << "\n";
+    qDebug("Calculated hash : %s", TestUtils::binaryToString(result, 20).c_str());
+    qDebug("Expected hash   : %s", TestUtils::binaryToString(string896bits, 20).c_str());
     QVERIFY(memcmp((void *)result, (void *)&string896bits, 20) == 0);
 
     // Clean up.

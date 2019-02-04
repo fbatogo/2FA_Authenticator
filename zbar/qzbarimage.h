@@ -23,6 +23,8 @@
 #ifndef QZBARIMAGE_H_
 #define QZBARIMAGE_H_
 
+#ifndef _WIN32
+
 /// @file
 /// QImage to Image type conversion wrapper
 
@@ -68,5 +70,6 @@ private:
 
 };
 
+#endif // _WIN32
 
 #endif
