@@ -17,7 +17,7 @@ Totp::~Totp()
     mHmacToUse = nullptr;
 }
 
-std::string Totp::calculate(unsigned char *key, size_t keyLength, uint64_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
+std::string Totp::calculate(const unsigned char *key, size_t keyLength, uint64_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
 {
     Hotp hotp(mHmacToUse);
     uint64_t calcTime;

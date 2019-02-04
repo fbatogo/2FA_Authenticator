@@ -1,14 +1,14 @@
 #include "otphandler.h"
 
 #include "logger.h"
+#include "../otpimpl/base32coder.h"
+#include "../otpimpl/hexdecoder.h"
+#include "../otpimpl/totp.h"
+#include "../otpimpl/hmac.h"
+#include "../otpimpl/sha1hash.h"
 
 #include <time.h>
 
-#ifndef _WIN32
-extern "C" {
-#include <oath.h>
-}
-#endif
 
 OtpHandler::OtpHandler()
 {
@@ -27,7 +27,7 @@ OtpHandler::OtpHandler()
  */
 OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
 {
-    char *dSecret;
+    unsigned char *dSecret;
     size_t dSize;
     QString calculatedCode;
     OtpEntry *result;
@@ -81,7 +81,7 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
  * @return QString containing the decoded key value.  On failure, an empty string
  *      will be returned.
  */
-bool OtpHandler::decodeSecret(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize)
+bool OtpHandler::decodeSecret(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize)
 {
     // Figure out what type of encoding we have, and make the correct call to
     // handle it.
@@ -106,18 +106,12 @@ bool OtpHandler::decodeSecret(const KeyEntry &keydata, char **decodedSecret, siz
  *
  * @return bool indicating if the key was decoded properly.
  */
-bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, char **decodedSecret, size_t *decodedSize)
+bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize)
 {
-    int rc;
-    const char *error;
-#ifndef _WIN32
-    rc = oath_base32_decode(keydata.secret().toStdString().c_str(), keydata.secret().length(), decodedSecret, decodedSize);
-    if (rc != OATH_OK) {
-        error = oath_strerror(rc);
-        LOG_ERROR("Unable to decode a base32 secret value!  Error : " + QString::fromLocal8Bit(error));
-        return false;
-    }
-#endif
+    Base32Coder decode;
+
+    (*decodedSecret) = decode.decode(keydata.secret().toStdString(), (*decodedSize));
+
     return true;
 }
 
@@ -132,7 +126,7 @@ bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, char **decodedSecret, 
  * @return QString containing the calculated OTP.  On failure, an empty string will
  *      be returned.
  */
-QString OtpHandler::calculateCode(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize)
+QString OtpHandler::calculateCode(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
 {
     // Figure out which type of OTP we need to calculate.
     switch (keydata.otpType()) {
@@ -157,27 +151,20 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, const char *decodedSe
  * @return QString containing the calculated TOTP.  On error, an empty
  *      string will be returned.
  */
-QString OtpHandler::calculateTotp(const KeyEntry &keydata, const char *decodedSecret, size_t decodedSize)
+QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
 {
     time_t now;
-    int rc;
-    char otp[10];
-    const char *error;
+    std::string otp;
+    Totp totp(new Hmac(new Sha1Hash(), true), true);
 
     // Get the current time, so we can calculate the OTP.
     now = time(nullptr);
-#ifndef _WIN32
-    rc = oath_totp_generate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.timeOffset(), keydata.outNumberCount(), (char *)&otp);
-    if (rc != OATH_OK) {
-        error = oath_strerror(rc);
-        LOG_ERROR("Unable to calculate the TOTP value!  Error : " + QString::fromLocal8Bit(error));
-        return "";
-    }
+
+    // Calculate the TOTP with HMAC-SHA1
+    otp = totp.calculate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.outNumberCount());
 
     // Return the calculated value.
-    return QString::fromLocal8Bit(otp);
-#endif
-    return "";
+    return QString::fromStdString(otp);
 }
 
 /**

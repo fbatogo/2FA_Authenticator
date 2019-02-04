@@ -28,7 +28,7 @@ Hotp::~Hotp()
  * @return std::string containing the HOTP value.  On error, this string will be
  *      empty.
  */
-std::string Hotp::calculate(unsigned char *key, size_t keyLength, uint64_t counter, size_t digits, bool addChecksum, int truncationOffset)
+std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t counter, size_t digits, bool addChecksum, int truncationOffset)
 {
     unsigned char *hashValue;
     size_t resultSize;
@@ -77,7 +77,7 @@ std::string Hotp::calculate(unsigned char *key, size_t keyLength, uint64_t count
  *
  * @return std::string containing the calculated HOTP value. On error, the string will be empty.
  */
-std::string Hotp::calculateHotpFromHmac(unsigned char *hmac, size_t hmacSize, size_t digits, bool addChecksum, int truncationOffset)
+std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSize, size_t digits, bool addChecksum, int truncationOffset)
 {
     int64_t DIGITS_POWER[9] = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
     unsigned char *truncValue;
@@ -178,7 +178,7 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  * @return unsigned char pointer to the dynamically truncated value.  The caller will take
  *      ownership of this pointer and *MUST* free it!  On error, nullptr will be returned.
  */
-unsigned char *Hotp::dynamicTruncate(unsigned char *hmac, size_t hmacSize, int truncateOffset)
+unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, int truncateOffset)
 {
     unsigned char offset;
     unsigned char *result;
