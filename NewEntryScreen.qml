@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.11
@@ -9,6 +9,17 @@ Item {
 
     property string siteName: ""
     property string otpSecret: ""
+
+    Component.onCompleted: {
+        // If we don't have any cameras available, disable the button to read a QR code.
+        if (QtMultimedia.availableCameras.length <= 0) {
+            console.log("No cameras found, disabling the acquire with camera button.");
+            getFromCameraButton.enabled = false;
+
+            // Change the text.
+            getFromCameraButton.text = qsTr("No cameras found.");
+        }
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -126,12 +137,21 @@ Item {
                         text: qsTr("Digit Count : ")
                     }
 
+                    TextMetrics {
+                        id: hiddenNumbers
+                        text: "8"
+                    }
+
                     ComboBox {
                         id: numberCountComboBox
                         Layout.row: 2
                         Layout.column: 1
                         Layout.fillWidth: true
-                        height: digitCountLabel.height + 2
+                        //height: digitCountLabel.height + 2
+                        height: {
+                            console.log("Height : " + hiddenNumbers.height);
+                            return hiddenNumbers.height;
+                        }
 
                         model: ["6", "7", "8"]
                     }
