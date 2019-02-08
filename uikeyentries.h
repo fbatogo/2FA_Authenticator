@@ -10,7 +10,7 @@ class UiKeyEntries : public QObject
     Q_OBJECT
 
 public:
-    explicit UiKeyEntries(QObject *parent = 0);
+    explicit UiKeyEntries(QObject *parent = nullptr);
     ~UiKeyEntries();
 
     bool populateEntries(QList<KeyEntry> &toCopy);

@@ -20,8 +20,8 @@
 //
 //  http://sourceforge.net/projects/zbar
 //------------------------------------------------------------------------
-#ifndef QZBARIMAGE_H_
-#define QZBARIMAGE_H_
+#ifndef MYQZBARIMAGE_H_
+#define MYQZBARIMAGE_H_
 
 #ifndef _WIN32
 
@@ -35,14 +35,14 @@ namespace zbar {
 
 /// wrap a QImage and convert into a format suitable for scanning.
 
-class QZBarImage
+class MyQZBarImage
     : public Image
 {
 public:
 
     /// construct a zbar library image based on an existing QImage.
 
-    QZBarImage (const QImage &qimg)
+    MyQZBarImage (const QImage &qimg)
         : qimg(qimg)
     {
         QImage::Format fmt = qimg.format();

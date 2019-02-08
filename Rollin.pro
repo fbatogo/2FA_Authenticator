@@ -1,4 +1,4 @@
-QT += quick sql multimedia svg
+QT += quick sql multimedia svg x11extras
 CONFIG += c++11
 
 contains(QT, testlib) {
@@ -31,7 +31,6 @@ SOURCES += \
     uiclipboard.cpp \
     zbar/qrcodefilter.cpp \
     zbar/qrvideorunnable.cpp \
-    zbar/zbarscanthread.cpp \
     zbar/qrcodestringparser.cpp \
     otpimpl/hotp.cpp \
     otpimpl/hmac.cpp \
@@ -56,8 +55,6 @@ HEADERS += \
     uiclipboard.h \
     zbar/qrcodefilter.h \
     zbar/qrvideorunnable.h \
-    zbar/zbarscanthread.h \
-    zbar/qzbarimage.h \
     zbar/qrcodestringparser.h \
     otpimpl/hotp.h \
     otpimpl/hmac.h \
@@ -66,7 +63,8 @@ HEADERS += \
     otpimpl/sha1hash.h \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
-    otpimpl/hexdecoder.h
+    otpimpl/hexdecoder.h \
+    zbar/myqzbarimage.h
 
 RESOURCES += qml.qrc
 

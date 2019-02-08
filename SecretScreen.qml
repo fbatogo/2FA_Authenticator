@@ -202,7 +202,7 @@ Item {
                                 id: timer
                                 size: clockFrame.width - 20
                                 arcBegin: 0
-                                arcEnd: circleShown
+                                arcEnd: (360 - circleShown)
                             }
                         }
                     }
