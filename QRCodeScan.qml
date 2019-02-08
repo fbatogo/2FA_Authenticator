@@ -3,12 +3,14 @@ import QtMultimedia 5.11
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import QRFilter 1.0
+import QRCodeStringParser 1.0
 
 Item {
     property string readText: ""
 
     Component.onCompleted: {
-        camera.start();
+        console.log("Device Name : " + camera.displayName);
+
     }
 
     Camera {
@@ -19,19 +21,24 @@ Item {
         id: videoFilter
 
         onSignalFinished: {
-            if (!code.isOtpCode()) {
-                console.log("Code returned isn't a valid OTP code!?  This shouldn't happen!");
+            if (code === null) {
+                // Just pop the stack and move on.
+                screenStack.pop();
                 return;
             }
 
-            console.log("Code found!");
+            console.log("Code found! -- " + JSON.stringify(code));
             console.log("Code label : " + code.label());
             console.log("Code type : " + code.type());
             console.log("Code secret : " + code.parameterByKey("secret"));
 
             // Populate the values in the add code screen.
+            var previousItem = screenStack.get(screenStack.StackView.index - 1);
+            console.log("1 higher : " + JSON.stringify(previousItem));
             newEntryScreen.siteName = code.label();
             newEntryScreen.otpSecret = code.parameterByKey("secret");
+
+            screenStack.pop();
         }
     }
 

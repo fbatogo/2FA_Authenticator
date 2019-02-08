@@ -4,43 +4,43 @@
 #ifndef _WIN32
 #include <zbar.h>
 #endif // _WIN32
-#include "qzbarimage.h"
+#include <iostream>
+#include "qrcodefilter.h"
+#include "qrcodestringparser.h"
 
-#ifndef _WIN32
-QRVideoRunnable::QRVideoRunnable(ZBarScanThread *scanner)
+QRVideoRunnable::QRVideoRunnable(QRCodeFilter *filter) :
+    mFilter(filter)
 {
-    mScanThread = scanner;
+    mScanner.set_config(zbar::ZBAR_QRCODE, zbar::ZBAR_CFG_ENABLE, 1);
+    mImage.set_format("Y800");
 }
-#else
-QRVideoRunnable::QRVideoRunnable()
-{
-
-}
-#endif // _WIN32
 
 QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, QVideoFilterRunnable::RunFlags flags)
 {
-    QImage toProcess;
-
     Q_UNUSED(surfaceFormat);
     Q_UNUSED(flags);
 
-    // See if we need to map the buffer in order for it to be usable.
-    if (!input->isMapped()) {
-        // We need to map the frame in to CPU addressible memory.
-        if (!input->map(QAbstractVideoBuffer::ReadOnly)) {
-            // Just return the original frame, but indicate we can't
-            // read it.
-            LOG_ERROR("Unable to map frame!");
-            return (*input);
+    if (input->handleType() == QAbstractVideoBuffer::NoHandle) {
+        if (mFrameSize != input->size()) {
+            mImage.set_size(input->width(), input->height());
+            mFrameSize = input->size();
+        }
+
+        // TODO handle other pixel formats
+        if (input->pixelFormat() == QVideoFrame::Format_YUV420P) {
+            if (input->map(QAbstractVideoBuffer::ReadOnly)) {
+                mImage.set_data(input->bits(), input->width()*input->height());
+                input->unmap();
+
+                mScanner.scan(mImage);
+
+                for (auto it = mImage.symbol_begin(), end = mImage.symbol_end(); it != end; ++it) {
+                    std::cout << "Detected : " << it->get_data() << std::endl;
+                    emit mFilter->signalFinished(new QRCodeStringParser(QString::fromStdString(it->get_data())));
+                }
+            }
         }
     }
 
-#ifndef _WIN32
-    // Queue up the frame for the worker thread to process.
-    mScanThread->queueFrameToProcess(QImage(input->bits(), input->width(), input->height(), input->bytesPerLine(), QVideoFrame::imageFormatFromPixelFormat(input->pixelFormat())));
-#endif // _WIN32
-
-    // We don't actually want to change anything, so return what was originally passed in.
-    return (*input);
+    return *input;
 }
