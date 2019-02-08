@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 #endif // FULLSCREEN
 
     qmlRegisterSingletonType<InterfaceSingleton>("InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
+    qmlRegisterSingletonType<QRCodeStringParser>("QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
 
     qmlRegisterType<KeyEntry>("KeyEntry", 1, 0, "KeyEntry");
     qmlRegisterType<UiKeyEntries>("UiKeyEntries", 1, 0, "UiKeyEntries");
@@ -31,7 +32,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<UiClipboard>("UiClipboard", 1, 0, "UiClipboard");
 
     qmlRegisterType<QRCodeFilter>("QRFilter", 1, 0, "QRFilter");
-    qmlRegisterType<QRCodeStringParser>("QRCodeStringParser", 1, 0, "QRCodeStringParser");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

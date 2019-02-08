@@ -20,23 +20,32 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
     Q_UNUSED(surfaceFormat);
     Q_UNUSED(flags);
 
-    if (input->handleType() == QAbstractVideoBuffer::NoHandle) {
-        if (mFrameSize != input->size()) {
-            mImage.set_size(input->width(), input->height());
-            mFrameSize = input->size();
-        }
+    // If our QRCodeStringParser singleton indicates that we have a code in processing, then don't process this frame.
+    if (!QRCodeStringParser::getInstance()->isCodeProcessing()) {
 
-        // TODO handle other pixel formats
-        if (input->pixelFormat() == QVideoFrame::Format_YUV420P) {
-            if (input->map(QAbstractVideoBuffer::ReadOnly)) {
-                mImage.set_data(input->bits(), input->width()*input->height());
-                input->unmap();
+        if (input->handleType() == QAbstractVideoBuffer::NoHandle) {
+            if (mFrameSize != input->size()) {
+                mImage.set_size(input->width(), input->height());
+                mFrameSize = input->size();
+            }
 
-                mScanner.scan(mImage);
+            if (input->pixelFormat() == QVideoFrame::Format_YUV420P) {
+                if (input->map(QAbstractVideoBuffer::ReadOnly)) {
+                    mImage.set_data(input->bits(), input->width()*input->height());
+                    input->unmap();
 
-                for (auto it = mImage.symbol_begin(), end = mImage.symbol_end(); it != end; ++it) {
-                    std::cout << "Detected : " << it->get_data() << std::endl;
-                    emit mFilter->signalFinished(new QRCodeStringParser(QString::fromStdString(it->get_data())));
+                    mScanner.scan(mImage);
+
+                    for (auto it = mImage.symbol_begin(), end = mImage.symbol_end(); it != end; ++it) {
+                        std::cout << "Detected : " << it->get_data() << std::endl;
+
+                        // Feed the text to the QRCodeStringParser singleton.
+                        QRCodeStringParser::getInstance()->parseCode(QString::fromStdString(it->get_data()));
+
+                        std::cout << "Code found!" << std::endl;
+                        // The QR code appears to be a valid TOTP code.
+                        emit mFilter->signalFinished();
+                    }
                 }
             }
         }
