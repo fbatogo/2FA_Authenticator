@@ -107,7 +107,10 @@ Item {
                 break;
             }
 
-            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: 0 });
+            // Calculate the percentage of time that has passed.
+            var timePercent = temp.mStartTime / temp.mTimeStep;
+
+            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent) });
         }
     }
 

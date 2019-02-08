@@ -3,12 +3,10 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.11
 import InterfaceSingleton 1.0
+import QRCodeSingleton 1.0
 
 Item {
     id: newEntryScreen
-
-    property string siteName: ""
-    property string otpSecret: ""
 
     Component.onCompleted: {
         // If we don't have any cameras available, disable the button to read a QR code.
@@ -18,6 +16,66 @@ Item {
 
             // Change the text.
             getFromCameraButton.text = qsTr("No cameras found.");
+        }
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            // See if the QR code singleton is valid.
+            if ((QRCodeSingleton.isOtpCode()) && (QRCodeSingleton.isCodeProcessing())) {
+                var temp;
+
+                // Read out the data, and fill in our form.
+
+                // Populate the UI.
+
+                // Start with the secret, since if it isn't defined, then we shouldn't update anything!
+                temp = QRCodeSingleton.parameterByKey("secret");
+                if (temp) {
+                    secretValueInput.text = temp;
+                } else {
+                    console.log("No secret was found in the QR code!?");
+
+                    // Do nothing.
+                    return;
+                }
+
+                // XXX Need to validate each value so that we don't end up populating with garbage, or overwriting with there
+                // is no new value.
+                temp = QRCodeSingleton.label();
+                if (temp) {
+                    siteNameInput.text = temp;
+                }
+
+                var digits = QRCodeSingleton.parameterByKey("digits");
+                if (digits) {
+                    console.log("Digits to use : " + digits);
+
+                    switch (parseInt(digits)) {
+                    case 6:
+                        // Set the combo box to index 0.
+                        numberCountComboBox.currentIndex = 0;
+                        break;
+
+                    case 7:
+                        // Set the combo box to index 1.
+                        numberCountComboBox.currentIndex = 1;
+                        break;
+
+                    case 8:
+                        // Set the combo box to index 2.
+                        numberCountComboBox.currentIndex = 2;
+                        break;
+
+                    default:
+                        console.log("Got an invalid number of digits!");
+                        return;
+                    }
+                } else {
+                    // No digits, assume the default of 6.
+                    numberCountComboBox.currentIndex = 0;
+                }
+            }  // Otherwise, the user may have cancelled, so don't do anything.
         }
     }
 
@@ -83,7 +141,7 @@ Item {
 
                         TextInput {
                             id: siteNameInput
-                            text: siteName
+                            text: ""
                             anchors.fill: parent
                             anchors.topMargin: 3
                             anchors.bottomMargin: 3
@@ -124,7 +182,7 @@ Item {
                             font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
-                            text: otpSecret
+                            text: ""
                         }
                     }
 
@@ -145,7 +203,7 @@ Item {
                     ComboBox {
                         id: numberCountComboBox
                         Layout.row: 2
-                        Layout.column: 1
+                        Layout.column: 1                        
                         Layout.fillWidth: true
                         //height: digitCountLabel.height + 2
                         height: {
@@ -153,7 +211,25 @@ Item {
                             return hiddenNumbers.height;
                         }
 
-                        model: ["6", "7", "8"]
+                        textRole: "digits"
+
+                        model: digitsModel
+                    }
+
+                    ListModel {
+                        id: digitsModel
+
+                        ListElement {
+                            digits: "6"
+                        }
+
+                        ListElement {
+                            digits: "7"
+                        }
+
+                        ListElement {
+                            digits: "8"
+                        }
                     }
                 }
 

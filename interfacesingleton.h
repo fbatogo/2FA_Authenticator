@@ -21,8 +21,6 @@ public:
     static InterfaceSingleton *getInstance();
     static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-    void updateEngine(QQmlEngine *engine);
-
     // Allow the QML code to write to the logger.
     Q_INVOKABLE void logDebug(QString logline);
     Q_INVOKABLE void logError(QString logline);
@@ -35,6 +33,8 @@ public:
 
 private:
     InterfaceSingleton();
+
+    void updateEngine(QQmlEngine *engine);
 
     KeyStorage mKeyStorage;
 

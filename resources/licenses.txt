@@ -1,15 +1,20 @@
 2 Factor Authenticator (this program) is<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(c) Copyright 2019, Chris Hessing<br/>
-it is licensed under the GPL V3 license (below).<br/>
+it is licensed under the GPL V3 license.<br/>
+<br/>
+<br/>
+Text for all used licenses are included below.<br/>
+<br/>
 <br/>
 ---- Libraries ----<br/>
 <br/>
-liboath is licensed under the terms of the LGPLv2 or higher.<br/>
 zbar is licensed under the terms of the LGPLv2.1 or higher.<br/>
 <br/>
 ---- Code Snippets ----<br/>
 <br/>
-SHA1 implementation by Steve Reid from https://github.com/clibs/sha1
+SHA1 implementation by Steve Reid from https://github.com/clibs/sha1 licensed in the Public Domain.<br/>
+<br/>
+qml-zbar implementation by mpersano from https://github.com/mpersano/qml-zbar  -- License currently unknown.  (Have reached out to request information.)<br/>
 <br/>
 ---- Graphics ----<br/>
 <br/>
@@ -22,8 +27,7 @@ The copy icon was made by <a href="https://www.flaticon.com/authors/elias-bikbul
 <br/>
 <br/>
 <br/>
--- CC 3.0 BY License --<br/>
-License<br/>
+-- CC 3.0 BY License --------------------------------<br/>
 <br/>
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.<br/>
 <br/>
@@ -75,7 +79,9 @@ No term or provision of this License shall be deemed waived and no breach consen
 This License constitutes the entire agreement between the parties with respect to the Work licensed here. There are no understandings, agreements or representations with respect to the Work not specified here. Licensor shall not be bound by any additional provisions that may appear in any communication from You. This License may not be modified without the mutual written agreement of the Licensor and You.<br/>
 <br/>
 <br/>
--- LGPL 2.1 License --<br/>
+<br/>
+<br/>
+-- LGPL 2.1 License --------------------------------<br/>
 <br/>
 GNU LESSER GENERAL PUBLIC LICENSE<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version 2.1, February 1999<br/>
@@ -537,7 +543,7 @@ DAMAGES.<br/>
 <br/>
 <br/>
 <br/>
--- GPL 3 License --<br/>
+-- GPL 3 License --------------------------------<br/>
 <br/>
 GNU GENERAL PUBLIC LICENSE<br/>
 &nbsp;&nbsp;&nbsp;Version 3, 29 June 2007<br/>
@@ -1161,12 +1167,15 @@ copy of the Program in return for a fee.<br/>
 <br/>
 <br/>
 <br/>
--- MIT License --<br/>
+<br/>
+-- MIT License --------------------------------<br/>
 <br/>
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 <br/>
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
 <br/>
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+<br/>
+<br/>
 <br/>
 <br/>
