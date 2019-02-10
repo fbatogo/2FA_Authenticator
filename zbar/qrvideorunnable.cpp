@@ -1,3 +1,5 @@
+#ifndef NO_ZBAR
+
 #include "qrvideorunnable.h"
 
 #include "logger.h"
@@ -53,3 +55,5 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
 
     return *input;
 }
+
+#endif // NO_ZBAR

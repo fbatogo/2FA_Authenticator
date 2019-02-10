@@ -31,6 +31,8 @@ public:
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
     Q_INVOKABLE bool deleteKey(QString identifier);
 
+    Q_INVOKABLE bool haveZbar();
+
 private:
     InterfaceSingleton();
 

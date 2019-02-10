@@ -1,4 +1,13 @@
-QT += quick sql multimedia svg x11extras
+QT += quick sql multimedia svg
+
+# If we aren't building on Windows, use the x11 extras.
+!win32 {
+    QT += x11extras
+} else {
+    # On Windows, we don't currently support zbar.
+    DEFINES *= NO_ZBAR
+}
+
 CONFIG += c++11
 
 contains(QT, testlib) {

@@ -1,6 +1,8 @@
 #ifndef QRVIDEORUNNABLE_H
 #define QRVIDEORUNNABLE_H
 
+#ifndef NO_ZBAR
+
 #include <QObject>
 #include <QVideoFilterRunnable>
 
@@ -22,4 +24,5 @@ private:
     QRCodeFilter *mFilter;
 };
 
+#endif
 #endif // QRVIDEORUNNABLE_H

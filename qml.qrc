@@ -13,5 +13,6 @@
         <file>QRCodeScan.qml</file>
         <file>resources/licenses.txt</file>
         <file>SideBar.qml</file>
+        <file>editentryscreen.qml</file>
     </qresource>
 </RCC>
