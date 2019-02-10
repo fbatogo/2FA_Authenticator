@@ -1,7 +1,7 @@
 #ifndef QRCODEFILTER_H
 #define QRCODEFILTER_H
 
-#ifndef _WIN32
+#ifndef NO_ZBAR
 #include <QObject>
 #include <QAbstractVideoFilter>
 
@@ -21,6 +21,6 @@ signals:
     void signalFinished();
 };
 
-#endif // _WIN32
+#endif // NO_ZBAR
 
 #endif // QRCODEFILTER_H

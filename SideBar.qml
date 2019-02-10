@@ -116,6 +116,7 @@ Drawer {
                     case 1:
                         // Edit key screen.
                         console.info("Edit entry clicked.");
+                        screenStack.push(Qt.resolvedUrl("editentryscreen.qml"));
                         break;
 
                     case 2:
