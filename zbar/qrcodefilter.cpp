@@ -1,6 +1,6 @@
 #include "qrcodefilter.h"
 
-#ifndef _WIN32
+#ifndef NO_ZBAR
 #include "qrcodestringparser.h"
 #include "qrvideorunnable.h"
 #include "logger.h"
@@ -27,4 +27,4 @@ QVideoFilterRunnable *QRCodeFilter::createFilterRunnable()
     return new QRVideoRunnable(this);
 }
 
-#endif // _WIN32
+#endif // NO_ZBAR

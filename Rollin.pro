@@ -5,7 +5,10 @@ QT += quick sql multimedia svg
     QT += x11extras
 } else {
     # On Windows, we don't currently support zbar.
-    DEFINES *= NO_ZBAR
+    #DEFINES *= NO_ZBAR
+
+    INCLUDEPATH += "C:/Program Files (x86)/ZBar/include"
+    LIBS += "C:/Program Files (x86)/ZBar/lib/libzbar-0.lib"
 }
 
 CONFIG += c++11
