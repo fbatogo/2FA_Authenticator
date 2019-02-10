@@ -9,13 +9,19 @@ Item {
     id: newEntryScreen
 
     Component.onCompleted: {
-        // If we don't have any cameras available, disable the button to read a QR code.
-        if (QtMultimedia.availableCameras.length <= 0) {
-            console.log("No cameras found, disabling the acquire with camera button.");
-            getFromCameraButton.enabled = false;
+        // If we weren't built with ZBar, don't show the button to use the camera.
+        if (InterfaceSingleton.haveZbar() === false) {
+            // Hide the camera button.
+            getFromCameraButton.visible = false;
+        } else {
+            // If we don't have any cameras available, disable the button to read a QR code.
+            if (QtMultimedia.availableCameras.length <= 0) {
+                console.log("No cameras found, disabling the acquire with camera button.");
+                getFromCameraButton.enabled = false;
 
-            // Change the text.
-            getFromCameraButton.text = qsTr("No cameras found.");
+                // Change the text.
+                getFromCameraButton.text = qsTr("No cameras found.");
+            }
         }
     }
 
@@ -40,8 +46,6 @@ Item {
                     return;
                 }
 
-                // XXX Need to validate each value so that we don't end up populating with garbage, or overwriting with there
-                // is no new value.
                 temp = QRCodeSingleton.label();
                 if (temp) {
                     siteNameInput.text = temp;

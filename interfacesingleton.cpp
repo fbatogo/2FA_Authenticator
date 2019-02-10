@@ -208,3 +208,18 @@ bool InterfaceSingleton::deleteKey(QString identifier)
     return mKeyStorage.deleteKeyByIdentifier(identifier);
 }
 
+/**
+ * @brief InterfaceSingleton::haveZbar - Indicate to the UI if we were built with
+ *  ZBar, or not.
+ *
+ * @return true if we were built with ZBar, false if not.
+ */
+bool InterfaceSingleton::haveZbar()
+{
+#ifndef NO_ZBAR
+    return true;
+#else
+    return false;
+#endif // NO_ZBAR
+}
+

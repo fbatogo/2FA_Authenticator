@@ -31,7 +31,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<UiClipboard>("UiClipboard", 1, 0, "UiClipboard");
 
+#ifndef NO_ZBAR
     qmlRegisterType<QRCodeFilter>("QRFilter", 1, 0, "QRFilter");
+#endif // NO_ZBAR
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

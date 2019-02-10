@@ -114,24 +114,29 @@ Drawer {
                         break;
 
                     case 1:
+                        // Edit key screen.
+                        console.info("Edit entry clicked.");
+                        break;
+
+                    case 2:
                         // Delete Key Entry screen.
                         console.info("Delete key entry clicked...");
                         screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
                         break;
 
-                    case 2:
+                    case 3:
                         // Setting screen
                         console.info("Settings entry clicked...");
                         screenStack.push(Qt.resolvedUrl("Settings.qml"));
                         break;
 
-                    case 3:
+                    case 4:
                         // About screen.
                         console.info("About screen clicked...");
                         screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
                         break;
 
-                    case 4:
+                    case 5:
                         // Quit option
                         console.info("Quit selected.");
                         Qt.quit();
@@ -148,6 +153,10 @@ Drawer {
         // If you change something here, be sure to change the indicies for onClicked above!
         ListElement {
             name: qsTr("New")
+        }
+
+        ListElement {
+            name: qsTr("Edit")
         }
 
         ListElement {
