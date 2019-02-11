@@ -6,6 +6,9 @@ import InterfaceSingleton 1.0
 Item {
 
     Component.onCompleted: {
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
+
         // Load the license text file, and stick it in the license text area.
         var rawFile = new XMLHttpRequest();
         var resultData = null;
@@ -40,7 +43,7 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 50
+                height: 10
             }
 
             RowLayout {
@@ -51,7 +54,7 @@ Item {
                 Text {
                     width: parent.width
                     horizontalAlignment: Text.Center
-                    text: "2FA Authenticator Version " + InterfaceSingleton.version()
+                    text: "Rollin' Version " + InterfaceSingleton.version()
                 }
 
                 Rectangle {
@@ -121,7 +124,6 @@ Item {
                             id: licenseText
                             readOnly: true
                             textFormat: TextEdit.RichText
-                            text: "License text goes here...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n"
                             wrapMode: TextArea.Wrap
                         }
 
@@ -131,32 +133,6 @@ Item {
 
                 Rectangle {
                     width: 10
-                }
-            }
-
-            RowLayout {
-                width: parent.width
-
-                Rectangle {
-                    Layout.fillWidth: true
-                }
-
-                Button {
-                    text: "Ok"
-                    highlighted: true
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            // Remove ourselves.
-                            console.log("Pop!");
-                            screenStack.pop()
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
                 }
             }
 

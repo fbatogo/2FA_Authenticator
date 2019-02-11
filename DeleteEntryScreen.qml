@@ -5,7 +5,8 @@ import InterfaceSingleton 1.0
 
 Item {
     Component.onCompleted: {
-        console.log("DeleteEntryScreen is ready!");
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
 
         populateToDeleteList();
     }
@@ -133,21 +134,6 @@ Item {
                             return;
                         }
                     }
-                }
-            }
-
-            Rectangle {
-                width: 10
-            }
-
-            Button {
-                id: cancelButton
-                text: qsTr("Cancel");
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: screenStack.pop();
                 }
             }
 
