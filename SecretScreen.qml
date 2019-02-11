@@ -9,10 +9,17 @@ Item {
 
         // Start the timer.
         updateTimer.start();
-    }
+    }    
 
     UiClipboard {
         id: clipboard
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            // Make sure the hamburger is showing.
+            menuButton.source = "resources/menu.svg";
+        }
     }
 
     Timer {

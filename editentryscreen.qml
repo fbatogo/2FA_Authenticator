@@ -7,7 +7,22 @@ Item {
     id: editEntryScreen
 
     Component.onCompleted: {
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
+
         // XXX Populate the list of keys we can edit.
+        populateToEditList();
+    }
+
+    function populateToEditList() {
+        var keys = InterfaceSingleton.keyEntries();
+
+        // Make sure the list is empty.
+        toEditModel.clear();
+
+        for (var i = 0; i < keys.count(); i++) {
+            toEditModel.append({ identifier: keys.at(i).mIdentifier });
+        }
     }
 
     ColumnLayout {
@@ -23,7 +38,7 @@ Item {
             }
 
             Text {
-                text: qsTr("Please select the OTP to edit : ");
+                text: qsTr("Please select the OTP entry to edit : ");
             }
 
             Rectangle {
@@ -64,40 +79,33 @@ Item {
 
                     Rectangle {
                         anchors.fill: parent
+                        anchors.leftMargin: 3
+                        anchors.rightMargin: 3
 
                         Text {
+                            anchors.fill: parent
                             id: toEditText
                             text: identifier
-                        }
+                            font.pixelSize: 10
 
-                        MouseArea {
-                            anchors.fill: parent
+                            MouseArea {
+                                anchors.fill: parent
+                                z:1
 
-                            onClicked: {
-                                var deleted = false;            // Have we deleted something, or not?
-                                var error = false;
-
-                                for (var i = 0; i < toDeleteModel.count; i++) {
-                                    if (toDeleteModel.get(i).itemChecked) {
-                                        if (!InterfaceSingleton.deleteKey(toDeleteModel.get(i).identifier)) {
-                                            console.log("Unable to delete key with the identifier : " + toDeleteModel.get(i).identifier);
-                                            error = true;
-                                        } else {
-                                            deleted = true;
+                                onClicked: {
+                                    var error = false;
+                                    console.log("Item clicked!");
+        /*
+                                    for (var i = 0; i < toDeleteModel.count; i++) {
+                                        if (toDeleteModel.get(i).itemChecked) {
+                                            if (!InterfaceSingleton.deleteKey(toDeleteModel.get(i).identifier)) {
+                                                console.log("Unable to delete key with the identifier : " + toDeleteModel.get(i).identifier);
+                                                error = true;
+                                            } else {
+                                                // XXX
+                                            }
                                         }
-                                    }
-                                }
-
-                                // If there was an error deleting one of the keys, we want to stay on this screen, but update the list.
-                                if (error) {
-                                    populateToDeleteList();
-                                    return;
-                                }
-
-                                // If we deleted something, we want to close this window.
-                                if (deleted) {
-                                    screenStack.pop();
-                                    return;
+                                    } */
                                 }
                             }
                         }
@@ -111,29 +119,6 @@ Item {
 
             Rectangle {
                 width: 10
-            }
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-
-            Rectangle {
-                Layout.fillWidth: true
-            }
-
-            Button {
-                id: cancelButton
-                text: qsTr("Cancel");
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: screenStack.pop();
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
             }
         }
 

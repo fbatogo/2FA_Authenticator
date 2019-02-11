@@ -14,5 +14,6 @@
         <file>resources/licenses.txt</file>
         <file>SideBar.qml</file>
         <file>editentryscreen.qml</file>
+        <file>resources/back.svg</file>
     </qresource>
 </RCC>

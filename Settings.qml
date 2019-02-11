@@ -3,6 +3,11 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 
 Item {
+    Component.onCompleted: {
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -40,22 +45,6 @@ Item {
 
                 Button {
                     text: qsTr("Save")
-                }
-
-                Rectangle {
-                    width: 10
-                }
-
-                Button {
-                    text: qsTr("Cancel")
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            // Remove ourselves.
-                            screenStack.pop()
-                        }
-                    }
                 }
 
                 Rectangle {

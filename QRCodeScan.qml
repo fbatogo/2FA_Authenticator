@@ -10,6 +10,9 @@ Item {
     property bool popped: false
 
     Component.onCompleted: {
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
+
         console.log("Device Name : " + camera.displayName);
 
     }
@@ -185,37 +188,8 @@ Item {
             }
 
             Rectangle {
-                height: 5
-                Layout.fillWidth: true
-            }
-
-            RowLayout {
-                Rectangle {
-                    Layout.fillWidth: true
-                }
-
-                Button {
-                    id: closeButton
-                    text: qsTr("Close")
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            camera.stop();
-
-                            screenStack.pop();
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                }
-            }
-
-            Rectangle {
                 height: 10
-                width: parent.width
+                Layout.fillWidth: true
             }
         }
     }

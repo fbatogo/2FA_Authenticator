@@ -16,18 +16,33 @@ ApplicationWindow {
         width: parent.width
         height: topToolbarTitle.height + 10
 
-        Image {
-            id: menuButton
-            anchors.leftMargin: 5
-            source: "resources/menu.svg"
-            width: topToolbar.height
-            height: topToolbar.height
+        background: Rectangle {
+            color: "white"
+        }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (!drawer.opened) {
-                        drawer.open()
+        Rectangle {
+            anchors.fill: parent
+            anchors.leftMargin: 5
+//            color: "white"
+
+            Image {
+                id: menuButton
+                source: "resources/menu.svg"
+                width: topToolbar.height
+                height: topToolbar.height
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (screenStack.depth === 1) {
+                            // Handle opening and closing the side bar.
+                            if (!drawer.opened) {
+                                drawer.open()
+                            }
+                        } else {
+                            // Pop the widget off the stack.
+                            screenStack.pop();
+                        }
                     }
                 }
             }

@@ -8,7 +8,12 @@ import QRCodeSingleton 1.0
 Item {
     id: newEntryScreen
 
+    // XXX Only enable the save button when we have data in all of the required fields!
+
     Component.onCompleted: {
+        // Change the icon on the toolbar to be the back button.
+        menuButton.source = "resources/back.svg";
+
         // If we weren't built with ZBar, don't show the button to use the camera.
         if (InterfaceSingleton.haveZbar() === false) {
             // Hide the camera button.
@@ -271,30 +276,6 @@ Item {
                 Layout.fillWidth: true
             }
 
-            RowLayout {
-                Rectangle {
-                    Layout.fillWidth: true
-                }
-
-                Button {
-                    id: getFromCameraButton
-
-                    text: qsTr("Acquire from camera");
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            // We need to push the QRCodeScan screen on to the screen stack.
-                            screenStack.push(Qt.resolvedUrl("QRCodeScan.qml"));
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                }
-            }
-
             Rectangle {
                 height: 10
                 Layout.fillWidth: true
@@ -409,16 +390,15 @@ Item {
                 }
 
                 Button {
-                    id: cancelButton
+                    id: getFromCameraButton
 
-                    text: qsTr("Cancel")
+                    text: qsTr("Acquire from camera");
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            // Remove ourselves.
-                            console.log("Pop!");
-                            screenStack.pop()
+                            // We need to push the QRCodeScan screen on to the screen stack.
+                            screenStack.push(Qt.resolvedUrl("QRCodeScan.qml"));
                         }
                     }
                 }
