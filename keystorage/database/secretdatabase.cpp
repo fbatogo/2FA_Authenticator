@@ -106,13 +106,13 @@ bool SecretDatabase::add(const KeyEntry &entry)
         // Double check it is what we expect.
         if (foundEntry.valid()) {
             if (foundEntry.identifier() == entry.identifier()) {
-                LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please us update()!");
+                LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please use update()!");
                 return false;
             }
         }
     }
 
-    if (!createBoundQuery("INSERT into secretData (identifier, secret, keyType, otpType, outNumberCount) VALUES (:identifier, :secret, :keyType, :otpType, :outNumberCount)", entry, query)) {
+    if (!createBoundQuery("INSERT into secretData (identifier, secret, keyType, otpType, outNumberCount, timeStep, timeOffset, algorithm, hotpCounter, issuer) VALUES (:identifier, :secret, :keyType, :otpType, :outNumberCount, :timeStep, :timeOffset, :algorithm, :hotpCounter, :issuer)", entry, query)) {
         // Already logged an error.  Just return.
         return false;
     }
@@ -151,7 +151,7 @@ bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEnt
         return false;
     }
 
-    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount", newEntry, query)) {
+    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount, timeStep=:timeStep, timeOffset=:timeOffset, algorithm=:algorithm, hotpCounter=:hotpCounter, issuer=:issuer", newEntry, query)) {
         // Already logged an error.  Just return.
         return false;
     }
@@ -159,6 +159,7 @@ bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEnt
     // Execute the query.
     if (!query.exec()) {
         LOG_ERROR("Failed to update the key entry data in the database!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -186,6 +187,7 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, KeyEntry &result
     // Make the query.
     if (!query.exec("SELECT * from secretData where identifier='" + identifier + "'")) {
         LOG_ERROR("Unable to query the database by identifier!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -217,6 +219,7 @@ bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 
     if (!query.exec("SELECT * from secretData")) {
         LOG_ERROR("Unable to query the database for all of the secret entries!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -248,6 +251,7 @@ bool SecretDatabase::deleteByIdentifier(const QString &identifier)
 
     if (!query.exec()) {
         LOG_ERROR("Failed to delete the key with identifier : " + identifier);
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -273,6 +277,7 @@ int SecretDatabase::schemaVersion(bool logError)
     // Execute the query.
     if (!query.exec()) {
         LOG_CONDITIONAL_ERROR(logError, "Failed to get the schema version!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
+        LOG_CONDITIONAL_ERROR(logError, "     Detailed Error : " + query.lastError().text());
         return -1;
     }
 
@@ -329,6 +334,7 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
 {
     if (!sqlQuery.prepare(query)) {
         LOG_ERROR("Unable to prepare the query : " + query);
+        LOG_ERROR("     Detailed Error : " + sqlQuery.lastError().text());
         return false;
     }
 
@@ -338,6 +344,11 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
     sqlQuery.bindValue(":keyType", toBind.keyType());
     sqlQuery.bindValue(":otpType", toBind.otpType());
     sqlQuery.bindValue(":outNumberCount", toBind.outNumberCount());
+    sqlQuery.bindValue(":timeStep", toBind.timeStep());
+    sqlQuery.bindValue(":timeOffset", toBind.timeOffset());
+    sqlQuery.bindValue(":algorithm", toBind.algorithm());
+    sqlQuery.bindValue(":hotpCounter", toBind.hotpCounter());
+    sqlQuery.bindValue(":issuer", toBind.issuer());
 
     return true;
 }
@@ -392,6 +403,41 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
     }
 
     result.setOutNumberCount(tempInt);
+
+    if (!queryEntryToInt(query, "timeStep", tempInt)) {
+        LOG_ERROR("Failed to get the time step to return from the database query row!");
+        return false;
+    }
+
+    result.setTimeStep(tempInt);
+
+    if (!queryEntryToInt(query, "timeOffset", tempInt)) {
+        LOG_ERROR("Failed to get the time offset to return from the database query row!");
+        return false;
+    }
+
+    result.setTimeOffset(tempInt);
+
+    if (!queryEntryToString(query, "algorithm", tempStr)) {
+        LOG_ERROR("Failed to get the algorithm to return from the database query row!");
+        return false;
+    }
+
+    result.setAlgorithm(tempStr);
+
+    if (!queryEntryToInt(query, "hotpCounter", tempInt)) {
+        LOG_ERROR("Failed to get the HOTP counter to return from the database query row!");
+        return false;
+    }
+
+    result.setHotpCounter(tempInt);
+
+    if (!queryEntryToString(query, "issuer", tempStr)) {
+        LOG_ERROR("Failed to get the key issuer name to return from the database query row!");
+        return false;
+    }
+
+    result.setIssuer(tempStr);
 
     return true;
 }
@@ -488,7 +534,7 @@ bool SecretDatabase::upgradeToVersion1()
     QSqlQuery query;
 
     // Start by creating the table for the data and the schema.
-    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int)")) {
+    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int, timeStep int, timeOffset int, algorithm text, hotpCounter int, issuer text)")) {
         LOG_ERROR("Failed to create the secret key table in the database!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
         return false;
     }

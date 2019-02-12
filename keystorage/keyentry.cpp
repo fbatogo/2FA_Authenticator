@@ -30,6 +30,9 @@ void KeyEntry::clear()
     mOutNumberCount = -1;
     mTimeStep = 30;             // Recommended default.
     mTimeOffset = 0;            // Recommended default.
+    mAlgorithm = "SHA1";        // Recommended default.
+    mHotpCounter = 0;           // HOTP isn't used by default.
+    mIssuer.clear();
 }
 
 /**
@@ -163,6 +166,36 @@ void KeyEntry::setTimeOffset(int newvalue)
     mTimeOffset = newvalue;
 }
 
+QString KeyEntry::algorithm() const
+{
+    return mAlgorithm;
+}
+
+void KeyEntry::setAlgorithm(const QString &newvalue)
+{
+    mAlgorithm = newvalue;
+}
+
+int KeyEntry::hotpCounter() const
+{
+    return mHotpCounter;
+}
+
+void KeyEntry::setHotpCounter(int newvalue)
+{
+    mHotpCounter = newvalue;
+}
+
+QString KeyEntry::issuer() const
+{
+    return mIssuer;
+}
+
+void KeyEntry::setIssuer(const QString &newvalue)
+{
+    mIssuer = newvalue;
+}
+
 /**
  * @brief KeyEntry::operator = - Handle copying data when using the = operator.
  *
@@ -179,6 +212,9 @@ KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
     setOutNumberCount(toCopy.outNumberCount());
     setTimeStep(toCopy.timeStep());
     setTimeOffset(toCopy.timeOffset());
+    setAlgorithm(toCopy.algorithm());
+    setHotpCounter(toCopy.hotpCounter());
+    setIssuer(toCopy.issuer());
 
     return *this;
 }

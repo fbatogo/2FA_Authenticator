@@ -140,7 +140,7 @@ UiOtpEntries *InterfaceSingleton::otpEntries()
     allKeys.clear();
 
     if (!mKeyStorage.getAllKeys(allKeys)) {
-        LOG_ERROR("Unable to get all of the keys stored in key storage!");
+        LOG_ERROR("Unable to get all of the OTP entries in storage!");
     } else {
         // We need to convert all of the KeyEntries in to dynamic allocations.
         result = new UiOtpEntries();

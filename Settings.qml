@@ -34,6 +34,21 @@ Item {
                 }
             }
 
+            // List the configuration options that we allow.
+            CheckBox {
+                id: showIssuer
+                tristate: false
+                checked: false      // XXX For now.
+                text: qsTr("Show Issuer")
+            }
+
+            CheckBox {
+                id: showHotpCounter
+                tristate: false
+                checked: false
+                text: qsTr("Show HOTP Counter Value")
+            }
+
             Rectangle {
                 Layout.fillHeight: true
             }
@@ -45,6 +60,17 @@ Item {
 
                 Button {
                     text: qsTr("Save")
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            // XXX Save the configuration settings.
+
+                            // Remove our widget from the stack.
+                            console.log("Pop!");
+                            screenStack.pop()
+                        }
+                    }
                 }
 
                 Rectangle {
@@ -54,15 +80,6 @@ Item {
 
             Rectangle {
                 height: 10
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                // Remove ourselves.
-                console.log("Pop!");
-                screenStack.pop()
             }
         }
     }
