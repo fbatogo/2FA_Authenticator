@@ -128,11 +128,49 @@ Item {
                     Layout.fillWidth: true
 
                     columns: 2
-                    rows: 3
+                    rows: 5
 
+                    // Key type value setting
+                    Text {
+                        id: otpTypeLabel
+                        Layout.row: 0
+                        Layout.column: 0
+                        horizontalAlignment: Text.AlignRight
+
+                        text: qsTr("OTP Type : ")
+                    }
+
+                    ComboBox {
+                        id: otpTypeComboBox
+                        Layout.row: 0
+                        Layout.column: 1
+                        Layout.fillWidth: true
+                        //height: digitCountLabel.height + 2
+                        height: {
+                            console.log("Height : " + hiddenNumbers.height);
+                            return hiddenNumbers.height;
+                        }
+
+                        model: otpTypeModel         // XXX When HOTP is selected, we need to show a row to allow inputting the current counter value.
+                    }
+
+                    ListModel {
+                        id: otpTypeModel
+
+                        ListElement {
+                            otpType: "TOTP"
+                        }
+
+                        ListElement {
+                            otpType: "HOTP"
+                        }
+                    }
+
+
+                    // Site name/label value
                     Text {
                         id: siteNameLabel
-                        Layout.row: 0
+                        Layout.row: 1
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
 
@@ -140,7 +178,7 @@ Item {
                     }
 
                     Rectangle {
-                        Layout.row: 0
+                        Layout.row: 1
                         Layout.column: 1
                         height: siteNameLabel.height * 2
                         Layout.fillWidth: true
@@ -162,9 +200,47 @@ Item {
                         }
                     }
 
+                    // Secret value format
+                    Text {
+                        id: secretValueTypeLabel
+                        Layout.row: 2
+                        Layout.column: 0
+                        horizontalAlignment: Text.AlignRight
+
+                        text: qsTr("Secret Format : ")
+                    }
+
+                    ComboBox {
+                        id: secretValueTypeComboBox
+                        Layout.row: 2
+                        Layout.column: 1
+                        Layout.fillWidth: true
+                        //height: digitCountLabel.height + 2
+                        height: {
+                            console.log("Height : " + hiddenNumbers.height);
+                            return hiddenNumbers.height;
+                        }
+
+                        model: secretValueTypeModel         // XXX When HOTP is selected, we need to show a row to allow inputting the current counter value.
+                    }
+
+                    ListModel {
+                        id: secretValueTypeModel
+
+                        ListElement {
+                            otpType: "Base32"
+                        }
+
+                        ListElement {
+                            otpType: "HEX"
+                        }
+                    }
+
+
+                    // Secret value.
                     Text {
                         id: secretValueLabel
-                        Layout.row: 1
+                        Layout.row: 3
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
 
@@ -173,7 +249,7 @@ Item {
 
                     Rectangle {
                         // Put a line around the text entry area.
-                        Layout.row: 1
+                        Layout.row: 3
                         Layout.column: 1
                         Layout.fillWidth: true
                         height: secretValueLabel.height * 2
@@ -195,9 +271,10 @@ Item {
                         }
                     }
 
+                    // Digit count
                     Text {
                         id: digitCountLabel
-                        Layout.row: 2
+                        Layout.row: 4
                         Layout.column: 0
                         horizontalAlignment: Text.AlignRight
 
@@ -211,7 +288,7 @@ Item {
 
                     ComboBox {
                         id: numberCountComboBox
-                        Layout.row: 2
+                        Layout.row: 4
                         Layout.column: 1                        
                         Layout.fillWidth: true
                         //height: digitCountLabel.height + 2
@@ -240,6 +317,9 @@ Item {
                             digits: "8"
                         }
                     }
+
+                    // XXX Add an "advanced" screen to allow setting the offset and time step?
+                    // XXX Add an option to select the hashing algorithm.
                 }
 
                 Rectangle {
@@ -289,7 +369,7 @@ Item {
                 Button {
                     id: saveButton
 
-                    text: qsTr("Save")
+                    text: qsTr("Save")  // XXX Add code to check if we should be able to save, and to enable the save button when it is valid, and disable it when it isn't.
 
                     MouseArea {
                         anchors.fill: parent
@@ -299,7 +379,7 @@ Item {
                             var errorSet = false;
 
                             // Convert the keyType index to the currect value.
-                            switch (otpTypeInput.currentIndex) {
+                            switch (otpTypeComboBox.currentIndex) {
                             case 0:
                                 // TOTP
                                 otpType = 0;
@@ -319,7 +399,7 @@ Item {
                             }
 
                             // Convert the keyType index to the correct value.
-                            switch (secretFormatInput.currentIndex) {
+                            switch (secretValueTypeComboBox.currentIndex) {
                             case 0:
                                 // Base 32
                                 keyType = 1;

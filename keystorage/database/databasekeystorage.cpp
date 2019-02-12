@@ -3,7 +3,7 @@
 #include <QDir>
 #include <logger.h>
 
-#define DOT_DIRECTORY       ".2FA"          // The name of the dot directory we will use in the user home directory.
+#define DOT_DIRECTORY       ".Rollin"          // The name of the dot directory we will use in the user home directory.
 
 DatabaseKeyStorage::DatabaseKeyStorage()
 {
@@ -34,7 +34,7 @@ int DatabaseKeyStorage::storageId()
  */
 bool DatabaseKeyStorage::initKeyStorage()
 {
-    // Make sure the .2FA directory exists.
+    // Make sure the .Rollin directory exists.
     if (!dotDirectoryExistsOrIsCreated()) {
         LOG_ERROR("Unable to create the directory to store the key entry database!");
         return false;

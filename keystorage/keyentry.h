@@ -24,6 +24,9 @@ class KeyEntry : public QObject
     Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount)
     Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep)
     Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset)
+    Q_PROPERTY(QString mAlgorithm READ algorithm WRITE setAlgorithm)
+    Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter)
+    Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer)
 
 
 public:
@@ -60,6 +63,15 @@ public:
     void timeOffset(int &value);
     void setTimeOffset(int newvalue);
 
+    QString algorithm() const;
+    void setAlgorithm(const QString &newvalue);
+
+    int hotpCounter() const;
+    void setHotpCounter(int newvalue);
+
+    QString issuer() const;
+    void setIssuer(const QString &newvalue);
+
     KeyEntry& operator=(const KeyEntry& toCopy);
 
 private:
@@ -71,6 +83,9 @@ private:
     int mOutNumberCount;
     int mTimeStep;
     int mTimeOffset;
+    QString mAlgorithm;
+    int mHotpCounter;
+    QString mIssuer;
 };
 
 #endif // KEYENTRY_H

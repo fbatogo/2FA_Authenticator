@@ -17,8 +17,10 @@ Item {
         // Make sure the list is empty.
         toDeleteModel.clear();
 
-        for (var i = 0; i < keys.count(); i++) {
-            toDeleteModel.append({ identifier: keys.at(i).mIdentifier, itemChecked: false });
+        if (keys !== null) {
+            for (var i = 0; i < keys.count(); i++) {
+                toDeleteModel.append({ identifier: keys.at(i).mIdentifier, itemChecked: false });
+            }
         }
     }
 
