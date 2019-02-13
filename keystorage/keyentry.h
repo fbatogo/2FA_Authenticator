@@ -28,6 +28,8 @@ class KeyEntry : public QObject
     Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter)
     Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer)
 
+    Q_PROPERTY(QString mInvalidReason READ invalidReason)
+
 
 public:
     KeyEntry();
@@ -72,6 +74,9 @@ public:
     QString issuer() const;
     void setIssuer(const QString &newvalue);
 
+    QString invalidReason() const;
+    void setInvalidReason(const QString &newvalue);
+
     KeyEntry& operator=(const KeyEntry& toCopy);
 
 private:
@@ -86,6 +91,7 @@ private:
     QString mAlgorithm;
     int mHotpCounter;
     QString mIssuer;
+    QString mInvalidReason;
 };
 
 #endif // KEYENTRY_H
