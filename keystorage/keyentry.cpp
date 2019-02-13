@@ -33,6 +33,7 @@ void KeyEntry::clear()
     mAlgorithm = "SHA1";        // Recommended default.
     mHotpCounter = 0;           // HOTP isn't used by default.
     mIssuer.clear();
+    mInvalidReason.clear();
 }
 
 /**
@@ -43,6 +44,12 @@ void KeyEntry::clear()
  */
 bool KeyEntry::valid() const
 {
+    // If the invalid reason isn't an empty string, then this key entry object isn't valid.
+    if (!mInvalidReason.isEmpty()) {
+        LOG_DEBUG("Key entry is invalid because an 'invalid reason' was set.");
+        return false;
+    }
+
     // The identifier and secret can't be empty.
     if (mIdentifier.isEmpty() || mSecret.isEmpty()) {
         LOG_DEBUG("Either the identifier or secret is empty.");
@@ -194,6 +201,16 @@ QString KeyEntry::issuer() const
 void KeyEntry::setIssuer(const QString &newvalue)
 {
     mIssuer = newvalue;
+}
+
+QString KeyEntry::invalidReason() const
+{
+    return mInvalidReason;
+}
+
+void KeyEntry::setInvalidReason(const QString &newvalue)
+{
+    mInvalidReason = newvalue;
 }
 
 /**
