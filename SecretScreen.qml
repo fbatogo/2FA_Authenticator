@@ -88,36 +88,40 @@ Item {
             var code;
             var parts;
 
-            switch (temp.mCurrentCode.length) {
-            case 6:
-                // Add a space between the first and 2nd 3 characters.
-                parts = temp.mCurrentCode.match(/.{1,3}/g);
-                code = parts[0] + " " + parts[1];
-                break;
+            if (temp.mValid === true) {
+                switch (temp.mCurrentCode.length) {
+                case 6:
+                    // Add a space between the first and 2nd 3 characters.
+                    parts = temp.mCurrentCode.match(/.{1,3}/g);
+                    code = parts[0] + " " + parts[1];
+                    break;
 
-            case 7:
-                // Add a space between the first 4 and second 3 characters.
-                parts = temp.mCurrentCode.match(/.{1,4}/g);
-                code = parts[0] + " " + parts[1];
-                break;
+                case 7:
+                    // Add a space between the first 4 and second 3 characters.
+                    parts = temp.mCurrentCode.match(/.{1,4}/g);
+                    code = parts[0] + " " + parts[1];
+                    break;
 
-            case 8:
-                // Add a space between the first and 2nd 4 characters.
-                parts = temp.mCurrentCode.match(/.{1,4}/g);
-                code = parts[0] + " " + parts[1];
-                break;
+                case 8:
+                    // Add a space between the first and 2nd 4 characters.
+                    parts = temp.mCurrentCode.match(/.{1,4}/g);
+                    code = parts[0] + " " + parts[1];
+                    break;
 
-            default:
-                // We should only allow 6, 7, and 8, but if we get something else, just
-                // display the number with no spaces.
-                code = temp.mCurrentCode
-                break;
+                default:
+                    // We should only allow 6, 7, and 8, but if we get something else, just
+                    // display the number with no spaces.
+                    code = temp.mCurrentCode
+                    break;
+                }
+
+                // Calculate the percentage of time that has passed.
+                var timePercent = temp.mStartTime / temp.mTimeStep;
+
+                otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent) });
+            } else {
+                otpListModel.append({ identifier: temp.mIdentifier });
             }
-
-            // Calculate the percentage of time that has passed.
-            var timePercent = temp.mStartTime / temp.mTimeStep;
-
-            otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent) });
         }
     }
 

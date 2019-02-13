@@ -19,6 +19,8 @@ protected:
     static QString calculateTotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize);
 
     static int getStartTime(int timeStep);
+
+    static OtpEntry *createOtpEntry(const KeyEntry &keydata, const QString &calculatedCode, int startTime, const QString &invalidReason = "");
 };
 
 #endif // OTPHANDLER_H

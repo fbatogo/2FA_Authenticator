@@ -17,6 +17,16 @@ OtpEntry::OtpEntry(const OtpEntry &toCopy) :
     setStartTime(toCopy.startTime());
 }
 
+bool OtpEntry::valid() const
+{
+    return mValid;
+}
+
+void OtpEntry::setValid(bool newval)
+{
+    mValid = newval;
+}
+
 QString OtpEntry::identifier() const
 {
     return mIdentifier;
@@ -55,4 +65,14 @@ int OtpEntry::timeStep() const
 void OtpEntry::setTimeStep(int newvalue)
 {
     mTimeStep = newvalue;
+}
+
+QString OtpEntry::invalidReason()
+{
+    return mInvalidReason;
+}
+
+void OtpEntry::setInvalidReason(const QString &newvalue)
+{
+    mInvalidReason = newvalue;
 }

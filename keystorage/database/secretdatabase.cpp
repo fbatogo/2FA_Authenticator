@@ -207,7 +207,8 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, KeyEntry &result
  * @param result[OUT] - If this method returns true, this vector will contain all of the
  *      KeyEntry rows from the database.
  *
- * @return true if the rows were read.  false on error.
+ * @return true if the rows were read (even if they contained errors).
+ *      false on severe error, such as the database not being available.
  */
 bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 {
@@ -226,8 +227,9 @@ bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
     // Iterate each row, convert it to a KeyEntry, and stuff it in the result vector.
     while (query.next()) {
         if (!queryToKeyEntry(query, entry)) {
-            LOG_ERROR("Unable to convert a database result to a KeyEntry.");
-            return false;
+            LOG_WARNING("Unable to convert a database result to a KeyEntry.");
+            // Continue anyway.  We want to include invalid key entries in the
+            // resulting data.
         }
 
         // Add it to the result list.
@@ -368,78 +370,92 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
 {
     QString tempStr;
     int tempInt;
+    bool success = true;        // Keep a positive attitude! :-)
 
+    // Attempt to read all of the data from the database, even if we get an error reading
+    // any of the entries.   If we *DO* get an error reading any entries, add an
+    // invalidReason to the resulting KeyEntry object that indicates why it failed.
     if (!queryEntryToString(query, "identifier", tempStr)) {
+        result.setInvalidReason("Unable to read the identifier from the database!");
         LOG_ERROR("Failed to get the identifier from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setIdentifier(tempStr);
     }
-
-    result.setIdentifier(tempStr);
 
     if (!queryEntryToString(query, "secret", tempStr)) {
+        result.setInvalidReason("Unable to read the secret value from the database!");
         LOG_ERROR("Failed to get the secret from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setSecret(tempStr);
     }
-
-    result.setSecret(tempStr);
 
     if (!queryEntryToInt(query, "keyType", tempInt)) {
+        result.setInvalidReason("Failed to read the key type from the database!");
         LOG_ERROR("Failed to get the key type from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setKeyType(tempInt);
     }
-
-    result.setKeyType(tempInt);
 
     if (!queryEntryToInt(query, "otpType", tempInt)) {
+        result.setInvalidReason("Failed to get the OTP type from the database!");
         LOG_ERROR("Failed to get the OTP type from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setOtpType(tempInt);
     }
-
-    result.setOtpType(tempInt);
 
     if (!queryEntryToInt(query, "outNumberCount", tempInt)) {
+        result.setInvalidReason("Failed to get the number of digits to show!");
         LOG_ERROR("Failed to get the number of numbers to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setOutNumberCount(tempInt);
     }
-
-    result.setOutNumberCount(tempInt);
 
     if (!queryEntryToInt(query, "timeStep", tempInt)) {
+        result.setInvalidReason("Failed to get the time step from the database!");
         LOG_ERROR("Failed to get the time step to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setTimeStep(tempInt);
     }
-
-    result.setTimeStep(tempInt);
 
     if (!queryEntryToInt(query, "timeOffset", tempInt)) {
+        result.setInvalidReason("Failed to get the time offset from the database!");
         LOG_ERROR("Failed to get the time offset to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setTimeOffset(tempInt);
     }
-
-    result.setTimeOffset(tempInt);
 
     if (!queryEntryToString(query, "algorithm", tempStr)) {
+        result.setInvalidReason("Failed to get the hash algorithm from the database!");
         LOG_ERROR("Failed to get the algorithm to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setAlgorithm(tempStr);
     }
-
-    result.setAlgorithm(tempStr);
 
     if (!queryEntryToInt(query, "hotpCounter", tempInt)) {
+        result.setInvalidReason("Failed to get the HOTP counter from the database!");
         LOG_ERROR("Failed to get the HOTP counter to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setHotpCounter(tempInt);
     }
-
-    result.setHotpCounter(tempInt);
 
     if (!queryEntryToString(query, "issuer", tempStr)) {
+        result.setInvalidReason("Failed to get the issuer from the database!");
         LOG_ERROR("Failed to get the key issuer name to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setIssuer(tempStr);
     }
 
-    result.setIssuer(tempStr);
-
-    return true;
+    return success;
 }
 
 /**
