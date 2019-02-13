@@ -63,6 +63,9 @@ bool KeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
 /**
  * @brief KeyStorage::getAllKeys - Attempt to get a list of all key entries stored in all storage methods.
  *
+ * @note The resulting list may contain key entries that are marked as 'invalid'.  This is
+ *      to allow the UI to display as much information about the invalid keys as possible.
+ *
  * @param result[OUT] - If this method returns true, this variable will contain a vector of all of the
  *      key entries found.  If this method returns false, any values in this variable should be ignored.
  *

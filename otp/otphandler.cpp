@@ -30,45 +30,47 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     unsigned char *dSecret;
     size_t dSize;
     QString calculatedCode;
-    OtpEntry *result;
     int startTime;
 
     // Make sure the key entry provided is valid.
+    LOG_DEBUG("Checking if keydata is valid.");
     if (!keydata.valid()) {
+        // It isn't valid, so just copy as much information as possible to our OtpEntry.
         LOG_ERROR("The key data provided to calculate the OTP from was invalid!");
-        return nullptr;
+        return createOtpEntry(keydata, "", -1);
     }
 
     // Start by converting the secret to the correct format for us to use.
+    LOG_DEBUG("Decoding secret.");
     if (!decodeSecret(keydata, &dSecret, &dSize)) {
         LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata.identifier());
-        return nullptr;
+
+        // Set our invalidReason, and return the otp object.
+        return createOtpEntry(keydata, "", -1, "Unable to decode the key secret value!");
     }
 
     // Calculate the OTP code.
+    LOG_DEBUG("Calculating code.");
     calculatedCode = calculateCode(keydata, dSecret, dSize);
+    LOG_DEBUG("Code calculated.");
 
     // Free the memory from dSecret before checking the result.
     free(dSecret);
     dSecret = nullptr;
 
+    LOG_DEBUG("Checking if code is empty.");
     if (calculatedCode.isEmpty()) {
         LOG_ERROR("Unable to calculate the OTP value for identifier : " + keydata.identifier());
-        return nullptr;
+
+        // Set our invalidReason, and return the otp object.
+        return createOtpEntry(keydata, "", -1, "Unable to calculate the OTP value!");
     }
 
     // Calculate the number of seconds in to the lifetime of the OTP that we are.
+    LOG_DEBUG("Calculating the start time.");
     startTime = getStartTime(keydata.timeStep());
 
-    // Take the resulting OTP code and data from the KeyEntry and create the
-    // OtpEntry.
-    result = new OtpEntry();
-    result->setIdentifier(keydata.identifier());
-    result->setCurrentCode(calculatedCode);
-    result->setStartTime(startTime);
-    result->setTimeStep(keydata.timeStep());
-
-    return result;
+    return createOtpEntry(keydata, calculatedCode, startTime);
 }
 
 /**
@@ -128,10 +130,14 @@ bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, unsigned char **decode
  */
 QString OtpHandler::calculateCode(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
 {
+    QString temp;
+
     // Figure out which type of OTP we need to calculate.
     switch (keydata.otpType()) {
     case KEYENTRY_OTPTYPE_TOTP:
-        return calculateTotp(keydata, decodedSecret, decodedSize);
+        temp = calculateTotp(keydata, decodedSecret, decodedSize);
+        LOG_DEBUG("After calc totp.");
+        return temp;
     }
 
     // If we get here, then we don't know the OTP type to generate.
@@ -161,9 +167,11 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
     now = time(nullptr);
 
     // Calculate the TOTP with HMAC-SHA1
+    LOG_DEBUG("Calculating totp.");
     otp = totp.calculate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.outNumberCount());
 
     // Return the calculated value.
+    LOG_DEBUG("Done.");
     return QString::fromStdString(otp);
 }
 
@@ -188,4 +196,47 @@ int OtpHandler::getStartTime(int timeStep)
 
     // Return the number of seconds beyond the time step that have elapsed.
     return (seconds & timeStep);
+}
+
+/**
+ * @brief OtpHandler::createOtpEntry - Create an OTP entry using the information from a
+ *      KeyEntry object, and other values we might need to use.
+ *
+ * @param keydata - The KeyData object that we want to create an OTP entry for.
+ * @param calculatedCode - The code that has been calculated to be used.  If the keydata
+ *      entry is invalid, this parameter should be an empty string.
+ * @param startTime - The time that the calculatedCode originally became valid.  If the
+ *      keydata object is invalid, this should be set to -1.
+ * @param invalidReason - If this value is not an empty string, this invalid reason will
+ *      be used in the resulting OtpEntry object.  If it *IS* an empty string, then the
+ *      object will either be valid, or contain an invalidReason copied from the KeyEntry.
+ *
+ * @return OtpEntry pointer containing the useful components of the parameters provided.
+ */
+OtpEntry *OtpHandler::createOtpEntry(const KeyEntry &keydata, const QString &calculatedCode, int startTime, const QString &invalidReason)
+{
+    OtpEntry *result;
+
+    // Create our OtpEntry object.
+    result = new OtpEntry();
+    if (result == nullptr) {
+        LOG_ERROR("Unable to allocate memory to store an OTP entry!");
+        return nullptr;
+    }
+
+    // Copy over the relevant values.
+    result->setIdentifier(keydata.identifier());
+    result->setCurrentCode(calculatedCode);
+    result->setStartTime(startTime);
+    result->setTimeStep(keydata.timeStep());
+
+    if (invalidReason.isEmpty()) {
+        result->setInvalidReason(keydata.invalidReason());
+        result->setValid(keydata.valid());
+    } else {
+        result->setInvalidReason(invalidReason);
+        result->setValid(false);
+    }
+
+    return result;
 }

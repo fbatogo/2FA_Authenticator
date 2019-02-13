@@ -115,7 +115,7 @@ UiKeyEntries *InterfaceSingleton::keyEntries()
         result = new UiKeyEntries();
 
         if (!result->populateEntries(allKeys)) {
-            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI!");
+            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (1)");
 
             // Clean up.
             delete result;
@@ -146,7 +146,7 @@ UiOtpEntries *InterfaceSingleton::otpEntries()
         result = new UiOtpEntries();
 
         if (!result->populateEntries(allKeys)) {
-            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI!");
+            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (2)");
 
             // Clean up.
             delete result;

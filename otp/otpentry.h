@@ -12,10 +12,15 @@ class OtpEntry : public QObject
     Q_PROPERTY(QString mCurrentCode READ currentCode)
     Q_PROPERTY(int mStartTime READ startTime)
     Q_PROPERTY(int mTimeStep READ timeStep)
+    Q_PROPERTY(bool mValid READ valid)
+    Q_PROPERTY(QString mInvalidReason READ invalidReason)
 
 public:
-    OtpEntry(QObject *parent = 0);
+    OtpEntry(QObject *parent = nullptr);
     OtpEntry(const OtpEntry &toCopy);
+
+    bool valid() const;
+    void setValid(bool newval);
 
     QString identifier() const;
     void setIdentifier(const QString &newvalue);
@@ -29,11 +34,16 @@ public:
     int timeStep() const;
     void setTimeStep(int newvalue);
 
+    QString invalidReason();
+    void setInvalidReason(const QString &newvalue);
+
 private:
     QString mIdentifier;
     QString mCurrentCode;
     int mStartTime;
     int mTimeStep;
+    bool mValid;
+    QString mInvalidReason;
 };
 
 #endif // OTPENTRY_H
