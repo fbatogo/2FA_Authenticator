@@ -29,11 +29,13 @@ Item {
 
         Rectangle {
             height: 10
+            color: "transparent"
         }
 
         RowLayout {
             Rectangle {
                 width: 15
+                color: "transparent"
             }
 
             Text {
@@ -42,11 +44,28 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
+                color: "transparent"
             }
         }
 
-        Rectangle {
-            height: 2
+        RowLayout {
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
+
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: "transparent"
+                border.color: "grey"
+                border.width: 1
+            }
+
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
         }
 
         RowLayout {
@@ -54,44 +73,60 @@ Item {
             Layout.fillWidth: true
 
             Rectangle {
-                width: 10
+                width: 5
+                color: "transparent"
             }
 
-            Rectangle {
+            ListView {
+                id: itemsToDelete
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                border.color: "black"
-                border.width: 1
+                model: toDeleteModel
+                delegate: itemsToDeleteDelegate
+                clip: true
+            }
 
-                ListView {
-                    id: itemsToDelete
+            Component {
+                id: itemsToDeleteDelegate
 
-                    anchors.fill: parent
-                    model: toDeleteModel
-                    delegate: itemsToDeleteDelegate
-                    clip: true
-                }
-
-                Component {
-                    id: itemsToDeleteDelegate
-
-                    CheckBox {
-                        id: checkbox
-                        tristate: false
-                        checked: itemChecked
-                        text: identifier
-                        onToggled: itemChecked = checkbox.checked
-                    }
-                }
-
-                ListModel {
-                    id: toDeleteModel
+                CheckBox {
+                    id: checkbox
+                    tristate: false
+                    checked: itemChecked
+                    text: identifier
+                    onToggled: itemChecked = checkbox.checked
                 }
             }
 
+            ListModel {
+                id: toDeleteModel
+            }
+
             Rectangle {
-                width: 10
+                width: 5
+                color: "transparent"
+            }
+        }
+
+        RowLayout {
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
+
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: "transparent"
+                border.color: "grey"
+                border.width: 1
+            }
+
+            Rectangle {
+                color: "transparent"
+                width: 5
             }
         }
 
@@ -100,6 +135,7 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
+                color: "transparent"
             }
 
             Button {
@@ -141,11 +177,13 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
+                color: "transparent"
             }
         }
 
         Rectangle {
             height: 10
+            color: "transparent"
         }
     }
 }

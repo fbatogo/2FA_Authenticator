@@ -13,7 +13,6 @@ Item {
         var rawFile = new XMLHttpRequest();
         var resultData = null;
 
-        console.log("Loading the licenses text...");
         rawFile.open("GET", "resources/licenses.txt", false);
 
         // Set up a callback to be called when the data comes in.
@@ -31,7 +30,6 @@ Item {
         rawFile.send(null);
 
         licenseText.text = resultData;
-        console.log("License text : " + resultData);
     }
 
     Rectangle {
@@ -54,7 +52,7 @@ Item {
                 Text {
                     width: parent.width
                     horizontalAlignment: Text.Center
-                    text: "Rollin' Version " + InterfaceSingleton.version()
+                    text: "Version " + InterfaceSingleton.version()
                 }
 
                 Rectangle {
@@ -64,7 +62,7 @@ Item {
 
             Rectangle {
                 width: parent.width
-                height: 20
+                height: 5
             }
 
             RowLayout {

@@ -9,59 +9,82 @@ ApplicationWindow {
     width: 240
     height: 320
     title: "Rollin'"
-    //visibility: "FullScreen"
     header: ToolBar {
         id: topToolbar
 
         width: parent.width
-        height: topToolbarTitle.height + 10
+        height: bannerTextSize.height + 10
+
+        position: ToolBar.Header
 
         background: Rectangle {
             color: "white"
+
+            Rectangle {
+                width: parent.width
+                height: 1
+                anchors.bottom: parent.bottom
+                color: "transparent"
+                border.color: "#000000"
+            }
         }
 
-        Rectangle {
-            anchors.fill: parent
+        Image {
+            id: menuButton
+            source: "resources/menu.svg"
+            anchors.left: parent.left
+            anchors.top: parent.top
             anchors.leftMargin: 5
-//            color: "white"
+            width: topToolbar.height
+            height: topToolbar.height
+            z: 1
+        }
 
-            Image {
-                id: menuButton
-                source: "resources/menu.svg"
-                width: topToolbar.height
-                height: topToolbar.height
+        MouseArea {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: topToolbar.height
+            height: topToolbar.height
+            z:2
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        if (screenStack.depth === 1) {
-                            // Handle opening and closing the side bar.
-                            if (!drawer.opened) {
-                                drawer.open()
-                            }
-                        } else {
-                            // Pop the widget off the stack.
-                            screenStack.pop();
-                        }
+            onClicked: {
+                if (screenStack.depth === 1) {
+                    // Handle opening and closing the side bar.
+                    if (!drawer.opened) {
+                        drawer.open()
                     }
+                } else {
+                    // Pop the widget off the stack.
+                    screenStack.pop();
                 }
             }
         }
 
-        Text {
-            id: topToolbarTitle
-
-            anchors.centerIn: parent
+        TextMetrics {
+            id: bannerTextSize
 
             text: "Rollin'"
             font.bold: true
             font.pointSize: 12
         }
 
-        SideBar {
-            id: drawer
+        Text {
+            id: topToolbarTitle
+            anchors.fill: parent
+
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            text: bannerTextSize.text
+            font.bold: bannerTextSize.font.bold
+            font.pointSize: bannerTextSize.font.pointSize
         }
     }
+
+    SideBar {
+        id: drawer
+    }
+
 
     StackView {
         id: screenStack

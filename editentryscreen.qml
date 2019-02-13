@@ -30,11 +30,13 @@ Item {
 
         Rectangle {
             height: 10
+            color: "transparent"
         }
 
         RowLayout {
             Rectangle {
-                width: 15
+                width: 10
+                color: "transparent"
             }
 
             Text {
@@ -43,11 +45,28 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
+                color: "transparent"
             }
         }
 
-        Rectangle {
-            height: 2
+        RowLayout {
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
+
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: "transparent"
+                border.color: "grey"
+                border.width: 1
+            }
+
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
         }
 
         RowLayout {
@@ -56,74 +75,76 @@ Item {
 
             Rectangle {
                 width: 10
+                color: "transparent"
             }
 
-            Rectangle {
+            ListView {
+                id: itemToEdit
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                border.color: "black"
-                border.width: 1
+                model: toEditModel
+                delegate: itemsToEditDelegate
+                clip: true
+            }
 
-                ListView {
-                    id: itemToEdit
+            Component {
+                id: itemsToEditDelegate
 
-                    anchors.fill: parent
-                    model: toEditModel
-                    delegate: itemsToEditDelegate
-                    clip: true
-                }
+                Text {
+                    Layout.fillWidth: true
+                    id: toEditText
+                    text: identifier
+                    font.pixelSize: 16
 
-                Component {
-                    id: itemsToEditDelegate
-
-                    Rectangle {
+                    MouseArea {
                         anchors.fill: parent
-                        anchors.leftMargin: 3
-                        anchors.rightMargin: 3
+                        z:1
 
-                        Text {
-                            anchors.fill: parent
-                            id: toEditText
-                            text: identifier
-                            font.pixelSize: 10
+                        onClicked: {
+                            var error = false;
+                            console.log("Item clicked! -- " + identifier);
 
-                            MouseArea {
-                                anchors.fill: parent
-                                z:1
-
-                                onClicked: {
-                                    var error = false;
-                                    console.log("Item clicked!");
-        /*
-                                    for (var i = 0; i < toDeleteModel.count; i++) {
-                                        if (toDeleteModel.get(i).itemChecked) {
-                                            if (!InterfaceSingleton.deleteKey(toDeleteModel.get(i).identifier)) {
-                                                console.log("Unable to delete key with the identifier : " + toDeleteModel.get(i).identifier);
-                                                error = true;
-                                            } else {
-                                                // XXX
-                                            }
-                                        }
-                                    } */
-                                }
-                            }
+                            // XXX Push the edit screen on the stack, and pass the identifier value that was clicked.
                         }
                     }
                 }
+            }
 
-                ListModel {
-                    id: toEditModel
-                }
+            ListModel {
+                id: toEditModel
             }
 
             Rectangle {
                 width: 10
+                color: "transparent"
+            }
+        }
+
+        RowLayout {
+            Rectangle {
+                color: "transparent"
+                width: 5
+            }
+
+            Rectangle {
+                height: 1
+                Layout.fillWidth: true
+                color: "transparent"
+                border.color: "grey"
+                border.width: 1
+            }
+
+            Rectangle {
+                color: "transparent"
+                width: 5
             }
         }
 
         Rectangle {
-            height: 10
+            height: 5
+            color: "transparent"
         }
     }
 }
