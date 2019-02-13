@@ -9,7 +9,7 @@ Item {
 
         // Start the timer.
         updateTimer.start();
-    }    
+    }
 
     UiClipboard {
         id: clipboard
@@ -37,32 +37,34 @@ Item {
             for(var i = 0; i < otpListModel.count; i++) {
                 var listItem = otpListModel.get(i);
 
-                listItem.currentTimer++;
+                if (!listItem.showError) {
+                    listItem.currentTimer++;
 
-                if (listItem.currentTimer > listItem.timeStep) {
-                    // Reset the timer to 0.
-                    listItem.currentTimer = 0;
+                    if (listItem.currentTimer > listItem.timeStep) {
+                        // Reset the timer to 0.
+                        listItem.currentTimer = 0;
 
-                    if (!updatedOtps) {
-                        console.log("Get all OTP values...");
-                        updatedOtps = true;
+                        if (!updatedOtps) {
+                            console.log("Get all OTP values...");
+                            updatedOtps = true;
 
-                        populateListModel();
-                        return;
+                            populateListModel();
+                            return;
+                        }
                     }
-                }
 
-                if (listItem.timeStep <= 0) {
-                    console.error("Time step is <= 0.  Ignoring!");
-                } else {
-                    if (listItem.currentTimer === 0) {
-                        listItem.circleShown = 0;
+                    if (listItem.timeStep <= 0) {
+                        console.error("Time step is <= 0.  Ignoring!");
                     } else {
-                        // Calculate the percentage of time that has passed.
-                        var timePercent = listItem.currentTimer / listItem.timeStep;
+                        if (listItem.currentTimer === 0) {
+                            listItem.circleShown = 0;
+                        } else {
+                            // Calculate the percentage of time that has passed.
+                            var timePercent = listItem.currentTimer / listItem.timeStep;
 
-                        // Then, figure out how much of the circle to draw.
-                        listItem.circleShown = 360 * timePercent;
+                            // Then, figure out how much of the circle to draw.
+                            listItem.circleShown = 360 * timePercent;
+                        }
                     }
                 }
             }
@@ -118,9 +120,9 @@ Item {
                 // Calculate the percentage of time that has passed.
                 var timePercent = temp.mStartTime / temp.mTimeStep;
 
-                otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent) });
+                otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent), showError: false, errorText: "" });
             } else {
-                otpListModel.append({ identifier: temp.mIdentifier });
+                otpListModel.append({ identifier: temp.mIdentifier, otpCode: "", showError: true, errorText: temp.mInvalidReason });
             }
         }
     }
@@ -133,128 +135,151 @@ Item {
         model: otpListModel
         delegate: otpListDelegate
         clip: true
+        spacing: 0
     }
 
     Component {
         id: otpListDelegate
 
-        Item {
-            width: parent.width
-            height: entryRow.height
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
 
-            ColumnLayout {
-                anchors.fill: parent
+            // Show the normal column widget.
+            RowLayout {
+                id: entryRow
+                visible: !showError
 
-                Rectangle {
+                Layout.fillWidth: true
+                height: keyColumn.height
+
+                Column {
+                    id: keyColumn
+                    visible: !showError
                     Layout.fillWidth: true
-                    height: 1
-                    color: "black"
-                }
+                    height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
 
-                RowLayout {
-                    id: entryRow
+                    Text {
+                        id: identifierText
+                        width: parent.width
 
-                    width: parent.width
-                    height: keyContainerFrame.height
+                        visible: !showError
 
-                    Rectangle {
-                        id: keyContainerFrame
-                        Layout.fillWidth: true
-                        height: rowColumnItem.height
-
-                        Column {
-                            Item {
-                                id: rowColumnItem
-                                width: parent.width
-                                height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
-
-                                Text {
-                                    id: identifierText
-                                    width: parent.width
-
-                                    // The name of the site the key is for.
-                                    anchors.top: rowColumnItem.top
-                                    anchors.topMargin: 5
-                                    anchors.left: rowColumnItem.left
-                                    anchors.leftMargin: 5
-                                    text: identifier
-                                    font.bold: true
-                                    font.pointSize: 12
-                                }
-
-
-                                Text {
-                                    id: otpNumberLabel
-                                    width: parent.width
-
-                                    anchors.top: identifierText.bottom
-                                    anchors.topMargin: 5
-                                    anchors.left: identifierText.left
-                                    anchors.leftMargin: 25     // Move it in 10% of the width of the item space.
-                                    text: otpCode
-                                    color: "blue"
-                                    font.pointSize: 32
-                                    font.bold: true
-                                }
-                            }
-                        }
+                        // The name of the site the key is for.
+                        x: 5
+                        y: 5
+                        text: identifier
+                        font.bold: true
+                        font.pointSize: 14
                     }
 
-                    // Show the clock icon.
-                    Rectangle {
-                        id: clockFrame
 
-                        width: keyContainerFrame.height
-                        height: keyContainerFrame.height
+                    Text {
+                        id: otpNumberLabel
+                        width: parent.width
 
-                        Item {
-                            anchors.fill: parent
-                            anchors.topMargin: 10
-                            anchors.leftMargin: 10
+                        visible: !showError
 
-                            ProgressCircle {
-                                id: timer
-                                size: clockFrame.width - 20
-                                arcBegin: 0
-                                arcEnd: (360 - circleShown)
-                            }
-                        }
-                    }
-
-                    // Show a copy button to copy the current value.
-                    Rectangle {
-                        id: copyButton
-
-                        width: keyContainerFrame.height
-                        height: keyContainerFrame.height
-
-                        Item {
-                            anchors.fill: parent
-                            anchors.margins: 10
-
-                            Image {
-                                source: "resources/copy.svg"
-                                sourceSize.height: keyContainerFrame.height - 20
-                                sourceSize.width: keyContainerFrame.height - 20
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                console.log("Copied to the clipboard.");
-                                clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
-                            }
-                        }
+                        text: otpCode
+                        x: 25
+                        color: "blue"
+                        font.pointSize: 32
+                        font.bold: true
                     }
                 }
 
+                // Show the clock icon.
                 Rectangle {
-                    Layout.fillWidth: true
-                    height: 1
-                    color: "black"
+                    id: clockFrame
+
+                    width: keyColumn.height
+                    height: keyColumn.height
+
+                    ProgressCircle {
+                        id: timer
+                        x: 5
+                        y: 5
+                        size: clockFrame.width - 10
+                        arcBegin: 0
+                        arcEnd: (360 - circleShown)
+                    }
+                }
+
+                // Show a copy button to copy the current value.
+                Rectangle {
+                    id: copyButton
+
+                    width: keyColumn.height
+                    height: keyColumn.height
+
+                    Image {
+                        x: 5
+                        y: 5
+                        source: "resources/copy.svg"
+                        sourceSize.height: keyColumn.height - 10
+                        sourceSize.width: keyColumn.height - 10
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("Copied to the clipboard.");
+                            clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
+                        }
+                    }
                 }
             }
+
+            // Error version of the widget.
+            RowLayout {
+                id: errorEntryRow
+                visible: showError
+
+                Layout.fillWidth: true
+                height: keyColumn.height
+
+                Column {
+                    id: errorContainerFrame
+                    Layout.fillWidth: true
+                    y: 5
+                    height: errorIdentifierText.height + errorLabel.height + 5 + 5
+                    visible: showError
+
+                    Text {
+                        id: errorIdentifierText
+                        width: parent.width
+                        y: 5
+                        x: 5
+                        visible: showError
+
+                        // The name of the site the key is for.
+                        text: identifier
+                        font.bold: true
+                        font.pointSize: 14
+                    }
+
+
+                    Text {
+                        id: errorLabel
+                        width: parent.width
+                        x: 25
+
+                        visible: showError
+
+                        text: errorText
+                        color: "red"
+                        font.pointSize: 16
+                    }
+                }
+            }
+
+            Rectangle {
+                id: bottomLine
+                Layout.fillWidth: true
+                height: 1
+                color: "black"
+            }
+            //            }
         }
     }
 

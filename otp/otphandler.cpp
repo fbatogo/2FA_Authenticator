@@ -33,7 +33,6 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     int startTime;
 
     // Make sure the key entry provided is valid.
-    LOG_DEBUG("Checking if keydata is valid.");
     if (!keydata.valid()) {
         // It isn't valid, so just copy as much information as possible to our OtpEntry.
         LOG_ERROR("The key data provided to calculate the OTP from was invalid!");
@@ -41,7 +40,6 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     }
 
     // Start by converting the secret to the correct format for us to use.
-    LOG_DEBUG("Decoding secret.");
     if (!decodeSecret(keydata, &dSecret, &dSize)) {
         LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata.identifier());
 
@@ -50,15 +48,12 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     }
 
     // Calculate the OTP code.
-    LOG_DEBUG("Calculating code.");
     calculatedCode = calculateCode(keydata, dSecret, dSize);
-    LOG_DEBUG("Code calculated.");
 
     // Free the memory from dSecret before checking the result.
     free(dSecret);
     dSecret = nullptr;
 
-    LOG_DEBUG("Checking if code is empty.");
     if (calculatedCode.isEmpty()) {
         LOG_ERROR("Unable to calculate the OTP value for identifier : " + keydata.identifier());
 
@@ -67,7 +62,6 @@ OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
     }
 
     // Calculate the number of seconds in to the lifetime of the OTP that we are.
-    LOG_DEBUG("Calculating the start time.");
     startTime = getStartTime(keydata.timeStep());
 
     return createOtpEntry(keydata, calculatedCode, startTime);
@@ -135,9 +129,7 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, const unsigned char *
     // Figure out which type of OTP we need to calculate.
     switch (keydata.otpType()) {
     case KEYENTRY_OTPTYPE_TOTP:
-        temp = calculateTotp(keydata, decodedSecret, decodedSize);
-        LOG_DEBUG("After calc totp.");
-        return temp;
+        return calculateTotp(keydata, decodedSecret, decodedSize);
     }
 
     // If we get here, then we don't know the OTP type to generate.
@@ -167,11 +159,9 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
     now = time(nullptr);
 
     // Calculate the TOTP with HMAC-SHA1
-    LOG_DEBUG("Calculating totp.");
     otp = totp.calculate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.outNumberCount());
 
     // Return the calculated value.
-    LOG_DEBUG("Done.");
     return QString::fromStdString(otp);
 }
 

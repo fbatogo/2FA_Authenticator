@@ -37,20 +37,16 @@ bool UiOtpEntries::populateEntries(QList<KeyEntry> &toCalculate)
     mEntryList.clear();
 
     for (int i = 0; i < toCalculate.size(); i++) {
-        LOG_DEBUG("Calculating entry..");
         temp = OtpHandler::calculateFromKeyEntry(toCalculate.at(i));
         if (temp == nullptr) {
             LOG_ERROR("Unable to calculate the OTP data for identifier : " + toCalculate.at(i).identifier());
             return false;
         }
-        LOG_DEBUG("Added an OTP entry!");
 
         // Save it to our internal list.
         mEntryList.push_back(temp);
-        LOG_DEBUG("Pushed one..");
     }
 
-    LOG_DEBUG("Returning " + QString::number(mEntryList.size()) + " OTP entries!");
     return true;
 }
 

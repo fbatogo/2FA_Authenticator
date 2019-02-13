@@ -98,11 +98,13 @@ Item {
             Rectangle {
                 width: parent.width
                 height: 10
+                color: "transparent"
             }
 
             RowLayout {
                 Rectangle {
-                    width: 20
+                    width: 10
+                    color: "transparent"
                 }
 
                 Text {
@@ -111,16 +113,39 @@ Item {
 
                 Rectangle {
                     Layout.fillWidth: true
+                    color: "transparent"
                 }
-            }
-
-            Rectangle {
-                height: 10
             }
 
             RowLayout {
                 Rectangle {
-                    width: 50
+                    color: "transparent"
+                    width: 5
+                }
+
+                Rectangle {
+                    height: 1
+                    Layout.fillWidth: true
+                    color: "transparent"
+                    border.color: "grey"
+                    border.width: 1
+                }
+
+                Rectangle {
+                    color: "transparent"
+                    width: 5
+                }
+            }
+
+            Rectangle {
+                height: 5
+                color: "transparent"
+            }
+
+            RowLayout {
+                Rectangle {
+                    width: 20
+                    color: "transparent"
                 }
 
                 GridLayout {
@@ -182,6 +207,7 @@ Item {
                         Layout.column: 1
                         height: siteNameLabel.height * 2
                         Layout.fillWidth: true
+                        color: "transparent"
 
                         border.color: "black"
                         border.width: 1
@@ -253,6 +279,7 @@ Item {
                         Layout.column: 1
                         Layout.fillWidth: true
                         height: secretValueLabel.height * 2
+                        color: "transparent"
 
                         border.color: "black"
                         border.width: 1
@@ -323,18 +350,21 @@ Item {
                 }
 
                 Rectangle {
-                    width: 50
+                    width: 20
+                    color: "transparent"
                 }
             }
 
             Rectangle {
                 height: 5
                 Layout.fillWidth: true
+                color: "transparent"
             }
 
             RowLayout {
                 Rectangle {
                     Layout.fillWidth: true
+                    color: "transparent"
                 }
 
                 Text {
@@ -348,22 +378,40 @@ Item {
 
                 Rectangle {
                     Layout.fillWidth: true
+                    color: "transparent"
                 }
             }
 
             Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                color: "transparent"
             }
 
-            Rectangle {
-                height: 10
-                Layout.fillWidth: true
+            RowLayout {
+                Rectangle {
+                    color: "transparent"
+                    width: 5
+                }
+
+                Rectangle {
+                    height: 1
+                    Layout.fillWidth: true
+                    color: "transparent"
+                    border.color: "grey"
+                    border.width: 1
+                }
+
+                Rectangle {
+                    color: "transparent"
+                    width: 5
+                }
             }
 
             RowLayout {
                 Rectangle {
                     Layout.fillWidth: true
+                    color: "transparent"
                 }
 
                 Button {
@@ -467,6 +515,7 @@ Item {
 
                 Rectangle {
                     width: 10
+                    color: "transparent"
                 }
 
                 Button {
@@ -485,6 +534,7 @@ Item {
 
                 Rectangle {
                     Layout.fillWidth: true
+                    color: "transparent"
                 }
             }
 
@@ -492,6 +542,7 @@ Item {
             Rectangle {
                 height: 10
                 Layout.fillWidth: true
+                color: "transparent"
             }
         }
     }
