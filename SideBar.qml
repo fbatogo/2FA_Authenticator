@@ -110,7 +110,7 @@ Drawer {
                     case 0:
                         // New Key Entry screen.
                         console.info("New key entry clicked...");
-                        screenStack.push(Qt.resolvedUrl("NewEntryScreen.qml"));
+                        screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"));
                         break;
 
                     case 1:
