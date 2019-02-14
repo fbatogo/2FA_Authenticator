@@ -8,24 +8,41 @@ import QRCodeSingleton 1.0
 Item {
     id: newEntryScreen
 
+    property bool editing: false
+    property string identifier: ""
+
     // XXX Only enable the save button when we have data in all of the required fields!
 
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
         menuButton.source = "resources/back.svg";
 
-        // If we weren't built with ZBar, don't show the button to use the camera.
-        if (InterfaceSingleton.haveZbar() === false) {
-            // Hide the camera button.
+        // If we are editing, we don't want to show the ZBar button, and we want to change a
+        // few other things.
+        if (editing) {
             getFromCameraButton.visible = false;
-        } else {
-            // If we don't have any cameras available, disable the button to read a QR code.
-            if (QtMultimedia.availableCameras.length <= 0) {
-                console.log("No cameras found, disabling the acquire with camera button.");
-                getFromCameraButton.enabled = false;
 
-                // Change the text.
-                getFromCameraButton.text = qsTr("No cameras found.");
+            var keyEntry = InterfaceSingleton.keyEntryFromIdentifier(identifier);
+
+            // Set the UI to show our values.
+            siteNameInput.text = keyEntry.mIdentifier;
+            secretValueInput.text = keyEntry.mSecret;
+
+            setComboBoxes(keyEntry.mOtpType, keyEntry.mKeyType, keyEntry.mOutNumberCount);
+        } else {
+            // If we weren't built with ZBar, don't show the button to use the camera.
+            if (InterfaceSingleton.haveZbar() === false) {
+                // Hide the camera button.
+                getFromCameraButton.visible = false;
+            } else {
+                // If we don't have any cameras available, disable the button to read a QR code.
+                if (QtMultimedia.availableCameras.length <= 0) {
+                    console.log("No cameras found, disabling the acquire with camera button.");
+                    getFromCameraButton.enabled = false;
+
+                    // Change the text.
+                    getFromCameraButton.text = qsTr("No cameras found.");
+                }
             }
         }
     }
@@ -57,34 +74,74 @@ Item {
                 }
 
                 var digits = QRCodeSingleton.parameterByKey("digits");
-                if (digits) {
-                    console.log("Digits to use : " + digits);
+                var otpType = QRCodeSingleton.type();
+                //var encodingType = QRCodeSingleton.parameterByKey()
 
-                    switch (parseInt(digits)) {
-                    case 6:
-                        // Set the combo box to index 0.
-                        numberCountComboBox.currentIndex = 0;
-                        break;
-
-                    case 7:
-                        // Set the combo box to index 1.
-                        numberCountComboBox.currentIndex = 1;
-                        break;
-
-                    case 8:
-                        // Set the combo box to index 2.
-                        numberCountComboBox.currentIndex = 2;
-                        break;
-
-                    default:
-                        console.log("Got an invalid number of digits!");
-                        return;
-                    }
-                } else {
-                    // No digits, assume the default of 6.
-                    numberCountComboBox.currentIndex = 0;
-                }
+                setComboBoxes(otpType, 1, digits);
             }  // Otherwise, the user may have cancelled, so don't do anything.
+        }
+    }
+
+    function setComboBoxes(otpType, encodingType, digitCount) {
+
+        if (digitCount) {
+            switch (parseInt(digitCount)) {
+            case 6:
+                // Set the combo box to index 0.
+                numberCountComboBox.currentIndex = 0;
+                break;
+
+            case 7:
+                // Set the combo box to index 1.
+                numberCountComboBox.currentIndex = 1;
+                break;
+
+            case 8:
+                // Set the combo box to index 2.
+                numberCountComboBox.currentIndex = 2;
+                break;
+
+            default:
+                console.log("Got an invalid number of digits!");
+                return;
+            }
+        } else {
+            // Set it to the default value of '6'.
+            numberCountComboBox.currentIndex = 0;
+        }
+
+        if (otpType) {
+            switch (parseInt(otpType)) {
+            case 0:
+                // TOTP
+                otpTypeComboBox.currentIndex = 0;
+                break;
+
+            case 1:
+                // HOTP
+                otpTypeComboBox.currentIndex = 1;
+                break;
+            }
+        } else {
+            // Set to the default of TOTP.
+            otpTypeComboBox.currentIndex = 0;
+        }
+
+        if (encodingType) {
+            switch (parseInt(digitCount)) {
+            case 0:
+                // HEX
+                secretValueTypeComboBox.currentIndex = 1;
+                break;
+
+            case 1:
+                // Base32
+                secretValueTypeComboBox.currentIndex = 0;
+                break;
+            }
+        } else {
+            // Set the default of BASE32.
+            secretValueTypeComboBox.currentIndex = 0;
         }
     }
 
@@ -108,7 +165,13 @@ Item {
                 }
 
                 Text {
-                    text: qsTr("Add a new site with secret key.")
+                    text: {
+                        if (!editing) {
+                            return qsTr("Add a new site with secret key.");
+                        }
+
+                        return qsTr("Edit information for a site with a secret key.");
+                    }
                 }
 
                 Rectangle {
@@ -491,20 +554,24 @@ Item {
                                 break;
                             }
 
-                            if (!InterfaceSingleton.addKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount)) {
-                                if (!errorSet) {
-                                    errorText.text = qsTr("Unable to save the key entry.  Be sure that values are provided for all of the settings above.");
+                            if (editing) {
+                                // XXX update the database, rather than adding a key entry.
+                            } else {
+                                if (!InterfaceSingleton.addKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount)) {
+                                    if (!errorSet) {
+                                        errorText.text = qsTr("Unable to save the key entry.  Be sure that values are provided for all of the settings above.");
 
-                                    // Create a timer to make the error text disappear after a few seconds.
-                                    Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
-                                    console.info("Timer set..");
+                                        // Create a timer to make the error text disappear after a few seconds.
+                                        Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
+                                        console.info("Timer set..");
+                                    }
+
+                                    InterfaceSingleton.logError("Failed to save the key data!  Error : " + errorText.text);
+
+                                    // Show the text.
+                                    errorText.visible = true;
+                                    return;     // Don't close the window.
                                 }
-
-                                InterfaceSingleton.logError("Failed to save the key data!  Error : " + errorText.text);
-
-                                // Show the text.
-                                errorText.visible = true;
-                                return;     // Don't close the window.
                             }
 
                             // Close the window.

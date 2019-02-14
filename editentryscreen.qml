@@ -107,6 +107,7 @@ Item {
                             console.log("Item clicked! -- " + identifier);
 
                             // XXX Push the edit screen on the stack, and pass the identifier value that was clicked.
+                            screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"), {"editing" : true, "identifier" : identifier});
                         }
                     }
                 }

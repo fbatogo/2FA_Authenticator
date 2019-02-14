@@ -127,6 +127,30 @@ UiKeyEntries *InterfaceSingleton::keyEntries()
 }
 
 /**
+ * @brief InterfaceSingleton::keyEntryFromIdentifier - Locate, and return, a KeyEntry object based
+ *      on the identifier value provided.
+ *
+ * @param identifier - The identifier that we want to look for.
+ *
+ * @return KeyEntry pointer to the requested identifier on success.  On failure, nullptr will be
+ *      returned.
+ */
+KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
+{
+    KeyEntry result;
+
+    LOG_DEBUG("Would find KeyEntry for : " + identifier);
+
+    if (!mKeyStorage.keyByIdentifier(identifier, result)) {
+        LOG_ERROR("Failed to locate the key entry for identifier : " + identifier);
+        return nullptr;
+    }
+
+    // Return a pointerized copy of the KeyEntry.
+    return new KeyEntry(result);
+}
+
+/**
  * @brief InterfaceSingleton::otpEntries - Get the list of all key entries, calculate the
  *      OTP value, and add it to the resulting list.
  *
