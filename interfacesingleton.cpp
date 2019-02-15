@@ -2,8 +2,6 @@
 
 #include "logger.h"
 
-#define APP_VERSION "0.01"
-
 InterfaceSingleton::InterfaceSingleton() :
     QObject(nullptr)
 {
@@ -139,6 +137,11 @@ KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
 {
     KeyEntry result;
 
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Unable to locate a key with an empty identifier!");
+        return nullptr;
+    }
+
     LOG_DEBUG("Would find KeyEntry for : " + identifier);
 
     if (!mKeyStorage.keyByIdentifier(identifier, result)) {
@@ -196,6 +199,32 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
 {
     KeyEntry toAdd;
 
+    // Validate inputs.
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Unable to add a key with an empty identifier!");
+        return false;
+    }
+
+    if (secret.isEmpty()) {
+        LOG_ERROR("Unable to add a key with an empty secret value!");
+        return false;
+    }
+
+    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
+        LOG_ERROR("Unable to add a key with an invalid key encoding!");
+        return false;
+    }
+
+    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
+        LOG_ERROR("Unable to add a key with an invalid OTP type!");
+        return false;
+    }
+
+    if ((numberCount < 6) || (numberCount > 8)) {
+        LOG_ERROR("Unable to add a key with a number count that isn't 6 through 8!");
+        return false;
+    }
+
     // Populate the KeyEntry object that we want to write to the key storage method.
     toAdd.clear();
     toAdd.setIdentifier(identifier);
@@ -220,6 +249,84 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
 }
 
 /**
+ * @brief InterfaceSingleton::updateKeyEntry - Update an existing key entry.
+ *
+ * @param identifier - The identifier for the key to be updated.
+ * @param secret - The secret value that should be associated with the provided identifier.
+ * @param keyType - The way the key is encoded for the provided identifier.
+ * @param otpType - The type of OTP value being used with the provided identifier.
+ * @param numberCount - The number of digits shown for the OTP.
+ *
+ * @return true if the key entry was updated.  false on error.
+ */
+bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount)
+{
+    KeyEntry toUpdate;
+    KeyEntry *currentEntry;
+    bool updated;
+
+    // Validate inputs.
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Unable to update a key with an empty identifier!");
+        return false;
+    }
+
+    if (secret.isEmpty()) {
+        LOG_ERROR("Unable to update a key with an empty secret value!");
+        return false;
+    }
+
+    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
+        LOG_ERROR("Unable to update a key with an invalid key encoding!");
+        return false;
+    }
+
+    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
+        LOG_ERROR("Unable to update a key with an invalid OTP type!");
+        return false;
+    }
+
+    if ((numberCount < 6) || (numberCount > 8)) {
+        LOG_ERROR("Unable to update a key with a number count that isn't 6 through 8!");
+        return false;
+    }
+
+    // Populate the KeyEntry object that we want to write to the key storage method.
+    toUpdate.clear();
+    toUpdate.setIdentifier(identifier);
+    toUpdate.setSecret(secret);
+    toUpdate.setKeyType(keyType);
+    toUpdate.setOtpType(otpType);
+    toUpdate.setOutNumberCount(numberCount);
+
+    if (!toUpdate.valid()) {
+        LOG_ERROR("Failed to update KeyEntry object from the provided data!  The data is invalid!");
+        return false;
+    }
+
+    // Locate the current entry for key specified by the identifier.
+    currentEntry = keyEntryFromIdentifier(identifier);
+    if (nullptr == currentEntry) {
+        LOG_ERROR("Unable to locate the key entry for identifier '" + identifier + "'!  Cannot update the key!");
+        return false;
+    }
+
+    // Pass it in to be handled.
+    updated = mKeyStorage.updateKey((*currentEntry), toUpdate);
+
+    // Free the current entry.
+    delete currentEntry;
+    currentEntry = nullptr;
+
+    if (!updated) {
+        LOG_ERROR("Failed to update the key for identifier '" + identifier + "'!");
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief InterfaceSingleton::deleteKey - Given a key identifier, delete it from the
  *      key storage.
  *
@@ -229,16 +336,21 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
  */
 bool InterfaceSingleton::deleteKey(QString identifier)
 {
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Unable to delete a key with an empty identifier!");
+        return false;
+    }
+
     return mKeyStorage.deleteKeyByIdentifier(identifier);
 }
 
 /**
- * @brief InterfaceSingleton::haveZbar - Indicate to the UI if we were built with
+ * @brief InterfaceSingleton::haveZBar - Indicate to the UI if we were built with
  *  ZBar, or not.
  *
  * @return true if we were built with ZBar, false if not.
  */
-bool InterfaceSingleton::haveZbar()
+bool InterfaceSingleton::haveZBar()
 {
 #ifndef NO_ZBAR
     return true;

@@ -6,10 +6,11 @@
 
 #define KEYENTRY_KEYTYPE_HEX      0
 #define KEYENTRY_KEYTYPE_BASE32   1
+#define KEYENTRY_KEYTYPE_MAX      1     // The highest key type value we can encode.
 
 #define KEYENTRY_OTPTYPE_TOTP     0
 #define KEYENTRY_OTPTYPE_HOTP     1
-
+#define KEYENTRY_OTPTYPE_MAX      1     // The highest otp type value we can encode.
 
 // This class needs to be derived from QObject so that we can easily use it in the QML code.
 class KeyEntry : public QObject

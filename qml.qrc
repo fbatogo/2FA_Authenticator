@@ -15,5 +15,11 @@
         <file>SideBar.qml</file>
         <file>editentryscreen.qml</file>
         <file>resources/back.svg</file>
+        <file>resources/javascript/NewOrEditEntryScreen.js</file>
+        <file>resources/widgets/SubHeader.qml</file>
+        <file>resources/widgets/PaddedRowLine.qml</file>
+        <file>resources/widgets/VerticalPadding.qml</file>
+        <file>resources/widgets/FillEmptySpace.qml</file>
+        <file>resources/widgets/HorizontalPadding.qml</file>
     </qresource>
 </RCC>
