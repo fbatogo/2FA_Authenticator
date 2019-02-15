@@ -11,6 +11,8 @@
 #include "otp/otpentry.h"
 #include "uiotpentries.h"
 
+#define APP_VERSION "0.01"
+
 class InterfaceSingleton : public QObject
 {
     Q_OBJECT
@@ -30,9 +32,10 @@ public:
     Q_INVOKABLE KeyEntry *keyEntryFromIdentifier(const QString &identifier);
     Q_INVOKABLE UiOtpEntries *otpEntries();
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
+    Q_INVOKABLE bool updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
     Q_INVOKABLE bool deleteKey(QString identifier);
 
-    Q_INVOKABLE bool haveZbar();
+    Q_INVOKABLE bool haveZBar();
 
 private:
     InterfaceSingleton();

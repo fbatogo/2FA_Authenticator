@@ -1,0 +1,5 @@
+- Finish editing screen/code
+- Add SHA256 and SHA512
+- Finish implementing settings code
+- Add the ability to show HOTP values
+- Validate the inputs on the add/edit screen.
