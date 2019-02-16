@@ -14,6 +14,14 @@ KeyStorage::KeyStorage()
     mAvailable = false;
 }
 
+KeyStorage::~KeyStorage()
+{
+    // Clean up the keystorage drivers that are registered.
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        delete mKeyStorageDrivers.at(i);
+    }
+}
+
 /**
  * @brief KeyStorage::available - Return the flag that indicates if we should be able to read/write
  *      KeyEntry objects using the key storage.

@@ -41,6 +41,9 @@ void HmacSha1Tests::hmacTestCase1()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase2()
@@ -70,6 +73,9 @@ void HmacSha1Tests::hmacTestCase2()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase3()
@@ -105,6 +111,9 @@ void HmacSha1Tests::hmacTestCase3()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase4()
@@ -134,6 +143,8 @@ void HmacSha1Tests::hmacTestCase4()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase5()
@@ -166,6 +177,9 @@ void HmacSha1Tests::hmacTestCase5()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase6()
@@ -198,6 +212,9 @@ void HmacSha1Tests::hmacTestCase6()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase7()
@@ -231,4 +248,7 @@ void HmacSha1Tests::hmacTestCase7()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest1, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }

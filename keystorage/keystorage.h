@@ -11,6 +11,7 @@ class KeyStorage
 {
 public:
     KeyStorage();
+    ~KeyStorage();
 
     bool available();
 

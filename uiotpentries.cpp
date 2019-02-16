@@ -17,6 +17,7 @@ UiOtpEntries::~UiOtpEntries()
             delete mEntryList.at(i);
         }
     }
+    mEntryList.clear();
 }
 
 /**
