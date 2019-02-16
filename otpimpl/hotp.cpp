@@ -110,6 +110,12 @@ std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSi
     // Convert the truncated value to a 32 bit number.
     truncData = (((truncValue[0] & 0x7f) << 24) | ((truncValue[1] & 0xff) << 16) | ((truncValue[2] & 0xff) << 8) | (truncValue[3] & 0xff));
 
+    // Free the memory from the truncation.
+    if (truncValue != nullptr) {
+        free(truncValue);
+        truncValue = nullptr;
+    }
+
     // Then, calculate the otp.
     otp = truncData % DIGITS_POWER[calcDigits];
 

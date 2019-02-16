@@ -4,9 +4,9 @@
 
 void QRCodeStringParserTests::qrCodeSimpleStringParserTests()
 {
-    QRCodeStringParser *test;
+    QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
-    test = new QRCodeStringParser("otpauth://TYPE/LABEL?PARAMETERS");
+    QVERIFY(test->parseCode("otpauth://TYPE/LABEL?PARAMETERS"));
     QVERIFY(test->isOtpCode());
 
     QCOMPARE(test->type(), "TYPE");
@@ -14,30 +14,24 @@ void QRCodeStringParserTests::qrCodeSimpleStringParserTests()
     QCOMPARE(test->parametersAsString(), "PARAMETERS");
 
     QCOMPARE(test->parameterByKey("PARAMETERS"), "");
-
-    // Clean up.
-    delete test;
 }
 
 void QRCodeStringParserTests::qrCodeInvalidStringParserTests()
 {
-    QRCodeStringParser *test;
+    QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
-    test = new QRCodeStringParser("nototpauth://TYPE/LABEL?PARAMETERS");
+    QVERIFY(test->parseCode("nototpauth://TYPE/LABEL?PARAMETERS"));
     QCOMPARE(test->isOtpCode(), false);
 
-    // XXX Add more tests..
-
-    // Clean up.
-    delete test;
+    // XXX Add more tests.
 }
 
 void QRCodeStringParserTests::qrCodeFullSetStringParametersTests()
 {
-    QRCodeStringParser *test;
+    QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
     // Parse a URI with all possible parameters.
-    test = new QRCodeStringParser("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30");
+    QVERIFY(test->parseCode("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
     QCOMPARE(test->type(), "totp");
@@ -50,17 +44,14 @@ void QRCodeStringParserTests::qrCodeFullSetStringParametersTests()
     QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
     QCOMPARE(test->parameterByKey("digits"), "6");
     QCOMPARE(test->parameterByKey("period"), "30");
-
-    // Clean up.
-    delete test;
 }
 
 void QRCodeStringParserTests::qrCodeFullSetStringWithEqualsInValueTests()
 {
-    QRCodeStringParser *test;
+    QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
     // Parse a URI with all possible parameters.
-    test = new QRCodeStringParser("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%3DCo&algorithm=SHA1&digits=6&period=30");
+    QVERIFY(test->parseCode("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%3DCo&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
     QCOMPARE(test->type(), "totp");
@@ -73,17 +64,14 @@ void QRCodeStringParserTests::qrCodeFullSetStringWithEqualsInValueTests()
     QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
     QCOMPARE(test->parameterByKey("digits"), "6");
     QCOMPARE(test->parameterByKey("period"), "30");
-
-    // Clean up
-    delete test;
 }
 
 void QRCodeStringParserTests::qrCodeFullSetStringWithAmpTests()
 {
-    QRCodeStringParser *test;
+    QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
     // Parse a URI with all possible parameters.
-    test = new QRCodeStringParser("otpauth://totp/ACME%26Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%26Co&algorithm=SHA1&digits=6&period=30");
+    QVERIFY(test->parseCode("otpauth://totp/ACME%26Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%26Co&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
     QCOMPARE(test->type(), "totp");
@@ -96,7 +84,5 @@ void QRCodeStringParserTests::qrCodeFullSetStringWithAmpTests()
     QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
     QCOMPARE(test->parameterByKey("digits"), "6");
     QCOMPARE(test->parameterByKey("period"), "30");
-
-    // Clean up.
-    delete test;
 }
+

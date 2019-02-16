@@ -6,5 +6,14 @@ pipeline {
         git 'https://github.com/fbatogo/Rollin.git'
       }
     }
+    stage('Build and Run Tests') {
+      steps {
+        dir("test") {
+	  sh '''qmake QT+=testlib'''
+	  sh '''make -j2'''
+	  sh '''./Rollin'''
+	}
+      }
+    }
   }
 }

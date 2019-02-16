@@ -17,6 +17,8 @@ void totpTests::totpTestCase1()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 59, 30, 8);
     qDebug("Expected : 94287082    Got : %s", result.c_str());
     QCOMPARE("94287082", result);
+
+    free(key);
 }
 
 void totpTests::totpTestCase2()
@@ -30,6 +32,8 @@ void totpTests::totpTestCase2()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1111111109, 30, 8);
     qDebug("Expected : 07081804    Got : %s", result.c_str());
     QCOMPARE("07081804", result);
+
+    free(key);
 }
 
 void totpTests::totpTestCase3()
@@ -43,6 +47,8 @@ void totpTests::totpTestCase3()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1111111111, 30, 8);
     qDebug("Expected : 14050471    Got : %s", result.c_str());
     QCOMPARE("14050471", result);
+
+    free(key);
 }
 
 void totpTests::totpTestCase4()
@@ -56,6 +62,8 @@ void totpTests::totpTestCase4()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 1234567890, 30, 8);
     qDebug("Expected : 89005924    Got : %s", result.c_str());
     QCOMPARE("89005924", result);
+
+    free(key);
 }
 
 void totpTests::totpTestCase5()
@@ -69,6 +77,8 @@ void totpTests::totpTestCase5()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 2000000000, 30, 8);
     qDebug("Expected : 69279037    Got : %s", result.c_str());
     QCOMPARE("69279037", result);
+
+    free(key);
 }
 
 void totpTests::totpTestCase6()
@@ -82,6 +92,8 @@ void totpTests::totpTestCase6()
     result = totp.calculate(reinterpret_cast<unsigned char *>(key), strlen(key), 20000000000, 30, 8);
     qDebug("Expected : 65353130    Got : %s", result.c_str());
     QCOMPARE("65353130", result);
+
+    free(key);
 }
 
 #if 0   // Test vectors from RFC6238 at https://tools.ietf.org/html/rfc6238

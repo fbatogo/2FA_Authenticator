@@ -186,4 +186,3 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
     QCOMPARE(readBack.outNumberCount(), 6);
 }
-

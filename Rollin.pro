@@ -2,7 +2,8 @@ QT += quick sql multimedia svg
 
 # If we aren't building on Windows, use the x11 extras.
 !win32 {
-    QT += x11extras
+    DEFINES += NO_ZBAR
+    #QT += x11extras
 } else {
     # On Windows, we don't currently support zbar.
     #DEFINES *= NO_ZBAR
@@ -12,6 +13,8 @@ QT += quick sql multimedia svg
 }
 
 CONFIG += c++11
+
+QMAKE_CFLAGS += -mtune=generic
 
 contains(QT, testlib) {
     message(Will use qDebug for logging...)
@@ -101,10 +104,16 @@ message($$QT)
 contains(QT, testlib) {
     # Include the test source files.
     include(tests/tests.pri)
+
+    CONFIG -= qml_debug
 } else {
     # Use our 'normal' main.cpp in the build.
     SOURCES += main.cpp
 }
+
+# Uncomment and rebuild to use address sanitizer.
+QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+LIBS += -lasan
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
