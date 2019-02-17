@@ -1,6 +1,8 @@
 #include "interfacesingleton.h"
 
 #include "logger.h"
+#include "otpimpl/hexdecoder.h"
+#include "otpimpl/base32coder.h"
 
 InterfaceSingleton::InterfaceSingleton() :
     QObject(nullptr)
@@ -342,6 +344,30 @@ bool InterfaceSingleton::deleteKey(QString identifier)
     }
 
     return mKeyStorage.deleteKeyByIdentifier(identifier);
+}
+
+/**
+ * @brief InterfaceSingleton::isEncodedProperly - Make sure the secret is encoded
+ *      properly.
+ *
+ * @param encodingType - One of the KEYENTRY_KEYTYPE_* values.
+ * @param valueToCheck - The string that we want to check the encoding on.
+ *
+ * @return true if the string appears to be encoded properly.  false if it isn't.
+ */
+bool InterfaceSingleton::isEncodedProperly(int encodingType, QString valueToCheck)
+{
+    switch (encodingType) {
+    case KEYENTRY_KEYTYPE_HEX:
+        return HexDecoder::isHexEncoded(valueToCheck.toStdString());
+
+    case KEYENTRY_KEYTYPE_BASE32:
+        return Base32Coder::isBase32Encoded(valueToCheck.toStdString());
+    }
+
+    // If we get here, we don't understand the encodingType, so return false.
+    LOG_ERROR("Unknown secret encoding type of '" + QString::number(encodingType) + "'!");
+    return false;
 }
 
 /**

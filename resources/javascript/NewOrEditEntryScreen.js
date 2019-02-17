@@ -42,6 +42,9 @@ function init() {
             }
         }
     }
+
+    // See if the save button should be enabled, or not.
+    checkEnableSave();
 }
 
 function onVisibleChanged(visible) {
@@ -75,6 +78,9 @@ function onVisibleChanged(visible) {
             //var encodingType = QRCodeSingleton.parameterByKey()
 
             setComboBoxes(otpType, 1, digits);
+
+            // See if the save button should be enabled.
+            checkEnableSave();
         }  // Otherwise, the user may have cancelled, so don't do anything.
     }
 }
@@ -140,4 +146,51 @@ function setComboBoxes(otpType, encodingType, digitCount) {
         // Set the default of BASE32.
         secretValueTypeComboBox.currentIndex = 0;
     }
+}
+
+// Check the fields in the UI and see if we should enable
+// the save button, or not.
+function checkEnableSave() {
+    var encodingType = -1;
+
+    if ((siteNameInput.text === null) || (siteNameInput.text === "")) {
+        // Don't allow saving yet.
+        saveButton.enabled = false;
+        return;
+    }
+
+    if ((secretValueInput.text === null) || (secretValueInput.text === "")) {
+        // Don't allow saving yet.
+        saveButton.enabled = false;
+        return;
+    }
+
+    // Figure out how the value should be encoded.
+    switch (secretValueTypeComboBox.currentIndex) {
+    case 0:
+        // Base 32
+        encodingType = 1;
+        break;
+
+    case 1:
+        // HEX
+        encodingType = 0;
+        break;
+
+    default:
+        console.log("Unknown encoding type selected for the secret value encoding!");
+        break;
+    }
+
+    // Make sure the secret is encoded properly, based on the encoding type
+    // selected.
+    if (!InterfaceSingleton.InterfaceSingleton.isEncodedProperly(encodingType, secretValueInput.text)) {
+        // Set the error text so that the user knows why they can't save yet.
+        errorText.text = qsTr("The secret is not encoded properly!");
+        saveButton.enabled = false;
+        return;
+    }
+
+    // Otherwise, allow saving.
+    saveButton.enabled = true;
 }

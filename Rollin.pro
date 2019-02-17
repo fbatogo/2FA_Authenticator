@@ -6,10 +6,10 @@ QT += quick sql multimedia svg
     #QT += x11extras
 } else {
     # On Windows, we don't currently support zbar.
-    #DEFINES *= NO_ZBAR
+    DEFINES *= NO_ZBAR
 
-    INCLUDEPATH += "C:/Program Files (x86)/ZBar/include"
-    LIBS += "C:/Program Files (x86)/ZBar/lib/libzbar-0.lib"
+    #INCLUDEPATH += "C:/Program Files (x86)/ZBar/include"
+    #LIBS += "C:/Program Files (x86)/ZBar/lib/libzbar-0.lib"
 }
 
 CONFIG += c++11
@@ -112,8 +112,8 @@ contains(QT, testlib) {
 }
 
 # Uncomment and rebuild to use address sanitizer.
-QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer
-LIBS += -lasan
+#QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+#LIBS += -lasan
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

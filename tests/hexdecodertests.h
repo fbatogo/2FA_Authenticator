@@ -10,6 +10,7 @@ class HexDecoderTests : public QObject
 
 private slots:
     void hexDecoderTest1();
+    void isHexEncodedTest();
 };
 
 DECLARE_TEST(HexDecoderTests)
