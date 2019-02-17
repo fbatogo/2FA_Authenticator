@@ -35,11 +35,7 @@ unsigned char *HexDecoder::decode(std::string hexString, size_t &resultSize)
 
     // Need to replace the spaces, colons, dashes, or periods in the string to get a single, undecorated, hex
     // string.
-    smashed = replaceInString(hexString, " ", "");
-    smashed = replaceInString(smashed, ":", "");
-    smashed = replaceInString(smashed, "-", "");
-    smashed = replaceInString(smashed, ".", "");
-    smashed = replaceInString(smashed, "0x", "");
+    smashed = cleanup(hexString);
 
     // We should now have a string that is all hex characters.  So, the length should be divisible by 2.  Make
     // sure it is.
@@ -64,6 +60,50 @@ unsigned char *HexDecoder::decode(std::string hexString, size_t &resultSize)
     }
 
     return result;
+}
+
+/**
+ * @brief HexDecoder::isHexEncoded - Verify that the string provided appears to be a
+ *      hex encoded string.
+ *
+ * @param toTest - The string that we want to test the encoding on.
+ *
+ * @return true if the string appears to be hex encoded.  false otherwise.
+ */
+bool HexDecoder::isHexEncoded(std::string toTest)
+{
+    QString temp;
+    std::string toValidate;
+
+    if (toTest.empty()) {
+        LOG_ERROR("The string to validate for hex encoding was empty!");
+        return false;
+    }
+
+    // Strip any excess, but allowed, characters from the string.
+    toValidate = cleanup(toTest);
+
+    // The string length needs to be evenly divisible by 2.
+    if ((toValidate.length() % 2) != 0) {
+        LOG_ERROR("The string provided isn't hex encoded.  The length is incorrect!");
+        return false;
+    }
+
+    // And, each character needs to be one of the characters allowed in the
+    // array above.
+    for (size_t i = 0; i < toValidate.length(); i++) {
+        if (((toValidate.at(i) < '0') || (toValidate.at(i) > '9')) &&
+                ((toValidate.at(i) < 'A') || (toValidate.at(i) > 'F'))) {
+            // The character is invalid.
+            temp.clear();
+            temp = toValidate.at(i);
+            LOG_DEBUG("The character '" + temp + "' at index " + QString::number(i) + " is not a valid hex encoded character!");
+            return false;
+        }
+    }
+
+    // If we get here, then the string appears to be a valid hex string.
+    return true;
 }
 
 /**
@@ -115,6 +155,34 @@ unsigned char HexDecoder::decodeOneNibble(char oneNibble)
 
     LOG_ERROR(QString::fromStdString(errorMessage.str()));
     return 0xff;
+}
+
+/**
+ * @brief HexDecoder::cleanup - Strip the hex encoded string of spaces, colons, dashes, periods of a 0x prefix
+ *      and make sure all letters are upper case, then return the result.
+ *
+ * @param toClean - The string that we want to strip of extra characters.
+ *
+ * @return std::string stripped of extra characters allowed in a hex string.
+ */
+std::string HexDecoder::cleanup(std::string toClean)
+{
+    std::string smashed;
+
+    // Need to replace the spaces, colons, dashes, or periods in the string to get a single, undecorated, hex
+    // string.
+    smashed = replaceInString(toClean, " ", "");
+    smashed = replaceInString(smashed, ":", "");
+    smashed = replaceInString(smashed, "-", "");
+    smashed = replaceInString(smashed, ".", "");
+    smashed = replaceInString(smashed, "0x", "");
+
+    // Iterate the newly stripped string, making sure everything is in upper case.
+    for (size_t i = 0; i < smashed.length(); i++) {
+        smashed[i] = toupper(smashed.at(i));
+    }
+
+    return smashed;
 }
 
 /**

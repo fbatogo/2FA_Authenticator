@@ -3,3 +3,7 @@
 - Finish implementing settings code
 - Add the ability to show HOTP values
 - Validate the inputs on the add/edit screen.
+- Before enabling save button, make sure secret is encoded properly.
+- If the secret isn't encoded properly, tell the user.
+- Add an 'advanced' screen to the new/edit screen to allow setting the offset and time step.
+- Pull out large javascript blocks in to .js files for each screen.

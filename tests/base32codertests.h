@@ -13,6 +13,7 @@ class Base32CoderTests : public QObject
 private slots:
     void encoderTest1();
     void decoderTest1();
+    void isBase32EncodedTests();
 
 private:
     std::vector<std::string> getClearTextTests();

@@ -85,6 +85,7 @@ Item {
         }
 
         // Iterate each entry, and add it to the list.
+        console.log("Iterating entries...");
         for (var i = 0; i < otpEntryList.count(); i++) {
             var temp = otpEntryList.at(i);
             var code;

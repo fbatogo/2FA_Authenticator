@@ -14,8 +14,6 @@ Item {
     property bool editing: false
     property string identifier: ""
 
-    // XXX Only enable the save button when we have data in all of the required fields!
-
     Component.onCompleted: NewOrEdit.init();
 
     onVisibleChanged: NewOrEdit.onVisibleChanged(visible);
@@ -125,6 +123,8 @@ Item {
                             font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
+
+                            onEditingFinished: NewOrEdit.checkEnableSave();
                         }
                     }
 
@@ -197,6 +197,8 @@ Item {
                             anchors.centerIn: parent
                             clip: true
                             text: ""
+
+                            onEditingFinished: NewOrEdit.checkEnableSave();
                         }
                     }
 

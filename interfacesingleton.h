@@ -35,6 +35,8 @@ public:
     Q_INVOKABLE bool updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount);
     Q_INVOKABLE bool deleteKey(QString identifier);
 
+    Q_INVOKABLE bool isEncodedProperly(int encodingType, QString valueToCheck);
+
     Q_INVOKABLE bool haveZBar();
 
 private:
