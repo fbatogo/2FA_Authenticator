@@ -5,10 +5,12 @@ import QtQuick.Layouts 1.3
 ApplicationWindow {
     id: window
 
+    property string appName: "Rollin'"
+
     visible: true
     width: 240
     height: 320
-    title: "Rollin'"
+    title: appName
     header: ToolBar {
         id: topToolbar
 
@@ -63,7 +65,7 @@ ApplicationWindow {
         TextMetrics {
             id: bannerTextSize
 
-            text: "Rollin'"
+            text: appName
             font.bold: true
             font.pointSize: 12
         }

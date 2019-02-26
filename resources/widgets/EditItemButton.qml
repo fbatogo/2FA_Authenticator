@@ -5,7 +5,8 @@ import QtQuick.Layouts 1.3
 Button {
     property int row: 0
     property int column: 0
-    property string showScreen: ""      // The filename of the screen we want to show.
+    property var showScreen: {}      // The filename of the screen we want to show.
+    property int selected: 0
 
     Layout.row: row
     Layout.column: column
@@ -21,7 +22,6 @@ Button {
             return;
         }
 
-        console.log("Showing new screen...");
-        screenStack.push(Qt.resolvedUrl(showScreen))
+        screenStack.push(showScreen, { selected: selected });
     }
 }

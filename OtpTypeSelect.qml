@@ -8,22 +8,17 @@ Item {
     property int selected: 0
 
     Component.onCompleted: {
-        console.log("Hashing type : " + selected);
+        console.log("OTP type : " + selected);
 
         switch (selected) {
         case 0:
-            // SHA1
-            sha1.checked = true;
+            // TOTP
+            totp.checked = true;
             break;
 
         case 1:
-            // SHA256
-            sha256.checked = true;
-            break;
-
-        case 2:
-            // SHA512
-            sha512.checked = true;
+            // HOTP
+            hotp.checked = true;
             break;
         }
     }
@@ -36,7 +31,7 @@ Item {
         }
 
         SubHeader {
-            headerText: qsTr("Select the hashing algorithm to be used to generate the OTP : ");
+            headerText: qsTr("Select the type of OTP to generate : ");
         }
 
         VerticalPadding {
@@ -52,24 +47,17 @@ Item {
 
             ColumnLayout {
                 RadioButton {
-                    id: sha1
+                    id: totp
                     checked: false
-                    text: "SHA1"
+                    text: "TOTP"
                     onClicked: selected = 0;
                 }
 
                 RadioButton {
-                    id: sha256
+                    id: hotp
                     checked: false
-                    text: "SHA256"
+                    text: "HOTP"
                     onClicked: selected = 1;
-                }
-
-                RadioButton {
-                    id: sha512
-                    checked: false
-                    text: "SHA512"
-                    onClicked: selected = 2;
                 }
             }
         }
