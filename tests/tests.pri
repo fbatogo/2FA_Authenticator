@@ -14,7 +14,11 @@ HEADERS += \
     $$PWD/hotptests.h \
     $$PWD/totptests.h \
     $$PWD/base32codertests.h \
-    $$PWD/hexdecodertests.h
+    $$PWD/hexdecodertests.h \
+    $$PWD/sha256tests.h \
+    $$PWD/sha512tests.h \
+    $$PWD/hmacsha256tests.h \
+    $$PWD/hmacsha512tests.h
 
 SOURCES += \
     $$PWD/secretdatabasetests.cpp \
@@ -25,7 +29,11 @@ SOURCES += \
     $$PWD/hotptests.cpp \
     $$PWD/totptests.cpp \
     $$PWD/base32codertests.cpp \
-    $$PWD/hexdecodertests.cpp
+    $$PWD/hexdecodertests.cpp \
+    $$PWD/sha256tests.cpp \
+    $$PWD/sha512tests.cpp \
+    $$PWD/hmacsha256tests.cpp \
+    $$PWD/hmacsha512tests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.

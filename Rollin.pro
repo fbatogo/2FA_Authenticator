@@ -14,8 +14,6 @@ QT += quick sql multimedia svg
 
 CONFIG += c++11
 
-QMAKE_CFLAGS += -mtune=generic
-
 contains(QT, testlib) {
     message(Will use qDebug for logging...)
     DEFINES += USE_QDEBUG
@@ -53,7 +51,11 @@ SOURCES += \
     otpimpl/sha1hash.cpp \
     otpimpl/totp.cpp \
     otpimpl/base32coder.cpp \
-    otpimpl/hexdecoder.cpp
+    otpimpl/hexdecoder.cpp \
+    otpimpl/sha256impl.c \
+    otpimpl/sha512impl.c \
+    otpimpl/sha256hash.cpp \
+    otpimpl/sha512hash.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -79,7 +81,12 @@ HEADERS += \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
     otpimpl/hexdecoder.h \
-    zbar/myqzbarimage.h
+    zbar/myqzbarimage.h \
+    otpimpl/sha256impl.h \
+    otpimpl/sha512impl.h \
+    otpimpl/shaimplcommon.h \
+    otpimpl/sha256hash.h \
+    otpimpl/sha512hash.h
 
 RESOURCES += qml.qrc
 

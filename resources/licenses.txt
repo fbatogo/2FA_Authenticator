@@ -14,6 +14,8 @@ zbar is licensed under the terms of the LGPLv2.1 or higher.<br/>
 <br/>
 SHA1 implementation by Steve Reid from https://github.com/clibs/sha1 licensed in the Public Domain.<br/>
 <br/>
+SHA256 and SHA512 implementations by Ulrich Drepper from https://www.akkadia.org/drepper/SHA-crypt.txt licensed in the Public Domain.<br/>
+<br/>
 qml-zbar implementation by mpersano from https://github.com/mpersano/qml-zbar  -- License currently unknown.  (Have reached out to request information.)<br/>
 <br/>
 ---- Graphics ----<br/>

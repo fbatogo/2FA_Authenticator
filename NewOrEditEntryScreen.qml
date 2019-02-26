@@ -25,9 +25,9 @@ Item {
         ColumnLayout {
             anchors.fill: parent
 
-            VerticalPadding {
-                size: 10
-            }
+/*            VerticalPadding {
+                size: 2
+            } */
 
             SubHeader {
                 headerText: {
@@ -39,73 +39,33 @@ Item {
                 }
             }
 
-            VerticalPadding {
-                size: 5
-            }
-
             RowLayout {
                 HorizontalPadding {
-                    size: 20
+                    size: 5
                 }
 
                 GridLayout {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    columns: 2
-                    rows: 5
-
-                    // Key type value setting
-                    Text {
-                        id: otpTypeLabel
-                        Layout.row: 0
-                        Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
-
-                        text: qsTr("OTP Type : ")
-                    }
-
-                    ComboBox {
-                        id: otpTypeComboBox
-                        Layout.row: 0
-                        Layout.column: 1
-                        Layout.fillWidth: true
-                        //height: digitCountLabel.height + 2
-                        height: {
-                            console.log("Height : " + hiddenNumbers.height);
-                            return hiddenNumbers.height;
-                        }
-
-                        model: otpTypeModel         // XXX When HOTP is selected, we need to show a row to allow inputting the current counter value.
-                    }
-
-                    ListModel {
-                        id: otpTypeModel
-
-                        ListElement {
-                            otpType: "TOTP"
-                        }
-
-                        ListElement {
-                            otpType: "HOTP"
-                        }
-                    }
-
+                    columns: 3
+                    rows: 7
 
                     // Site name/label value
                     Text {
                         id: siteNameLabel
-                        Layout.row: 1
+                        Layout.row: 0
                         Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
+                        Layout.alignment: Qt.AlignRight
 
                         text: qsTr("Site Name : ")
                     }
 
                     Rectangle {
-                        Layout.row: 1
+                        Layout.row: 0
                         Layout.column: 1
-                        height: siteNameLabel.height * 2
+                        Layout.columnSpan: 2
+                        height: siteNameLabel.height + 8
                         Layout.fillWidth: true
                         color: "transparent"
 
@@ -120,7 +80,6 @@ Item {
                             anchors.bottomMargin: 3
                             anchors.leftMargin: 3
                             anchors.rightMargin: 3
-                            font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
 
@@ -128,59 +87,24 @@ Item {
                         }
                     }
 
-                    // Secret value format
-                    Text {
-                        id: secretValueTypeLabel
-                        Layout.row: 2
-                        Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
-
-                        text: qsTr("Secret Format : ")
-                    }
-
-                    ComboBox {
-                        id: secretValueTypeComboBox
-                        Layout.row: 2
-                        Layout.column: 1
-                        Layout.fillWidth: true
-                        //height: digitCountLabel.height + 2
-                        height: {
-                            console.log("Height : " + hiddenNumbers.height);
-                            return hiddenNumbers.height;
-                        }
-
-                        model: secretValueTypeModel         // XXX When HOTP is selected, we need to show a row to allow inputting the current counter value.
-                    }
-
-                    ListModel {
-                        id: secretValueTypeModel
-
-                        ListElement {
-                            otpType: "Base32"
-                        }
-
-                        ListElement {
-                            otpType: "HEX"
-                        }
-                    }
-
-
                     // Secret value.
                     Text {
                         id: secretValueLabel
-                        Layout.row: 3
+                        Layout.row: 1
                         Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
+                        Layout.alignment: Qt.AlignRight
 
-                        text: qsTr("Secret Value : ")
+                        text: qsTr("Secret : ")
                     }
 
                     Rectangle {
                         // Put a line around the text entry area.
-                        Layout.row: 3
+                        id: secretValueInputBox
+                        Layout.row: 1
                         Layout.column: 1
+                        Layout.columnSpan: 2
                         Layout.fillWidth: true
-                        height: secretValueLabel.height * 2
+                        height: secretValueLabel.height + 8
                         color: "transparent"
 
                         border.color: "black"
@@ -193,7 +117,6 @@ Item {
                             anchors.bottomMargin: 3
                             anchors.leftMargin: 3
                             anchors.rightMargin: 3
-                            font.pixelSize: height - 2
                             anchors.centerIn: parent
                             clip: true
                             text: ""
@@ -202,64 +125,195 @@ Item {
                         }
                     }
 
+                    // OTP Type row
+                    Text {
+                        id: otpTypeLabel
+                        Layout.row: 2
+                        Layout.column: 0
+                        Layout.alignment: Qt.AlignRight
+
+                        text: qsTr("Type : ")
+                    }
+
+                    Text {
+                        Layout.row: 2
+                        Layout.column: 1
+                        Layout.fillWidth: true
+                        id: otpTypeText
+                        text: "Invalid"
+                    }
+
+                    TextMetrics {
+                        id: threeDots
+                        text: "..."
+                    }
+
+                    Button {
+                        id: otpTypeButton
+                        Layout.row: 2
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
+                    }
+
+                    // Secret value format
+                    Text {
+                        id: secretValueTypeLabel
+                        Layout.row: 3
+                        Layout.column: 0
+                        Layout.alignment: Qt.AlignRight
+
+                        text: qsTr("Secret Format : ")
+                    }
+
+                    Text {
+                        id:secretValueText
+                        Layout.row: 3
+                        Layout.column: 1
+                        Layout.fillWidth: true
+                        text: "Invalid"
+                    }
+
+                    Button {
+                        id: secretTypeButton
+                        Layout.row: 3
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
+                    }
+
                     // Digit count
                     Text {
                         id: digitCountLabel
                         Layout.row: 4
                         Layout.column: 0
-                        horizontalAlignment: Text.AlignRight
+                        Layout.alignment: Qt.AlignRight
 
-                        text: qsTr("Digit Count : ")
+                        text: qsTr("Digits : ")
                     }
 
-                    TextMetrics {
-                        id: hiddenNumbers
-                        text: "8"
-                    }
-
-                    ComboBox {
-                        id: numberCountComboBox
+                    Text {
+                        id: digitCountValue
                         Layout.row: 4
                         Layout.column: 1
+                        text: "Invalid"
                         Layout.fillWidth: true
-                        //height: digitCountLabel.height + 2
-                        height: {
-                            console.log("Height : " + hiddenNumbers.height);
-                            return hiddenNumbers.height;
-                        }
-
-                        textRole: "digits"
-
-                        model: digitsModel
                     }
 
-                    ListModel {
-                        id: digitsModel
-
-                        ListElement {
-                            digits: "6"
-                        }
-
-                        ListElement {
-                            digits: "7"
-                        }
-
-                        ListElement {
-                            digits: "8"
-                        }
+                    Button {
+                        id: digitCountButton
+                        Layout.row: 4
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
                     }
 
-                    // XXX Add an "advanced" screen to allow setting the offset and time step?
-                    // XXX Add an option to select the hashing algorithm.
+                    // Algorithm
+                    Text {
+                        id: algorithmLabel
+                        Layout.row: 5
+                        Layout.column: 0
+                        Layout.alignment: Qt.AlignRight
+
+                        text: qsTr("Algorithm : ")
+                    }
+
+                    Text {
+                        id: algorithmValue
+                        Layout.row: 5
+                        Layout.column: 1
+                        text: "Invalid"
+                        Layout.fillWidth: true
+                    }
+
+                    EditItemButton {
+                        id: algorithmButton
+                        row: 5
+                        column: 2
+                    }
+
+/*                    Button {
+                        id: algorithmButton
+                        Layout.row: 5
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
+                    }*/
+
+                    // Period
+                    Text {
+                        id: periodLabel
+                        Layout.row: 6
+                        Layout.column: 0
+                        Layout.alignment: Qt.AlignRight
+
+                        text: qsTr("Period : ")
+                    }
+
+                    Text {
+                        id: periodValue
+                        Layout.row: 6
+                        Layout.column: 1
+                        text: "Invalid"
+                        Layout.fillWidth: true
+                    }
+
+                    Button {
+                        id: periodButton
+                        Layout.row: 6
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
+                    }
+
+                    // Offset
+                    Text {
+                        id: offsetLabel
+                        Layout.row: 7
+                        Layout.column: 0
+                        Layout.alignment: Qt.AlignRight
+
+                        text: qsTr("Offset : ")
+                    }
+
+                    Text {
+                        id: offsetValue
+                        Layout.row: 7
+                        Layout.column: 1
+                        text: "Invalid"
+                        Layout.fillWidth: true
+                    }
+
+                    Button {
+                        id: offsetButton
+                        Layout.row: 7
+                        Layout.column: 2
+                        Layout.maximumWidth: threeDots.width + 8
+                        Layout.maximumHeight: threeDots.height + 8
+                        height: threeDots.height + 8
+                        width: threeDots.width + 8
+                        text: "..."
+                    }
                 }
 
                 HorizontalPadding {
-                    size: 20
+                    size: 5
                 }
-            }
-
-            VerticalPadding {
-                size: 5
             }
 
             RowLayout {
@@ -287,7 +341,6 @@ Item {
             }
 
             PaddedRowLine {
-
             }
 
             RowLayout {
@@ -299,119 +352,11 @@ Item {
                 Button {
                     id: saveButton
 
-                    text: qsTr("Save")  // XXX Add code to check if we should be able to save, and to enable the save button when it is valid, and disable it when it isn't.
+                    text: qsTr("Save")
 
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: {
-                            console.log("Saving key entries...");
-                            var keyType, otpType, numberCount;
-                            var errorSet = false;
-
-                            // Convert the keyType index to the currect value.
-                            switch (otpTypeComboBox.currentIndex) {
-                            case 0:
-                                // TOTP
-                                otpType = 0;
-                                break;
-
-                            case 1:
-                                // HOTP
-                                otpType = 1;
-                                break;
-
-                            default:
-                                // Shouldn't happen, but set to an invalid value to cause the save to fail.
-                                otpType = -1;
-                                errorText.text = qsTr("Invalid OTP type!");
-                                errorSet = true;
-                                break;
-                            }
-
-                            // Convert the keyType index to the correct value.
-                            switch (secretValueTypeComboBox.currentIndex) {
-                            case 0:
-                                // Base 32
-                                keyType = 1;
-                                break;
-
-                            case 1:
-                                // HEX
-                                keyType = 0;
-                                break;
-
-                            default:
-                                // Use an invalid value to cause the save to fail.
-                                keyType = -1;
-                                errorText.text = qsTr("Invalid key format!");
-                                errorSet = true;
-                                break;
-                            }
-
-                            // Convert the combobox index to the correct number count.
-                            switch (numberCountComboBox.currentIndex) {
-                            case 0:
-                                // 6
-                                numberCount = 6;
-                                break;
-
-                            case 1:
-                                // 7
-                                numberCount = 7;
-                                break;
-
-                            case 2:
-                                // 8
-                                numberCount = 8;
-                                break;
-
-                            default:
-                                // Shouldn't be possible, but use an invalid value to cause the save to fail.
-                                numberCount = -1;
-                                errorText.text = qsTr("Invalid number of numbers.  Must be 6, 7, or 8.");
-                                errorSet = true;
-                                break;
-                            }
-
-                            if (editing) {
-                                if (!InterfaceSingleton.updateKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount)) {
-                                    if (!errorSet) {
-                                        errorText.text = qsTr("Unable to update the key entry.  Please be sure that values a provided for all of the settings above.");
-
-                                        // Create a timer to make the error text disappear after a few seconds.
-                                        Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
-                                        console.info("Timer set..");
-                                    }
-
-                                    InterfaceSingleton.logError("Failed to update the key data!  Error : " + errorText.text);
-
-                                    // Show the text.
-                                    errorText.visible = true;
-                                    return;     // Don't close the window.
-                                }
-
-                                // XXX update the database, rather than adding a key entry.
-                            } else {
-                                if (!InterfaceSingleton.addKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount)) {
-                                    if (!errorSet) {
-                                        errorText.text = qsTr("Unable to save the key entry.  Please be sure that values are provided for all of the settings above.");
-
-                                        // Create a timer to make the error text disappear after a few seconds.
-                                        Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
-                                        console.info("Timer set..");
-                                    }
-
-                                    InterfaceSingleton.logError("Failed to save the key data!  Error : " + errorText.text);
-
-                                    // Show the text.
-                                    errorText.visible = true;
-                                    return;     // Don't close the window.
-                                }
-                            }
-
-                            // Close the window.
-                            screenStack.pop();
-                        }
+                        onClicked: NewOrEdit.saveConfiguration();
                     }
                 }
 
@@ -440,11 +385,8 @@ Item {
                 }
             }
 
-            // Take up all the extra space.
-            Rectangle {
-                height: 10
-                Layout.fillWidth: true
-                color: "transparent"
+            VerticalPadding {
+                size: 5
             }
         }
     }

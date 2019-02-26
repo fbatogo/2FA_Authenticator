@@ -6,21 +6,21 @@ void QRCodeStringParserTests::qrCodeSimpleStringParserTests()
 {
     QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
-    QVERIFY(test->parseCode("otpauth://TYPE/LABEL?PARAMETERS"));
+    QVERIFY(test->parseCode("otpauth://TYPE/LABEL?secret=secret"));
     QVERIFY(test->isOtpCode());
 
     QCOMPARE(test->type(), "TYPE");
     QCOMPARE(test->label(), "LABEL");
-    QCOMPARE(test->parametersAsString(), "PARAMETERS");
+    QCOMPARE(test->parametersAsString(), "secret=secret");
 
-    QCOMPARE(test->parameterByKey("PARAMETERS"), "");
+    QCOMPARE(test->parameterByKey("secret"), "secret");
 }
 
 void QRCodeStringParserTests::qrCodeInvalidStringParserTests()
 {
     QRCodeStringParser *test = QRCodeStringParser::getInstance();
 
-    QVERIFY(test->parseCode("nototpauth://TYPE/LABEL?PARAMETERS"));
+    QVERIFY(!test->parseCode("nototpauth://TYPE/LABEL?PARAMETERS"));
     QCOMPARE(test->isOtpCode(), false);
 
     // XXX Add more tests.

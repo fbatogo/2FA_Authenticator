@@ -18,7 +18,7 @@ void Sha1Tests::sha1Tests1()
     Sha1Hash hashObj;
 
     // Calculate the empty string test.
-    toTest = strdup("");
+    toTest = _strdup("");
     result = hashObj.hash(reinterpret_cast<unsigned char *>(toTest), strlen(toTest));
     QVERIFY(memcmp((void *)result, (void *)&emptyStringResult, 20) == 0);
 
@@ -35,7 +35,7 @@ void Sha1Tests::sha1Tests2()
     Sha1Hash hashObj;
 
     // Calculate 896 bit string test.
-    toTest = strdup("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu");
+    toTest = _strdup("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu");
     result = hashObj.hash(reinterpret_cast<unsigned char *>(toTest), strlen(toTest));
     qDebug("Calculated hash : %s", TestUtils::binaryToString(result, 20).c_str());
     qDebug("Expected hash   : %s", TestUtils::binaryToString(string896bits, 20).c_str());

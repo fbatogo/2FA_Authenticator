@@ -4,7 +4,7 @@
 #include <QFileInfo>
 #include "../keystorage/keyentry.h"
 
-#define TEST_DB "./test.db"
+#define TEST_DB "test.db"
 
 void SecretDatabaseTests::databaseTests()
 {

@@ -12,6 +12,11 @@
 #define KEYENTRY_OTPTYPE_HOTP     1
 #define KEYENTRY_OTPTYPE_MAX      1     // The highest otp type value we can encode.
 
+#define KEYENTRY_ALG_SHA1         0
+#define KEYENTRY_ALG_SHA256       1
+#define KEYENTRY_ALG_SHA512       2
+#define KEYENTRY_ALG_MAX          3     // The highest algorithm value we can encode.
+
 // This class needs to be derived from QObject so that we can easily use it in the QML code.
 class KeyEntry : public QObject
 {
@@ -25,7 +30,7 @@ class KeyEntry : public QObject
     Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount)
     Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep)
     Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset)
-    Q_PROPERTY(QString mAlgorithm READ algorithm WRITE setAlgorithm)
+    Q_PROPERTY(int mAlgorithm READ algorithm WRITE setAlgorithm)
     Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter)
     Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer)
 
@@ -66,8 +71,8 @@ public:
     void timeOffset(int &value);
     void setTimeOffset(int newvalue);
 
-    QString algorithm() const;
-    void setAlgorithm(const QString &newvalue);
+    int algorithm() const;
+    void setAlgorithm(int newvalue);
 
     int hotpCounter() const;
     void setHotpCounter(int newvalue);
@@ -89,7 +94,7 @@ private:
     int mOutNumberCount;
     int mTimeStep;
     int mTimeOffset;
-    QString mAlgorithm;
+    int mAlgorithm;
     int mHotpCounter;
     QString mIssuer;
     QString mInvalidReason;
