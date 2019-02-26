@@ -14,7 +14,7 @@
 SecretDatabase::SecretDatabase()
 {
     // Set up the database object to use SQLITE.
-    mDatabase = QSqlDatabase::addDatabase("QSQLITE");
+    mDatabase = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
 }
 
 SecretDatabase::~SecretDatabase()
@@ -42,6 +42,7 @@ bool SecretDatabase::open(const QString &path)
 
     if (!mDatabase.open()) {
         LOG_ERROR("Failed to open or create the database file : " + path);
+        LOG_ERROR("    Error : " + mDatabase.lastError().text());
         return false;
     }
 
@@ -69,6 +70,9 @@ bool SecretDatabase::close()
     }
 
     mDatabase.close();
+
+    // Release the reference.
+    mDatabase = QSqlDatabase();
 
     return true;            // I guess a close can't fail?
 }
@@ -431,12 +435,12 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
         result.setTimeOffset(tempInt);
     }
 
-    if (!queryEntryToString(query, "algorithm", tempStr)) {
+    if (!queryEntryToInt(query, "algorithm", tempInt)) {
         result.setInvalidReason("Failed to get the hash algorithm from the database!");
         LOG_ERROR("Failed to get the algorithm to return from the database query row!");
         success = false;
     } else {
-        result.setAlgorithm(tempStr);
+        result.setAlgorithm(tempInt);
     }
 
     if (!queryEntryToInt(query, "hotpCounter", tempInt)) {
@@ -550,7 +554,7 @@ bool SecretDatabase::upgradeToVersion1()
     QSqlQuery query;
 
     // Start by creating the table for the data and the schema.
-    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int, timeStep int, timeOffset int, algorithm text, hotpCounter int, issuer text)")) {
+    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int, timeStep int, timeOffset int, algorithm int, hotpCounter int, issuer text)")) {
         LOG_ERROR("Failed to create the secret key table in the database!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
         return false;
     }

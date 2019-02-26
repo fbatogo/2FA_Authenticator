@@ -30,7 +30,7 @@ void KeyEntry::clear()
     mOutNumberCount = -1;
     mTimeStep = 30;             // Recommended default.
     mTimeOffset = 0;            // Recommended default.
-    mAlgorithm = "SHA1";        // Recommended default.
+    mAlgorithm = KEYENTRY_ALG_SHA1;        // Recommended default.
     mHotpCounter = 0;           // HOTP isn't used by default.
     mIssuer.clear();
     mInvalidReason.clear();
@@ -173,12 +173,12 @@ void KeyEntry::setTimeOffset(int newvalue)
     mTimeOffset = newvalue;
 }
 
-QString KeyEntry::algorithm() const
+int KeyEntry::algorithm() const
 {
     return mAlgorithm;
 }
 
-void KeyEntry::setAlgorithm(const QString &newvalue)
+void KeyEntry::setAlgorithm(int newvalue)
 {
     mAlgorithm = newvalue;
 }

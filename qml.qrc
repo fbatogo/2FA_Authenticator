@@ -21,5 +21,7 @@
         <file>resources/widgets/VerticalPadding.qml</file>
         <file>resources/widgets/FillEmptySpace.qml</file>
         <file>resources/widgets/HorizontalPadding.qml</file>
+        <file>SelectAlgorithm.qml</file>
+        <file>resources/widgets/EditItemButton.qml</file>
     </qresource>
 </RCC>

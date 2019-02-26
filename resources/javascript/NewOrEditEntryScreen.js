@@ -25,7 +25,48 @@ function init() {
         siteNameInput.text = keyEntry.mIdentifier;
         secretValueInput.text = keyEntry.mSecret;
 
-        setComboBoxes(keyEntry.mOtpType, keyEntry.mKeyType, keyEntry.mOutNumberCount);
+        switch (keyEntry.mOtpType) {
+        case 0:
+            // TOTP
+            otpTypeText.text = "TOTP";
+            break;
+
+        case 1:
+            // HOTP
+            otpTypeText.text = "HOTP";
+            break;
+        }
+
+        digitCountValue.text = keyEntry.mOutNumberCount;
+
+        switch (keyEntry.keyType) {
+        case 0:
+            // HEX
+            secretValueText.text = "HEX";
+            break;
+
+        case 1:
+            // Base32
+            secretValueText.text = "Base32";
+            break;
+        }
+
+        switch (keyEntry.mAlgorithm) {
+        case 0:
+            algorithmValue.text = "SHA1";
+            break;
+
+        case 1:
+            algorithmValue.text = "SHA256";
+            break;
+
+        case 2:
+            algorithmValue.text = "SHA512";
+            break;
+        }
+
+        periodValue.text = keyEntry.mTimeStep;
+        offsetValue.text = keyEntry.mTimeOffset;
     } else {
         // If we weren't built with ZBar, don't show the button to use the camera.
         if (InterfaceSingleton.haveZBar === false) {
@@ -41,6 +82,13 @@ function init() {
                 getFromCameraButton.text = qsTr("No cameras found.");
             }
         }
+
+        otpTypeText.text = "TOTP";
+        digitCountValue.text = "6";
+        secretValueText.text = "Base32"
+        algorithmValue.text = "SHA1";
+        periodValue.text = 30;
+        offsetValue.text = 0;
     }
 
     // See if the save button should be enabled, or not.
@@ -85,69 +133,6 @@ function onVisibleChanged(visible) {
     }
 }
 
-function setComboBoxes(otpType, encodingType, digitCount) {
-
-    if (digitCount) {
-        switch (parseInt(digitCount)) {
-        case 6:
-            // Set the combo box to index 0.
-            numberCountComboBox.currentIndex = 0;
-            break;
-
-        case 7:
-            // Set the combo box to index 1.
-            numberCountComboBox.currentIndex = 1;
-            break;
-
-        case 8:
-            // Set the combo box to index 2.
-            numberCountComboBox.currentIndex = 2;
-            break;
-
-        default:
-            console.log("Got an invalid number of digits!");
-            return;
-        }
-    } else {
-        // Set it to the default value of '6'.
-        numberCountComboBox.currentIndex = 0;
-    }
-
-    if (otpType) {
-        switch (parseInt(otpType)) {
-        case 0:
-            // TOTP
-            otpTypeComboBox.currentIndex = 0;
-            break;
-
-        case 1:
-            // HOTP
-            otpTypeComboBox.currentIndex = 1;
-            break;
-        }
-    } else {
-        // Set to the default of TOTP.
-        otpTypeComboBox.currentIndex = 0;
-    }
-
-    if (encodingType) {
-        switch (parseInt(digitCount)) {
-        case 0:
-            // HEX
-            secretValueTypeComboBox.currentIndex = 1;
-            break;
-
-        case 1:
-            // Base32
-            secretValueTypeComboBox.currentIndex = 0;
-            break;
-        }
-    } else {
-        // Set the default of BASE32.
-        secretValueTypeComboBox.currentIndex = 0;
-    }
-}
-
 // Check the fields in the UI and see if we should enable
 // the save button, or not.
 function checkEnableSave() {
@@ -165,21 +150,14 @@ function checkEnableSave() {
         return;
     }
 
-    // Figure out how the value should be encoded.
-    switch (secretValueTypeComboBox.currentIndex) {
-    case 0:
-        // Base 32
-        encodingType = 1;
-        break;
-
-    case 1:
-        // HEX
+    if (secretValueText.text == "HEX") {
         encodingType = 0;
-        break;
-
-    default:
-        console.log("Unknown encoding type selected for the secret value encoding!");
-        break;
+    } else if (secretValueText.text == "Base32") {
+        encodingType = 1;
+    } else {
+        console.log("Unknown encoding value '" + secretValueText.text + "'!");
+        saveButton.enabled = false;
+        return;
     }
 
     // Make sure the secret is encoded properly, based on the encoding type
@@ -193,4 +171,97 @@ function checkEnableSave() {
 
     // Otherwise, allow saving.
     saveButton.enabled = true;
+}
+
+function saveConfiguration() {
+    console.log("Saving key entries...");
+    var keyType, otpType, numberCount, algorithm, period, offset;
+    var errorSet = false;
+
+    // Convert the keyType index to the currect value.
+    switch (otpTypeComboBox.currentIndex) {
+    case 0:
+        // TOTP
+        otpType = 0;
+        break;
+
+    case 1:
+        // HOTP
+        otpType = 1;
+        break;
+
+    default:
+        // Shouldn't happen, but set to an invalid value to cause the save to fail.
+        otpType = -1;
+        errorText.text = qsTr("Invalid OTP type!");
+        errorSet = true;
+        break;
+    }
+
+    if (secretValueText.text == "HEX") {
+        keyType = 0;
+    } else if (secretValueText.text == "Base32") {
+        keyType = 1;
+    } else {
+        errorText.text = qsTr("Invalid secret encoding!");
+        console.log("Unknown encoding value '" + secretValueText.text + "'!");
+        keyType = -1;
+    }
+
+    numberCount = parseInt(digitCountValue.text);
+    if ((numberCount < 6) || (numberCount > 8)) {
+        errorText.text = qsTr("Invalid number of result digits!");
+        numberCount = -1;
+    }
+
+    if (algorithmValue.text == "SHA1") {
+        algorithm = 0;
+    } else if (algorithmValue.text == "SHA256") {
+        algorithm = 1;
+    } else if (algorithmValue.text == "SHA512") {
+        algorithm = 2;
+    } else {
+        errorText.text = qsTr("Unknown/unexpected algorithm value!");
+        algorithm = -1;
+    }
+
+    period = parseInt(periodValue.text);
+    offset = parseInt(offsetValue.text);
+
+    if (editing) {
+        if (!InterfaceSingleton.updateKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount, algorithm, period, offset)) {
+            if (!errorSet) {
+                errorText.text = qsTr("Unable to update the key entry.  Please be sure that values a provided for all of the settings above.");
+
+                // Create a timer to make the error text disappear after a few seconds.
+                Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
+                console.info("Timer set..");
+            }
+
+            InterfaceSingleton.logError("Failed to update the key data!  Error : " + errorText.text);
+
+            // Show the text.
+            errorText.visible = true;
+            return;     // Don't close the window.
+        }
+    } else {
+        if (!InterfaceSingleton.addKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount, algorithm, period, offset)) {
+            if (!errorSet) {
+                errorText.text = qsTr("Unable to save the key entry.  Please be sure that values are provided for all of the settings above.");
+
+                // Create a timer to make the error text disappear after a few seconds.
+                Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
+                console.info("Timer set..");
+            }
+
+            InterfaceSingleton.logError("Failed to save the key data!  Error : " + errorText.text);
+
+            // Show the text.
+            errorText.visible = true;
+            return;     // Don't close the window.
+        }
+    }
+
+    // Close the window.
+    screenStack.pop();
 }

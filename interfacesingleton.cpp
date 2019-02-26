@@ -194,10 +194,13 @@ UiOtpEntries *InterfaceSingleton::otpEntries()
  * @param keyType - One of the KEYENTRY_KEYTYPE_* values from keyentry.h
  * @param otpType - One of the KEYENTRY_OTPTYPE_* values from keyentry.h
  * @param numberCount - The number of digits of the secret to show 6, 7, or 8.
+ * @param algorithm - One of the KEYENTRY_ALG_* values from keyentry.h
+ * @param period - The number of seconds a key should be valid for.
+ * @param offset - The offset (in seconds) that should be used for the OTP.
  *
  * @return true if the key entry was stored to the data store.  false on error.
  */
-bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount)
+bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
 {
     KeyEntry toAdd;
 
@@ -227,6 +230,21 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
         return false;
     }
 
+    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
+        LOG_ERROR("Unable to use an algorithm with an invalid type!");
+        return false;
+    }
+
+    if (period < 0) {
+        LOG_ERROR("Unable to use a period length less than 0!");
+        return false;
+    }
+
+    if (offset < 0) {
+        LOG_ERROR("Unable to use an offset value less than 0!");
+        return false;
+    }
+
     // Populate the KeyEntry object that we want to write to the key storage method.
     toAdd.clear();
     toAdd.setIdentifier(identifier);
@@ -234,6 +252,9 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
     toAdd.setKeyType(keyType);
     toAdd.setOtpType(otpType);
     toAdd.setOutNumberCount(numberCount);
+    toAdd.setAlgorithm(algorithm);
+    toAdd.setTimeStep(period);
+    toAdd.setTimeOffset(offset);
 
     if (!toAdd.valid()) {
         LOG_ERROR("Failed to create a valid KeyEntry object from the provided data!");
@@ -258,10 +279,13 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
  * @param keyType - The way the key is encoded for the provided identifier.
  * @param otpType - The type of OTP value being used with the provided identifier.
  * @param numberCount - The number of digits shown for the OTP.
+ * @param algorithm - One of the KEYENTRY_ALG_* values from keyentry.h
+ * @param period - The number of seconds a key should be valid for.
+ * @param offset - The offset (in seconds) that should be used for the OTP.
  *
  * @return true if the key entry was updated.  false on error.
  */
-bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount)
+bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
 {
     KeyEntry toUpdate;
     KeyEntry *currentEntry;
@@ -293,6 +317,21 @@ bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int 
         return false;
     }
 
+    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
+        LOG_ERROR("Unable to use an algorithm with an invalid type!");
+        return false;
+    }
+
+    if (period < 0) {
+        LOG_ERROR("Unable to use a period length less than 0!");
+        return false;
+    }
+
+    if (offset < 0) {
+        LOG_ERROR("Unable to use an offset value less than 0!");
+        return false;
+    }
+
     // Populate the KeyEntry object that we want to write to the key storage method.
     toUpdate.clear();
     toUpdate.setIdentifier(identifier);
@@ -300,6 +339,9 @@ bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int 
     toUpdate.setKeyType(keyType);
     toUpdate.setOtpType(otpType);
     toUpdate.setOutNumberCount(numberCount);
+    toUpdate.setAlgorithm(algorithm);
+    toUpdate.setTimeStep(period);
+    toUpdate.setTimeOffset(offset);
 
     if (!toUpdate.valid()) {
         LOG_ERROR("Failed to update KeyEntry object from the provided data!  The data is invalid!");
@@ -355,7 +397,7 @@ bool InterfaceSingleton::deleteKey(QString identifier)
  *
  * @return true if the string appears to be encoded properly.  false if it isn't.
  */
-bool InterfaceSingleton::isEncodedProperly(int encodingType, QString valueToCheck)
+bool InterfaceSingleton::isEncodedProperly(int encodingType, const QString &valueToCheck)
 {
     switch (encodingType) {
     case KEYENTRY_KEYTYPE_HEX:
