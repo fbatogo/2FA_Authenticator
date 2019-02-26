@@ -25,17 +25,7 @@ function init() {
         siteNameInput.text = keyEntry.mIdentifier;
         secretValueInput.text = keyEntry.mSecret;
 
-        switch (keyEntry.mOtpType) {
-        case 0:
-            // TOTP
-            otpTypeText.text = "TOTP";
-            break;
-
-        case 1:
-            // HOTP
-            otpTypeText.text = "HOTP";
-            break;
-        }
+        otpTypeText.text = otpTypeIntToString(keyEntry.mOtpType);
 
         digitCountValue.text = keyEntry.mOutNumberCount;
 
@@ -51,19 +41,7 @@ function init() {
             break;
         }
 
-        switch (keyEntry.mAlgorithm) {
-        case 0:
-            algorithmValue.text = "SHA1";
-            break;
-
-        case 1:
-            algorithmValue.text = "SHA256";
-            break;
-
-        case 2:
-            algorithmValue.text = "SHA512";
-            break;
-        }
+        algorithmValue.text = hashAlgIntToString(keyEntry.mAlgorithm);
 
         periodValue.text = keyEntry.mTimeStep;
         offsetValue.text = keyEntry.mTimeOffset;
@@ -93,6 +71,68 @@ function init() {
 
     // See if the save button should be enabled, or not.
     checkEnableSave();
+}
+
+// Convert the OTP type to an integer used to identify the OTP type in the C++
+// code.
+function otpTypeToInt(encodingType) {
+    if (encodingType === "TOTP") {
+        return 0;
+    } else if (encodingType === "HOTP") {
+        return 1;
+    }
+
+    console.log("Unknown/unexpected encoding type : " + encodingType);
+    return -1;
+}
+
+// Convert the OTP type string to the int value used to represent it in the
+// C++ code.
+function otpTypeIntToString(otpTypeInt) {
+    switch (otpTypeInt) {
+    case 0:
+        // TOTP
+        return "TOTP";
+
+    case 1:
+        // HOTP
+        return "HOTP";
+    }
+
+    console.log("Unknown/unexpected OTP type : " + otpTypeInt);
+    return "<UNKNOWN>";
+}
+
+// Convert a string that indiciates one of the hashing algorithms we can use, to the
+// integer value used in the C++ code.
+function hashAlgToInt(hashAlg) {
+    if (hashAlg === "SHA1") {
+        return 0;
+    } else if (hashAlg === "SHA256") {
+        return 1;
+    } else if (hashAlg === "SHA512") {
+        return 2;
+    }
+
+    console.log("Unknown/unexpected hash algorithm of '" + hashAlg + "'!");
+    return -1;
+}
+
+// Convert an integer value to the hash algorithm string to display.
+function hashAlgIntToString(hashAlg) {
+    switch (hashAlg) {
+    case 0:
+        return "SHA1";
+
+    case 1:
+        return "SHA256";
+
+    case 2:
+        return "SHA512";
+    }
+
+    console.log("Unknown/unexpected hash algorithm int : " + hashAlg);
+    return "<UNKNOWN>";
 }
 
 function onVisibleChanged(visible) {

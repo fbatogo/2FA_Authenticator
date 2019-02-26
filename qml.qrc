@@ -23,5 +23,6 @@
         <file>resources/widgets/HorizontalPadding.qml</file>
         <file>SelectAlgorithm.qml</file>
         <file>resources/widgets/EditItemButton.qml</file>
+        <file>OtpTypeSelect.qml</file>
     </qresource>
 </RCC>

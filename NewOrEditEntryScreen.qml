@@ -18,6 +18,38 @@ Item {
 
     onVisibleChanged: NewOrEdit.onVisibleChanged(visible);
 
+    function selectedChanged(newvalue) {
+        console.log("Selection changed!");
+    }
+
+    // Create the "Select Algorithm" screen that will be shown if the user clicks the ... button next to the algorithm text.
+    Component {
+        id: selectAlgorithm
+
+        SelectAlgorithm {
+            id: alg
+
+            onSelectedChanged: {
+                console.log("Selected changed!");
+                algorithmValue.text = NewOrEdit.hashAlgIntToString(selected);
+            }
+        }
+    }
+
+    // Create the "Select OTP type" screen that will be shown if the user clicks the ... button next to the OTP type text.
+    Component {
+        id: selectOtpType
+
+        OtpTypeSelect {
+            id: otpTypeSelect
+
+            onSelectedChanged: {
+                console.log("Selected changed!");
+                otpTypeText.text = NewOrEdit.otpTypeIntToString(selected);
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -143,11 +175,19 @@ Item {
                         text: "Invalid"
                     }
 
+                    EditItemButton {
+                        id: otpTypeButton
+                        row: 2
+                        column: 2
+                        showScreen: selectOtpType
+                        selected: NewOrEdit.otpTypeToInt(otpTypeText.text)
+                    }
+
                     TextMetrics {
                         id: threeDots
                         text: "..."
                     }
-
+/*
                     Button {
                         id: otpTypeButton
                         Layout.row: 2
@@ -157,7 +197,7 @@ Item {
                         height: threeDots.height + 8
                         width: threeDots.width + 8
                         text: "..."
-                    }
+                    } */
 
                     // Secret value format
                     Text {
@@ -239,18 +279,9 @@ Item {
                         id: algorithmButton
                         row: 5
                         column: 2
+                        showScreen: selectAlgorithm //Qt.resolvedUrl("/SelectAlgorithm.qml")
+                        selected: NewOrEdit.hashAlgToInt(algorithmValue.text)
                     }
-
-/*                    Button {
-                        id: algorithmButton
-                        Layout.row: 5
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
-                    }*/
 
                     // Period
                     Text {
