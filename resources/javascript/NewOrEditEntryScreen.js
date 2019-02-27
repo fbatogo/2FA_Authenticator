@@ -22,24 +22,14 @@ function init() {
         var keyEntry = InterfaceSingleton.InterfaceSingleton.keyEntryFromIdentifier(identifier);
 
         // Set the UI to show our values.
-        siteNameInput.text = keyEntry.mIdentifier;
-        secretValueInput.text = keyEntry.mSecret;
+        siteNameInput.boxText = keyEntry.mIdentifier;
+        secretValueInput.boxText = keyEntry.mSecret;
 
         otpTypeText.text = otpTypeIntToString(keyEntry.mOtpType);
 
         digitCountValue.text = keyEntry.mOutNumberCount;
 
-        switch (keyEntry.keyType) {
-        case 0:
-            // HEX
-            secretValueText.text = "HEX";
-            break;
-
-        case 1:
-            // Base32
-            secretValueText.text = "Base32";
-            break;
-        }
+        secretValueText.text =secretTypeIntToString(keyEntry.keyType);
 
         algorithmValue.text = hashAlgIntToString(keyEntry.mAlgorithm);
 
@@ -71,6 +61,35 @@ function init() {
 
     // See if the save button should be enabled, or not.
     checkEnableSave();
+}
+
+// Convert the secret encoding type of a string to the integer value used in the C++
+// code.
+function secretTypeToInt(secretEncoding) {
+    if (secretEncoding === "HEX") {
+        return 0;
+    } else if (secretEncoding === "Base32") {
+        return 1;
+    }
+
+    console.log("Unknown/unexpected secret encoding type : " + secretEncoding);
+    return -1;
+}
+
+// Convert the secret coding from the integer value used in the C++ code to a string.
+function secretTypeIntToString(secretEncodingInt) {
+    switch (secretEncodingInt) {
+    case 0:
+        // HEX
+        return "HEX";
+
+    case 1:
+        // Base32
+        return "Base32";
+    }
+
+    console.log("Unknown/unexpected secret encoding type : " + secretEncodingInt);
+    return "<UNKNOWN>";
 }
 
 // Convert the OTP type to an integer used to identify the OTP type in the C++
@@ -148,7 +167,7 @@ function onVisibleChanged(visible) {
             // Start with the secret, since if it isn't defined, then we shouldn't update anything!
             temp = QRCodeSingleton.parameterByKey("secret");
             if (temp) {
-                secretValueInput.text = temp;
+                secretValueInput.boxText = temp;
             } else {
                 console.log("No secret was found in the QR code!?");
 
@@ -158,7 +177,7 @@ function onVisibleChanged(visible) {
 
             temp = QRCodeSingleton.label();
             if (temp) {
-                siteNameInput.text = temp;
+                siteNameInput.boxText = temp;
             }
 
             var digits = QRCodeSingleton.parameterByKey("digits");
@@ -178,13 +197,13 @@ function onVisibleChanged(visible) {
 function checkEnableSave() {
     var encodingType = -1;
 
-    if ((siteNameInput.text === null) || (siteNameInput.text === "")) {
+    if ((siteNameInput.boxText === null) || (siteNameInput.boxText === "")) {
         // Don't allow saving yet.
         saveButton.enabled = false;
         return;
     }
 
-    if ((secretValueInput.text === null) || (secretValueInput.text === "")) {
+    if ((secretValueInput.boxText === null) || (secretValueInput.boxText === "")) {
         // Don't allow saving yet.
         saveButton.enabled = false;
         return;
@@ -202,7 +221,7 @@ function checkEnableSave() {
 
     // Make sure the secret is encoded properly, based on the encoding type
     // selected.
-    if (!InterfaceSingleton.InterfaceSingleton.isEncodedProperly(encodingType, secretValueInput.text)) {
+    if (!InterfaceSingleton.InterfaceSingleton.isEncodedProperly(encodingType, secretValueInput.boxText)) {
         // Set the error text so that the user knows why they can't save yet.
         errorText.text = qsTr("The secret is not encoded properly!");
         saveButton.enabled = false;
@@ -269,7 +288,7 @@ function saveConfiguration() {
     offset = parseInt(offsetValue.text);
 
     if (editing) {
-        if (!InterfaceSingleton.updateKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount, algorithm, period, offset)) {
+        if (!InterfaceSingleton.updateKeyEntry(siteNameInput.boxText, secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
             if (!errorSet) {
                 errorText.text = qsTr("Unable to update the key entry.  Please be sure that values a provided for all of the settings above.");
 
@@ -285,7 +304,7 @@ function saveConfiguration() {
             return;     // Don't close the window.
         }
     } else {
-        if (!InterfaceSingleton.addKeyEntry(siteNameInput.text, secretValueInput.text, keyType, otpType, numberCount, algorithm, period, offset)) {
+        if (!InterfaceSingleton.addKeyEntry(siteNameInput.boxText, secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
             if (!errorSet) {
                 errorText.text = qsTr("Unable to save the key entry.  Please be sure that values are provided for all of the settings above.");
 

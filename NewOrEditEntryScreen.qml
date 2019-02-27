@@ -50,6 +50,48 @@ Item {
         }
     }
 
+    // Create the "Select secret encoding type" screen that will be shown if the user clicks the ... button next to the secret encoding text.
+    Component {
+        id: selectSecretFormatScreen
+
+        SelectSecretFormat {
+            id: secretFormatSelect
+
+            onSelectedChanged: {
+                console.log("Selected changed!");
+                secretValueText.text = NewOrEdit.secretTypeIntToString(selected);
+            }
+        }
+    }
+
+    // Create the "Select number of digits" screen that will be shown if the user clicks the ... button next to the number of digits text.
+    Component {
+        id: selectNumberOfDigitsScreen
+
+        SelectDigitLength {
+            id: digitLengthSelect
+
+            onSelectedChanged: {
+                console.log("Selected changed!");
+                digitCountValue.text = (selected + 6);
+            }
+        }
+    }
+
+    // Create the "Select number of digits" screen that will be shown if the user clicks the ... button next to the number of digits text.
+    Component {
+        id: selectTimeStepScreen
+
+        SetTimeStep {
+            id: timeStepSelect
+
+            onSelectedChanged: {
+                console.log("Selected changed!");
+                periodValue.text = selected;
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -57,9 +99,9 @@ Item {
         ColumnLayout {
             anchors.fill: parent
 
-/*            VerticalPadding {
+            VerticalPadding {
                 size: 2
-            } */
+            }
 
             SubHeader {
                 headerText: {
@@ -93,31 +135,19 @@ Item {
                         text: qsTr("Site Name : ")
                     }
 
-                    Rectangle {
+                    BoxedTextInput {
+                        id: siteNameInput
                         Layout.row: 0
                         Layout.column: 1
                         Layout.columnSpan: 2
                         height: siteNameLabel.height + 8
                         Layout.fillWidth: true
-                        color: "transparent"
 
-                        border.color: "black"
-                        border.width: 1
+                        boxText: ""
 
-                        TextInput {
-                            id: siteNameInput
-                            text: ""
-                            anchors.fill: parent
-                            anchors.topMargin: 3
-                            anchors.bottomMargin: 3
-                            anchors.leftMargin: 3
-                            anchors.rightMargin: 3
-                            anchors.centerIn: parent
-                            clip: true
-
-                            onEditingFinished: NewOrEdit.checkEnableSave();
-                        }
+                        onEditingComplete: NewOrEdit.checkEnableSave();
                     }
+
 
                     // Secret value.
                     Text {
@@ -129,32 +159,17 @@ Item {
                         text: qsTr("Secret : ")
                     }
 
-                    Rectangle {
-                        // Put a line around the text entry area.
-                        id: secretValueInputBox
+                    BoxedTextInput {
+                        id: secretValueInput
                         Layout.row: 1
                         Layout.column: 1
                         Layout.columnSpan: 2
+                        height: siteNameLabel.height + 8
                         Layout.fillWidth: true
-                        height: secretValueLabel.height + 8
-                        color: "transparent"
 
-                        border.color: "black"
-                        border.width: 1
+                        boxText: ""
 
-                        TextInput {
-                            id: secretValueInput
-                            anchors.fill: parent
-                            anchors.topMargin: 3
-                            anchors.bottomMargin: 3
-                            anchors.leftMargin: 3
-                            anchors.rightMargin: 3
-                            anchors.centerIn: parent
-                            clip: true
-                            text: ""
-
-                            onEditingFinished: NewOrEdit.checkEnableSave();
-                        }
+                        onEditingComplete: NewOrEdit.checkEnableSave();
                     }
 
                     // OTP Type row
@@ -187,17 +202,6 @@ Item {
                         id: threeDots
                         text: "..."
                     }
-/*
-                    Button {
-                        id: otpTypeButton
-                        Layout.row: 2
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
-                    } */
 
                     // Secret value format
                     Text {
@@ -217,15 +221,12 @@ Item {
                         text: "Invalid"
                     }
 
-                    Button {
-                        id: secretTypeButton
-                        Layout.row: 3
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
+                    EditItemButton {
+                        id: secretFormatButton
+                        row: 3
+                        column: 2
+                        showScreen: selectSecretFormatScreen
+                        selected: NewOrEdit.secretTypeToInt(secretValueText.text)
                     }
 
                     // Digit count
@@ -246,15 +247,12 @@ Item {
                         Layout.fillWidth: true
                     }
 
-                    Button {
+                    EditItemButton {
                         id: digitCountButton
-                        Layout.row: 4
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
+                        row: 4
+                        column: 2
+                        showScreen: selectNumberOfDigitsScreen
+                        selected: digitCountValue.text - 6
                     }
 
                     // Algorithm
@@ -301,6 +299,14 @@ Item {
                         Layout.fillWidth: true
                     }
 
+                    EditItemButton {
+                        id: periodButton
+                        row: 6
+                        column: 2
+                        showScreen: selectTimeStepScreen
+                        selected: periodValue.text
+                    }
+/*
                     Button {
                         id: periodButton
                         Layout.row: 6
@@ -311,7 +317,7 @@ Item {
                         width: threeDots.width + 8
                         text: "..."
                     }
-
+*/
                     // Offset
                     Text {
                         id: offsetLabel

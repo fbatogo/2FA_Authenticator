@@ -24,5 +24,9 @@
         <file>SelectAlgorithm.qml</file>
         <file>resources/widgets/EditItemButton.qml</file>
         <file>OtpTypeSelect.qml</file>
+        <file>SelectSecretFormat.qml</file>
+        <file>SelectDigitLength.qml</file>
+        <file>SetTimeStep.qml</file>
+        <file>resources/widgets/BoxedTextInput.qml</file>
     </qresource>
 </RCC>
