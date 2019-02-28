@@ -26,7 +26,7 @@
         <file>OtpTypeSelect.qml</file>
         <file>SelectSecretFormat.qml</file>
         <file>SelectDigitLength.qml</file>
-        <file>SetTimeStep.qml</file>
         <file>resources/widgets/BoxedTextInput.qml</file>
+        <file>resources/widgets/OtpTimeInput.qml</file>
     </qresource>
 </RCC>

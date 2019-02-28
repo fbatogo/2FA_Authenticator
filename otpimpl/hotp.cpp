@@ -184,7 +184,7 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  * @return unsigned char pointer to the dynamically truncated value.  The caller will take
  *      ownership of this pointer and *MUST* free it!  On error, nullptr will be returned.
  */
-unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, int truncateOffset)
+unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, size_t truncateOffset)
 {
     unsigned char offset;
     unsigned char *result;

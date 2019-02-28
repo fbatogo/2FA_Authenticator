@@ -18,10 +18,6 @@ Item {
 
     onVisibleChanged: NewOrEdit.onVisibleChanged(visible);
 
-    function selectedChanged(newvalue) {
-        console.log("Selection changed!");
-    }
-
     // Create the "Select Algorithm" screen that will be shown if the user clicks the ... button next to the algorithm text.
     Component {
         id: selectAlgorithm
@@ -29,10 +25,7 @@ Item {
         SelectAlgorithm {
             id: alg
 
-            onSelectedChanged: {
-                console.log("Selected changed!");
-                algorithmValue.text = NewOrEdit.hashAlgIntToString(selected);
-            }
+            onSelectedChanged: algorithmValue.text = NewOrEdit.hashAlgIntToString(selected);
         }
     }
 
@@ -43,10 +36,7 @@ Item {
         OtpTypeSelect {
             id: otpTypeSelect
 
-            onSelectedChanged: {
-                console.log("Selected changed!");
-                otpTypeText.text = NewOrEdit.otpTypeIntToString(selected);
-            }
+            onSelectedChanged: otpTypeText.text = NewOrEdit.otpTypeIntToString(selected);
         }
     }
 
@@ -57,10 +47,7 @@ Item {
         SelectSecretFormat {
             id: secretFormatSelect
 
-            onSelectedChanged: {
-                console.log("Selected changed!");
-                secretValueText.text = NewOrEdit.secretTypeIntToString(selected);
-            }
+            onSelectedChanged: secretValueText.text = NewOrEdit.secretTypeIntToString(selected);
         }
     }
 
@@ -71,24 +58,33 @@ Item {
         SelectDigitLength {
             id: digitLengthSelect
 
-            onSelectedChanged: {
-                console.log("Selected changed!");
-                digitCountValue.text = (selected + 6);
-            }
+            onSelectedChanged: digitCountValue.text = (selected + 6);
         }
     }
 
-    // Create the "Select number of digits" screen that will be shown if the user clicks the ... button next to the number of digits text.
+    // Create the "set the time step" screen that will be shown if the user clicks the ... button next to the time step entry
     Component {
         id: selectTimeStepScreen
 
-        SetTimeStep {
+        OtpTimeInput {
             id: timeStepSelect
 
-            onSelectedChanged: {
-                console.log("Selected changed!");
-                periodValue.text = selected;
-            }
+            promptText: qsTr("Select the period that an OTP is valid for : ");
+
+            onSelectedChanged: periodValue.text = selected;
+        }
+    }
+
+    // Create the "set the timestamp offset" screen that will be shown if the user clicks the ... button next to the time offset entry.
+    Component {
+        id: selectTimeOffsetScreen
+
+        OtpTimeInput {
+            id: timeOffsetSelect
+
+            promptText: qsTr("Select time offset that the OTP should use : ");
+
+            onSelectedChanged: offsetValue.text = selected;
         }
     }
 
@@ -140,7 +136,7 @@ Item {
                         Layout.row: 0
                         Layout.column: 1
                         Layout.columnSpan: 2
-                        height: siteNameLabel.height + 8
+                        totalHeight: siteNameLabel.height + 8
                         Layout.fillWidth: true
 
                         boxText: ""
@@ -164,7 +160,7 @@ Item {
                         Layout.row: 1
                         Layout.column: 1
                         Layout.columnSpan: 2
-                        height: siteNameLabel.height + 8
+                        totalHeight: siteNameLabel.height + 8
                         Layout.fillWidth: true
 
                         boxText: ""
@@ -306,18 +302,7 @@ Item {
                         showScreen: selectTimeStepScreen
                         selected: periodValue.text
                     }
-/*
-                    Button {
-                        id: periodButton
-                        Layout.row: 6
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
-                    }
-*/
+
                     // Offset
                     Text {
                         id: offsetLabel
@@ -336,6 +321,14 @@ Item {
                         Layout.fillWidth: true
                     }
 
+                    EditItemButton {
+                        id: offsetButton
+                        row: 7
+                        column: 2
+                        showScreen: selectTimeOffsetScreen
+                        selected: offsetValue.text
+                    }
+/*
                     Button {
                         id: offsetButton
                         Layout.row: 7
@@ -345,7 +338,7 @@ Item {
                         height: threeDots.height + 8
                         width: threeDots.width + 8
                         text: "..."
-                    }
+                    } */
                 }
 
                 HorizontalPadding {
