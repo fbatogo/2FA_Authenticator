@@ -27,7 +27,10 @@ Rectangle {
         clip: true
         validator: boxValidator
 
-        onEditingFinished: editingComplete();
+        onEditingFinished: {
+            boxText = boxInput.text;
+            editingComplete();
+        }
 
         onTextEdited: liveText = boxInput.text;
     }

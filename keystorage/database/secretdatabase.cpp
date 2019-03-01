@@ -14,7 +14,7 @@
 SecretDatabase::SecretDatabase()
 {
     // Set up the database object to use SQLITE.
-    mDatabase = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
+    mDatabase = QSqlDatabase::addDatabase("QSQLITE");
 }
 
 SecretDatabase::~SecretDatabase()

@@ -3,7 +3,7 @@ import QtMultimedia 5.11
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import QRFilter 1.0
-import QRCodeSingleton 1.0
+import Rollin.QRCodeSingleton 1.0
 
 Item {
     property string readText: ""
@@ -33,7 +33,7 @@ Item {
             }
 
             // If the code isn't valid, display a message, and return.
-            if (!QRCodeSingleton.isOtpCode()) {
+            if (!Rollin.QRCodeSingleton.isOtpCode()) {
                 console.log("Not a valid OTP QR code!");
 
                 // Set the error text, and show it.
@@ -52,7 +52,7 @@ Item {
                 }
 
                 // We are done processing.
-                QRCodeSingleton.setCodeProcessing(false);
+                Rollin.QRCodeSingleton.setCodeProcessing(false);
 
                 // XXX Spin up a timer to hide this text after some period of time, and to keep from
                 // trying to process the same thing again.
@@ -72,9 +72,9 @@ Item {
             }
 
             console.log("Code found!");
-            console.log("Code label : " + QRCodeSingleton.label());
-            console.log("Code type : " + QRCodeSingleton.type());
-            console.log("Code secret : " + QRCodeSingleton.parameterByKey("secret"));
+            console.log("Code label : " + Rollin.QRCodeSingleton.label());
+            console.log("Code type : " + Rollin.QRCodeSingleton.type());
+            console.log("Code secret : " + Rollin.QRCodeSingleton.parameterByKey("secret"));
 
             popped = true;
             screenStack.pop();
