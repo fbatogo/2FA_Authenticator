@@ -23,11 +23,10 @@ function init() {
         var keyEntry = InterfaceSingletonImpl.InterfaceSingleton.keyEntryFromIdentifier(identifier);
 
         if (keyEntry === null) {
-            //  XXX Something wrong!
+            console.log("Unable to locate the key entry to edit.");
+            //  XXX Show an error.  However, this shouldn't happen!
             return;
         }
-
-        console.log(keyEntry);
 
         // Set the UI to show our values.
         siteNameInput.boxText = keyEntry.mIdentifier;
@@ -37,7 +36,7 @@ function init() {
 
         digitCountValue.text = keyEntry.mOutNumberCount;
 
-        secretValueText.text =secretTypeIntToString(keyEntry.keyType);
+        secretValueText.text =secretTypeIntToString(keyEntry.mKeyType);
 
         algorithmValue.text = hashAlgIntToString(keyEntry.mAlgorithm);
 
@@ -280,6 +279,7 @@ function saveConfiguration() {
         numberCount = -1;
         return;
     }
+    console.log("number count = " + numberCount);
 
     algorithm = hashAlgToInt(algorithmValue.text);
     if (algorithm < 0) {
@@ -316,4 +316,9 @@ function saveConfiguration() {
 
     // Close the window.
     screenStack.pop();
+
+    if (editing) {
+        // We need to pop 2 screens.
+        screenStack.pop();
+    }
 }
