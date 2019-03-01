@@ -151,6 +151,11 @@ KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
         return nullptr;
     }
 
+    if (!result.valid()) {
+        LOG_ERROR("KeyEntry returned wasn't valid!");
+        return nullptr;
+    }
+
     // Return a pointerized copy of the KeyEntry.
     return new KeyEntry(result);
 }

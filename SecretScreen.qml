@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import InterfaceSingleton 1.0
+import Rollin.InterfaceSingleton 1.0
 import QtQuick.Layouts 1.3
 import UiClipboard 1.0
 
@@ -20,6 +20,9 @@ Component {
             if (visible) {
                 // Make sure the hamburger is showing.
                 menuButton.source = "resources/menu.svg";
+
+                // Also update the list model.
+                populateListModel();
             }
         }
 

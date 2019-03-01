@@ -2,8 +2,8 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import QtMultimedia 5.11
-import InterfaceSingleton 1.0
-import QRCodeSingleton 1.0
+import Rollin.InterfaceSingleton 1.0
+import Rollin.QRCodeSingleton 1.0
 
 import "resources/javascript/NewOrEditEntryScreen.js" as NewOrEdit
 import "resources/widgets/"

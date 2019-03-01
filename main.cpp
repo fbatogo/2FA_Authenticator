@@ -17,8 +17,9 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    qmlRegisterSingletonType<InterfaceSingleton>("InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
-    qmlRegisterSingletonType<QRCodeStringParser>("QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
+    qmlRegisterSingletonType<InterfaceSingleton>("Rollin.InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
+
+    qmlRegisterSingletonType<QRCodeStringParser>("Rollin.QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
 
     qmlRegisterType<KeyEntry>("KeyEntry", 1, 0, "KeyEntry");
     qmlRegisterType<UiKeyEntries>("UiKeyEntries", 1, 0, "UiKeyEntries");
