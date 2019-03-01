@@ -328,17 +328,6 @@ Item {
                         showScreen: selectTimeOffsetScreen
                         selected: offsetValue.text
                     }
-/*
-                    Button {
-                        id: offsetButton
-                        Layout.row: 7
-                        Layout.column: 2
-                        Layout.maximumWidth: threeDots.width + 8
-                        Layout.maximumHeight: threeDots.height + 8
-                        height: threeDots.height + 8
-                        width: threeDots.width + 8
-                        text: "..."
-                    } */
                 }
 
                 HorizontalPadding {
