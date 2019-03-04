@@ -18,6 +18,6 @@ private slots:
     void hmacTestCase7();
 };
 
-//DECLARE_TEST(HmacSha256Tests)
+DECLARE_TEST(HmacSha256Tests)
 
 #endif // HMACSHA256TESTS_H

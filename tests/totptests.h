@@ -17,6 +17,6 @@ private slots:
     void totpTestCase6();
 };
 
-//DECLARE_TEST(totpTests)
+DECLARE_TEST(totpTests)
 
 #endif // TOTPTESTS_H

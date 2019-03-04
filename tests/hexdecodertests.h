@@ -13,6 +13,6 @@ private slots:
     void isHexEncodedTest();
 };
 
-//DECLARE_TEST(HexDecoderTests)
+DECLARE_TEST(HexDecoderTests)
 
 #endif // HEXDECODERTESTS_H

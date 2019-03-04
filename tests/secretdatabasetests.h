@@ -23,6 +23,6 @@ private:
     SecretDatabase mTestDatabase;
 };
 
-//DECLARE_TEST(SecretDatabaseTests)
+DECLARE_TEST(SecretDatabaseTests)
 
 #endif // SECRETDATABASETESTS_H
