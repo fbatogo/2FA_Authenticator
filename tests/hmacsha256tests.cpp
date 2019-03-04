@@ -149,7 +149,7 @@ void HmacSha256Tests::hmacTestCase5()
 {
     char *key;
     size_t keyLength = 20;
-    unsigned char expectedDigest[20] = { 0xa3, 0xb6, 0x16, 0x74, 0x73, 0x10, 0x0e, 0xe0, 0x6e, 0x0c, 0x79, 0x6c, 0x29, 0x55, 0x55, 0x2b };
+    unsigned char expectedDigest[16] = { 0xa3, 0xb6, 0x16, 0x74, 0x73, 0x10, 0x0e, 0xe0, 0x6e, 0x0c, 0x79, 0x6c, 0x29, 0x55, 0x55, 0x2b };
     char *data;
     size_t dataLen;
     Hmac dohmac(new Sha256Hash(), true);
@@ -171,9 +171,9 @@ void HmacSha256Tests::hmacTestCase5()
     // Make sure the length is what we expect.  (Before truncation)
     QCOMPARE(resultSize, static_cast<size_t>(32));
     if (result != nullptr) {
-        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 16).c_str());
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
-        QVERIFY(memcmp(result, expectedDigest, 20) == 0);
+        QVERIFY(memcmp(result, expectedDigest, 16) == 0);
     }
 
     free(key);

@@ -18,6 +18,6 @@ private:
 
 };
 
-DECLARE_TEST(Sha1Tests)
+//DECLARE_TEST(Sha1Tests)
 
 #endif // SHA1TESTS_H
