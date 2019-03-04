@@ -156,7 +156,7 @@ QRCodeStringParser *QRCodeStringParser::getInstance()
  *
  * @return QObject pointer to the singleton.
  */
-QObject *QRCodeStringParser::getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine)
+QObject *QRCodeStringParser::getQmlSingleton(QQmlEngine *engine, QJSEngine *)
 {
     QRCodeStringParser *cSingleton;
 

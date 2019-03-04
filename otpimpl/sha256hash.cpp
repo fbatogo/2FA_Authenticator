@@ -1,18 +1,25 @@
 #include "sha256hash.h"
 
-#include "sha256impl.h"
+extern "C" {
+#include "otpimpl/sha2.h"
+}
+
 #include <cstring>
 
 unsigned char *Sha256Hash::hash(unsigned char *bytes, size_t bytesLength)
 {
+    sha256_ctx ctx;
+
     if (bytes == nullptr) {
         // Nothing we can do.
         return nullptr;
     }
 
-    memset(&mHashResult, 0x00, 20);
+    memset(&mHashResult, 0x00, sizeof(mHashResult));
 
-    SHA256(reinterpret_cast<unsigned char *>(&mHashResult), reinterpret_cast<char *>(bytes), static_cast<int>(bytesLength));
+    sha256_init(&ctx);
+    sha256_update(&ctx, bytes, bytesLength);
+    sha256_final(&ctx, (unsigned char *)&mHashResult);
 
     return reinterpret_cast<unsigned char *>(&mHashResult);
 }

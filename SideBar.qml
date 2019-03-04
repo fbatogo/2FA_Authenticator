@@ -136,12 +136,6 @@ Drawer {
                         console.info("About screen clicked...");
                         screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
                         break;
-
-                    case 5:
-                        // Quit option
-                        console.info("Quit selected.");
-                        Qt.quit();
-                        break;
                     }
                 }
             }
@@ -170,10 +164,6 @@ Drawer {
 
         ListElement {
             name: qsTr("About")
-        }
-
-        ListElement {
-            name: qsTr("Quit")
         }
     }
 }

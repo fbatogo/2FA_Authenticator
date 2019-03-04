@@ -186,7 +186,7 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  */
 unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, size_t truncateOffset)
 {
-    unsigned char offset;
+    size_t offset;
     unsigned char *result;
 
     if (hmac == nullptr) {
@@ -194,7 +194,7 @@ unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize,
         return nullptr;
     }
 
-    if ((truncateOffset >= 0) && (truncateOffset < (hmacSize - 4))) {
+    if (truncateOffset < (hmacSize - 4)) {
         // Use the provided truncation value.
         offset = static_cast<size_t>(truncateOffset);
     } else {

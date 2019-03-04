@@ -17,6 +17,6 @@ private slots:
     void qrCodeFullSetStringWithAmpTests();
 };
 
-DECLARE_TEST(QRCodeStringParserTests)
+//DECLARE_TEST(QRCodeStringParserTests)
 
 #endif // QRCODESTRINGPARSERTESTS_H
