@@ -21,6 +21,6 @@ private:
     std::string binaryToString(unsigned char *bytes, size_t bytesLength);
 };
 
-//DECLARE_TEST(HmacSha1Tests)
+DECLARE_TEST(HmacSha1Tests)
 
 #endif // HMACSHA1TESTS_H

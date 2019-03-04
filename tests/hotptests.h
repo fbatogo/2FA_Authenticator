@@ -12,6 +12,6 @@ private slots:
     void hotpTest1();
 };
 
-//DECLARE_TEST(hotpTests)
+DECLARE_TEST(hotpTests)
 
 #endif // HOTPTESTS_H
