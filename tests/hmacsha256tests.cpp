@@ -183,7 +183,7 @@ void HmacSha256Tests::hmacTestCase5()
 void HmacSha256Tests::hmacTestCase6()
 {
     char *key;
-    size_t keyLength = 80;
+    size_t keyLength = 131;
     unsigned char expectedDigest[32] = { 0x60, 0xe4, 0x31, 0x59, 0x1e, 0xe0, 0xb6, 0x7f, 0x0d, 0x8a, 0x26, 0xaa, 0xcb, 0xf5, 0xb7, 0x7f, 0x8e, 0x0b, 0xc6, 0x21, 0x37, 0x28, 0xc5, 0x14, 0x05, 0x46, 0x04, 0x0f, 0x0e, 0xe3, 0x7f, 0x54 };
     char *data;
     size_t dataLen;
@@ -191,7 +191,7 @@ void HmacSha256Tests::hmacTestCase6()
     unsigned char *result;
     size_t resultSize;
 
-    // Build the key, which is 80 bytes of 0xaa for test 6.
+    // Build the key, which is 131 bytes of 0xaa for test 6.
     key = reinterpret_cast<char *>(calloc(1, keyLength));
     for (size_t i = 0; i < keyLength; i++) {
         key[i] = static_cast<char>(0xaa);
@@ -218,22 +218,21 @@ void HmacSha256Tests::hmacTestCase6()
 void HmacSha256Tests::hmacTestCase7()
 {
     char *key;
-    size_t keyLength = 80;
+    size_t keyLength = 131;
     unsigned char expectedDigest1[32] = { 0x9b, 0x09, 0xff, 0xa7, 0x1b, 0x94, 0x2f, 0xcb, 0x27, 0x63, 0x5f, 0xbc, 0xd5, 0xb0, 0xe9, 0x44, 0xbf, 0xdc, 0x63, 0x64, 0x4f, 0x07, 0x13, 0x93, 0x8a, 0x7f, 0x51, 0x53, 0x5c, 0x3a, 0x35, 0xe2 };
-    //unsigned char expectedDigest2[20] = { 0x4c, 0x1a, 0x03, 0x42, 0x4b, 0x55, 0xe0, 0x7f, 0xe7, 0xf2, 0x7b, 0xe1, 0xd5, 0x8b, 0xb9, 0x32, 0x4a, 0x9a, 0x5a, 0x04 };  // We don't calculate the 2nd block in this test.
     char *data;
     size_t dataLen;
     Hmac dohmac(new Sha256Hash(), true);
     unsigned char *result;
     size_t resultSize;
 
-    // Build the key, which is 80 bytes of 0xaa for test 7.
+    // Build the key, which is 131 bytes of 0xaa for test 7.
     key = reinterpret_cast<char *>(calloc(1, keyLength));
     for (size_t i = 0; i < keyLength; i++) {
         key[i] = static_cast<char>(0xaa);
     }
 
-    data = strdup("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data");
+    data = strdup("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
