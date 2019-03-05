@@ -28,5 +28,6 @@
         <file>SelectDigitLength.qml</file>
         <file>resources/widgets/BoxedTextInput.qml</file>
         <file>resources/widgets/OtpTimeInput.qml</file>
+        <file>resources/refresh.svg</file>
     </qresource>
 </RCC>

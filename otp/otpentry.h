@@ -14,6 +14,9 @@ class OtpEntry : public QObject
     Q_PROPERTY(int mTimeStep READ timeStep)
     Q_PROPERTY(bool mValid READ valid)
     Q_PROPERTY(QString mInvalidReason READ invalidReason)
+    Q_PROPERTY(QString mIssuer READ issuer)
+    Q_PROPERTY(int mOtpType READ otpType)
+    Q_PROPERTY(int mHotpCounter READ hotpCounter)
 
 public:
     OtpEntry(QObject *parent = nullptr);
@@ -37,6 +40,15 @@ public:
     QString invalidReason();
     void setInvalidReason(const QString &newvalue);
 
+    QString issuer();
+    void setIssuer(const QString &newvalue);
+
+    int otpType() const;
+    void setOtpType(int newvalue);
+
+    int hotpCounter() const;
+    void setHotpCounter(int newvalue);
+
 private:
     QString mIdentifier;
     QString mCurrentCode;
@@ -44,6 +56,9 @@ private:
     int mTimeStep;
     bool mValid;
     QString mInvalidReason;
+    QString mIssuer;
+    int mOtpType;
+    int mHotpCounter;
 };
 
 #endif // OTPENTRY_H

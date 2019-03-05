@@ -7,6 +7,10 @@ OtpEntry::OtpEntry(QObject *parent) :
     mCurrentCode.clear();
     mStartTime = -1;
     mTimeStep = -1;
+    mInvalidReason.clear();
+    mIssuer.clear();
+    mOtpType = -1;
+    mHotpCounter = -1;
 }
 
 OtpEntry::OtpEntry(const OtpEntry &toCopy) :
@@ -75,4 +79,34 @@ QString OtpEntry::invalidReason()
 void OtpEntry::setInvalidReason(const QString &newvalue)
 {
     mInvalidReason = newvalue;
+}
+
+QString OtpEntry::issuer()
+{
+    return mIssuer;
+}
+
+void OtpEntry::setIssuer(const QString &newvalue)
+{
+    mIssuer = newvalue;
+}
+
+int OtpEntry::otpType() const
+{
+    return mOtpType;
+}
+
+void OtpEntry::setOtpType(int newvalue)
+{
+    mOtpType = newvalue;
+}
+
+int OtpEntry::hotpCounter() const
+{
+    return mHotpCounter;
+}
+
+void OtpEntry::setHotpCounter(int newvalue)
+{
+    mHotpCounter = newvalue;
 }

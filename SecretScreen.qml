@@ -2,6 +2,9 @@ import QtQuick 2.0
 import Rollin.InterfaceSingleton 1.0
 import QtQuick.Layouts 1.3
 import UiClipboard 1.0
+import Rollin.SettingsHandler 1.0
+
+import "resources/widgets/"
 
 Component {
     Item {
@@ -125,9 +128,9 @@ Component {
                     // Calculate the percentage of time that has passed.
                     var timePercent = temp.mStartTime / temp.mTimeStep;
 
-                    otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  circleShown: (360 * timePercent), showError: false, errorText: "" });
+                    otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  issuerText: temp.mIssuer, otpType: temp.mOtpType, hotpCounter: temp.mHotpCounter, circleShown: (360 * timePercent), showError: false, errorText: "" });
                 } else {
-                    otpListModel.append({ identifier: temp.mIdentifier, otpCode: "", showError: true, errorText: temp.mInvalidReason });
+                    otpListModel.append({ identifier: temp.mIdentifier, otpCode: "", issuerText: "", otpType: -1, hotpCounter: -1, showError: true, errorText: temp.mInvalidReason });
                 }
             }
         }
@@ -178,6 +181,40 @@ Component {
                             font.pointSize: 14
                         }
 
+                        // Show the issue, if enabled.
+                        Text {
+                            id: issuer
+                            width: parent.width
+                            x: 25
+
+                            visible: ((!showError) && (SettingsHandler.showIssuer()))
+
+                            text: {
+                                if (issuerText === "") {
+                                    return qsTr("Issuer : <Not Provided>");
+                                }
+
+                                return qsTr("Issuer : %1").arg(issuerText);
+                            }
+                        }
+
+                        // Show the HOTP counter, if enabled.
+                        Text {
+                            id: hotpCounterLabel
+                            width: parent.width
+                            x: 25
+
+                            visible: ((!showError) && (otpType === 1) && (SettingsHandler.showHotpCounterValue()))
+
+                            text: {
+                                console.log("HOTP Counter Value : " + hotpCounter);
+                                if (hotpCounter < 0) {
+                                    return qsTr("Invalid HOTP Counter value!");
+                                }
+
+                                return qsTr("HOTP Counter Value : %1").arg(hotpCounter);
+                            }
+                        }
 
                         Text {
                             id: otpNumberLabel
@@ -196,6 +233,7 @@ Component {
                     // Show the clock icon.
                     Rectangle {
                         id: clockFrame
+                        visible: (otpType !== 1)
 
                         width: keyColumn.height
                         height: keyColumn.height
@@ -207,6 +245,37 @@ Component {
                             size: clockFrame.width - 10
                             arcBegin: 0
                             arcEnd: (360 - circleShown)
+                        }
+                    }
+
+                    // Show a refresh button for HOTP values.
+                    Rectangle {
+                        id: hotpRefreshButton
+
+                        visible: (otpType === 1)
+
+                        width: keyColumn.height
+                        height: keyColumn.height
+
+                        Image {
+                            x: 5
+                            y: 5
+                            source: "resources/refresh.svg"
+                            sourceSize.height: keyColumn.height - 20
+                            sourceSize.width: keyColumn.height - 20
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log("Getting new value.");
+
+                                // Increment the counter value.
+                                // XXX Implement!
+
+                                // Force update the display.
+                                // XXX Implement!
+                            }
                         }
                     }
 
@@ -232,6 +301,10 @@ Component {
                                 clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
                             }
                         }
+                    }
+
+                    HorizontalPadding {
+                        size: 10
                     }
                 }
 

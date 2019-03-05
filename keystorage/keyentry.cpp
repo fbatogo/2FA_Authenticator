@@ -18,6 +18,7 @@ KeyEntry::KeyEntry(const KeyEntry &toCopy) :
     setOutNumberCount(toCopy.outNumberCount());
     setTimeStep(toCopy.timeStep());
     setTimeOffset(toCopy.timeOffset());
+    setHotpCounter(toCopy.hotpCounter());
 }
 
 void KeyEntry::clear()
@@ -31,9 +32,9 @@ void KeyEntry::clear()
     mTimeStep = 30;             // Recommended default.
     mTimeOffset = 0;            // Recommended default.
     mAlgorithm = KEYENTRY_ALG_SHA1;        // Recommended default.
-    mHotpCounter = 0;           // HOTP isn't used by default.
+    mHotpCounter = -1;           // HOTP isn't used by default.
     mIssuer.clear();
-    mInvalidReason.clear();
+    mInvalidReason.clear();    
 }
 
 /**
