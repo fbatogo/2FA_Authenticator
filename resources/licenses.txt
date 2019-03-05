@@ -9,7 +9,7 @@ Text for all used licenses are included below.<br/>
 ---- Libraries ----<br/>
 <br/>
 zbar is licensed under the terms of the LGPLv2.1 or higher.<br/>
-sha-2 implementation is licensed under the terms of the BSD license.<br/>
+SHA-2 implementation is licensed under the terms of the BSD license and can be found at http://www.ouah.org/ogay/sha2/<br/>
 <br/>
 ---- Code Snippets ----<br/>
 <br/>
