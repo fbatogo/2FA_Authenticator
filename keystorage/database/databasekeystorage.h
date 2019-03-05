@@ -23,9 +23,6 @@ public:
     bool freeKeyStorage();
 
 private:
-    QString getDotDirectory();
-    bool dotDirectoryExistsOrIsCreated();
-
     SecretDatabase mSecretDatabase;
 };
 
