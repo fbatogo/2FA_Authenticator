@@ -26,7 +26,7 @@ void HmacSha512Tests::hmacTestCase1()
         key[i] = 0x0b;
     }
 
-    data = _strdup("Hi There");
+    data = strdup("Hi There");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
@@ -48,7 +48,7 @@ void HmacSha512Tests::hmacTestCase2()
 {
     char *key;
     size_t keyLength = 4;
-    unsigned char expectedDigest[20] = { 0xef, 0xfc, 0xdf, 0x6a, 0xe5, 0xeb, 0x2f, 0xa2, 0xd2, 0x74, 0x16, 0xd5, 0xf1, 0x84, 0xdf, 0x9c, 0x25, 0x9a, 0x7c, 0x79 };
+    unsigned char expectedDigest[64] = { 0x16, 0x4b, 0x7a, 0x7b, 0xfc, 0xf8, 0x19, 0xe2, 0xe3, 0x95, 0xfb, 0xe7, 0x3b, 0x56, 0xe0, 0xa3, 0x87, 0xbd, 0x64, 0x22, 0x2e, 0x83, 0x1f, 0xd6, 0x10, 0x27, 0x0c, 0xd7, 0xea, 0x25, 0x05, 0x54, 0x97, 0x58, 0xbf, 0x75, 0xc0, 0x5a, 0x99, 0x4a, 0x6d, 0x03, 0x4f, 0x65, 0xf8, 0xf0, 0xe6, 0xfd, 0xca, 0xea, 0xb1, 0xa3, 0x4d, 0x4a, 0x6b, 0x4b, 0x63, 0x6e, 0x07, 0x0a, 0x38, 0xbc, 0xe7, 0x37 };
     char *data;
     size_t dataLen;
     Hmac dohmac(new Sha512Hash(), true);
@@ -65,11 +65,11 @@ void HmacSha512Tests::hmacTestCase2()
     result = dohmac.calculate(reinterpret_cast<unsigned char *>(key), keyLength, reinterpret_cast<unsigned char *>(data), dataLen, resultSize);
 
     // Make sure the length is what we expect.
-    QCOMPARE(resultSize, static_cast<size_t>(20));
+    QCOMPARE(resultSize, static_cast<size_t>(64));
     if (result != nullptr) {
-        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+        qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 64).c_str());
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
-        QVERIFY(memcmp(result, expectedDigest, 20) == 0);
+        QVERIFY(memcmp(result, expectedDigest, 64) == 0);
     }
 
     free(key);

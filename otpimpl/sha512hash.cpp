@@ -34,5 +34,5 @@ size_t Sha512Hash::hashResultLength()
 
 size_t Sha512Hash::hashBlockLength()
 {
-    return 64;
+    return 128;
 }

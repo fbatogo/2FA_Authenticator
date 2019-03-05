@@ -24,7 +24,7 @@ void Base32CoderTests::encoderTest1()
     encodedText = getEncodedTextTests();
 
     for (size_t i = 0; i < clearText.size(); i++) {
-        testPtr = reinterpret_cast<unsigned char *>(_strdup(clearText.at(i).c_str()));
+        testPtr = reinterpret_cast<unsigned char *>(strdup(clearText.at(i).c_str()));
         encoded = encoder.encode(testPtr, clearText.at(i).length());
         qDebug("Expected : %s    Calculated : %s", encodedText.at(i).c_str(), encoded.c_str());
         QCOMPARE(encodedText.at(i), encoded);
@@ -48,7 +48,7 @@ void Base32CoderTests::decoderTest1()
 
     for (size_t i = 0; i < clearText.size(); i++) {
         testPtr = decoder.decode(encodedText.at(i), testPtrSize);
-        toCompare = reinterpret_cast<unsigned char *>(_strdup(clearText.at(i).c_str()));
+        toCompare = reinterpret_cast<unsigned char *>(strdup(clearText.at(i).c_str()));
 
         qDebug("%s  Expected : %s", clearText.at(i).c_str(), TestUtils::binaryToString(toCompare, clearText.at(i).length()).c_str());
         qDebug("%s  Decoded  : %s", clearText.at(i).c_str(), TestUtils::binaryToString(testPtr, testPtrSize).c_str());
