@@ -26,7 +26,7 @@ void HmacSha256Tests::hmacTestCase1()
         key[i] = 0x0b;
     }
 
-    data = _strdup("Hi There");
+    data = strdup("Hi There");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
@@ -56,9 +56,9 @@ void HmacSha256Tests::hmacTestCase2()
     size_t resultSize;
 
     // Key for test 2.
-    key = _strdup("Jefe");
+    key = strdup("Jefe");
 
-    data = _strdup("what do ya want for nothing?");
+    data = strdup("what do ya want for nothing?");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
@@ -162,7 +162,7 @@ void HmacSha256Tests::hmacTestCase5()
         key[i] = static_cast<char>(0xa0c);
     }
 
-    data = _strdup("Test With Truncation");
+    data = strdup("Test With Truncation");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
@@ -197,7 +197,7 @@ void HmacSha256Tests::hmacTestCase6()
         key[i] = static_cast<char>(0xaa);
     }
 
-    data = _strdup("Test Using Larger Than Block-Size Key - Hash Key First");
+    data = strdup("Test Using Larger Than Block-Size Key - Hash Key First");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
@@ -233,7 +233,7 @@ void HmacSha256Tests::hmacTestCase7()
         key[i] = static_cast<char>(0xaa);
     }
 
-    data = _strdup("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data");
+    data = strdup("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data");
     dataLen = strlen(data);
 
     // Calculate the HMAC.
