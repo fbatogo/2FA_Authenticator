@@ -1,9 +1,5 @@
-- Finish editing screen/code
-- Add SHA256 and SHA512
-- Finish implementing settings code
-- Add the ability to show HOTP values
-- Validate the inputs on the add/edit screen.
-- Before enabling save button, make sure secret is encoded properly.
-- If the secret isn't encoded properly, tell the user.
-- Add an 'advanced' screen to the new/edit screen to allow setting the offset and time step.
+- Add SHA256 and SHA512 (fix so OTPs can be calculated using this hashes)
+- Finish implementing settings code (add option to show HASH type being used)
+- Add the ability to show HOTP values (finish)
 - Pull out large javascript blocks in to .js files for each screen.
+- Convert zbar to not using qml-zbar, since we don't know the license?

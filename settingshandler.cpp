@@ -1,6 +1,7 @@
 #include "settingshandler.h"
 
 #include <QDir>
+#include <QVariant>
 #include <logger.h>
 
 #define DOT_DIRECTORY       ".Rollin"          // The name of the dot directory we will use in the user home directory.
@@ -64,7 +65,7 @@ void SettingsHandler::setShowHotpCounterValue(bool newvalue)
 {
     mShowHotpCounter = newvalue;
 
-    mSettingsDatabase.setValue("main/showHotpCounter", mShowHotpCounter);
+    mSettingsDatabase.setValue("Settings/showHotpCounter", mShowHotpCounter);
 }
 
 /**
@@ -89,7 +90,7 @@ void SettingsHandler::setShowIssuer(bool newvalue)
 {
     mShowIssuer = newvalue;
 
-    mSettingsDatabase.setValue("main/showIssuer", mShowIssuer);
+    mSettingsDatabase.setValue("Settings/showIssuer", mShowIssuer);
 }
 
 /**
@@ -159,5 +160,9 @@ SettingsHandler::SettingsHandler() :
     }
 
     // Override the path to store our settings at.
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, dataPath());
+    mSettingsDatabase.setPath(QSettings::IniFormat, QSettings::UserScope, dataPath() + "/Rollin.ini");
+
+    // Attempt to load the values that were set last.
+    mShowIssuer = mSettingsDatabase.value("Settings/showIssuer", false).toBool();
+    mShowHotpCounter = mSettingsDatabase.value("Settings/showHotpCounter", false).toBool();
 }

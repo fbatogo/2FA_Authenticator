@@ -21,7 +21,7 @@ qml-zbar implementation by mpersano from https://github.com/mpersano/qml-zbar  -
 <br/>
 ---- Graphics ----<br/>
 <br/>
-The menu and back icons were made by Timothy Miller from <a href="https://www.iconfinder.com/iconsets/wirecons-free-vector-icons">IconFinder</a>, and is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.<br/>
+The menu, refresh and back icons were made by Timothy Miller from <a href="https://www.iconfinder.com/iconsets/wirecons-free-vector-icons">IconFinder</a>, and is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.<br/>
 The copy icon was made by <a href="https://www.flaticon.com/authors/elias-bikbulatov" title="Elias Bikbulatov">Elias Bikbulatov</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>.<br/>
 <br/>
 <br/>
