@@ -9,6 +9,7 @@
 #include "uiclipboard.h"
 #include "zbar/qrcodefilter.h"
 #include "zbar/qrcodestringparser.h"
+#include "settingshandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,8 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<InterfaceSingleton>("Rollin.InterfaceSingleton", 1, 0, "InterfaceSingleton", InterfaceSingleton::getQmlSingleton);
 
     qmlRegisterSingletonType<QRCodeStringParser>("Rollin.QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
+
+    qmlRegisterSingletonType<SettingsHandler>("Rollin.SettingsHandler", 1, 0, "SettingsHandler", SettingsHandler::getQmlSingleton);
 
     qmlRegisterType<KeyEntry>("KeyEntry", 1, 0, "KeyEntry");
     qmlRegisterType<UiKeyEntries>("UiKeyEntries", 1, 0, "UiKeyEntries");

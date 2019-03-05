@@ -54,7 +54,8 @@ SOURCES += \
     otpimpl/hexdecoder.cpp \
     otpimpl/sha256hash.cpp \
     otpimpl/sha512hash.cpp \
-    otpimpl/sha2.c
+    otpimpl/sha2.c \
+    settingshandler.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -83,7 +84,8 @@ HEADERS += \
     zbar/myqzbarimage.h \
     otpimpl/sha256hash.h \
     otpimpl/sha512hash.h \
-    otpimpl/sha2.h
+    otpimpl/sha2.h \
+    settingshandler.h
 
 RESOURCES += qml.qrc
 
