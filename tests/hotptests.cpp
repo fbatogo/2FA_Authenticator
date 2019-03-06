@@ -47,6 +47,18 @@
    9        2679dc69        645520489     520489
    */
 
+void hotpTests::invalidHotpTest()
+{
+    Hotp invalidHotp;
+    unsigned char *key;
+
+    // Set the HOTP object to delete the HMAC when the dtor is called, but set
+    // the HMAC object to null to be sure we don't crash.
+    invalidHotp.setHmac(nullptr, true);
+
+    QCOMPARE(invalidHotp.calculate(key, 20, 0, 6), "");
+}
+
 void hotpTests::hotpTest1()
 {
     Hotp hotp(new Hmac(new Sha1Hash(), true), true);

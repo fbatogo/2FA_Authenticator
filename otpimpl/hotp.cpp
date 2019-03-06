@@ -4,6 +4,12 @@
 #include "sha1hash.h"
 #include "../logger.h"
 
+Hotp::Hotp()
+{
+    mHmacToUse = nullptr;
+    mShouldDelete = false;
+}
+
 Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -12,11 +18,26 @@ Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 
 Hotp::~Hotp()
 {
-    if (mShouldDelete) {
-        delete mHmacToUse;
-    }
+    clear();
+}
 
-    mHmacToUse = nullptr;
+/**
+ * @brief Hotp::setHmac - Set the HMAC object to use when calculating the HOTP value.
+ *
+ * @param hmacToUse - The HMAC object that should be used to calculate the HOTP value.
+ * @param takeOwnership - If true, this object will take ownership of the HMAC object, and
+ *      will delete it in the dtor.  If false, the caller is responsible for freeing the
+ *      HMAC object when it knows it is no longer in use.
+ */
+void Hotp::setHmac(Hmac *hmacToUse, bool takeOwnership)
+{
+    // If we are currently set to take ownership of the HMAC object, and an HMAC object
+    // is set, clean it up.
+    clear();
+
+    // Set the new values to use.
+    mHmacToUse = hmacToUse;
+    mShouldDelete = takeOwnership;
 }
 
 /**
@@ -42,6 +63,12 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
         return "";
     }
 
+    // Make sure we are configured properly.
+    if (mHmacToUse == nullptr) {
+        LOG_ERROR("No HMAC object was set when attempting to calculate an HOTP value!");
+        return "";
+    }
+
     if ((digits < 6) || (digits > 8)) {
         LOG_ERROR("The number of digits provided must be 6, 7, or 8!");
         return "";
@@ -62,6 +89,19 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
     }
 
     return calculateHotpFromHmac(hashValue, resultSize, digits, addChecksum, truncationOffset);
+}
+
+/**
+ * @brief Hotp::clear - If necessary, delete the current HMAC object.  Then, set the current
+ *      object to be a nullptr.
+ */
+void Hotp::clear()
+{
+    if ((mShouldDelete) && (mHmacToUse != nullptr)) {
+        delete mHmacToUse;
+    }
+
+    mHmacToUse = nullptr;
 }
 
 /**
