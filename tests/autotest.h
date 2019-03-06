@@ -8,6 +8,7 @@
 #include <QList>
 #include <QString>
 #include <QSharedPointer>
+#include <iostream>
 
 namespace AutoTest
 {
@@ -16,16 +17,19 @@ namespace AutoTest
  inline TestList& testList()
  {
   static TestList list;
+
   return list;
  }
 
  inline bool findObject(QObject* object)
  {
   TestList& list = testList();
+
   if (list.contains(object))
   {
    return true;
   }
+
   foreach (QObject* test, list)
   {
    if (test->objectName() == object->objectName())
@@ -33,12 +37,14 @@ namespace AutoTest
     return true;
    }
   }
+
   return false;
  }
 
  inline void addTest(QObject* object)
  {
   TestList& list = testList();
+
   if (!findObject(object))
   {
    list.append(object);
@@ -53,6 +59,8 @@ namespace AutoTest
   {
    ret += QTest::qExec(test, argc, argv);
   }
+
+  std::cout << std::endl << std::endl << ret << " test(s) failed!" << std::endl;
 
   return ret;
  }

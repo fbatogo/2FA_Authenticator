@@ -9,6 +9,7 @@ class HmacSha1Tests : public QObject
     Q_OBJECT
 
 private slots:
+    void hmacNoHashTest();
     void hmacTestCase1();
     void hmacTestCase2();
     void hmacTestCase3();

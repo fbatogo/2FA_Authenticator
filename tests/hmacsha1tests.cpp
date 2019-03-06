@@ -11,6 +11,21 @@
 
 // Test vectors taken from RFC 2202 at https://tools.ietf.org/html/rfc2202
 
+void HmacSha1Tests::hmacNoHashTest()
+{
+    Hmac invalidHmac;
+    unsigned char *randomJunk;
+    unsigned char *data;
+    size_t resultSize;
+
+    // Set the object to delete the hash object, but set the hash object to null
+    // to make sure we don't crash.
+    invalidHmac.setHashType(nullptr, true);
+
+    // Attempt to do an HMAC without a hash algorithm set.
+    QCOMPARE(invalidHmac.calculate(randomJunk, 20, data, 20, resultSize), nullptr);
+}
+
 void HmacSha1Tests::hmacTestCase1()
 {
     char *key;

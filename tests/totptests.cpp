@@ -6,6 +6,18 @@
 
 #include <QDebug>
 
+void totpTests::totpInvalidHmacTest()
+{
+    Totp invalidTotp;
+    unsigned char *invalidKey;
+
+    // Set the object to take ownership of the HMAC object, but set the HMAC object
+    // to null to make sure we don't crash in the dtor.
+    invalidTotp.setHmac(nullptr, true);
+
+    QCOMPARE(invalidTotp.calculate(invalidKey, 20, 0), "");
+}
+
 void totpTests::totpTestCase1()
 {
     char *key;
