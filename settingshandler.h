@@ -22,6 +22,9 @@ public:
     Q_INVOKABLE bool showIssuer();
     Q_INVOKABLE void setShowIssuer(bool newvalue);
 
+    Q_INVOKABLE bool showHashAlgorithm();
+    Q_INVOKABLE void setShowHashAlgorithm(bool newvalue);
+
     QString dataPath();
     bool dataDirectoryExistsOrIsCreated();
 
@@ -32,6 +35,7 @@ private:
 
     bool mShowHotpCounter;
     bool mShowIssuer;
+    bool mShowAlgorithm;
 
     QSettings mSettingsDatabase;
 };

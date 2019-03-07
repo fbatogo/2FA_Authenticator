@@ -94,6 +94,31 @@ void SettingsHandler::setShowIssuer(bool newvalue)
 }
 
 /**
+ * @brief SettingsHandler::showHashAlgorithm - Return the boolean that indicates if we
+ *      should show the hash algorithm with the OTP value.
+ *
+ * @return true if the hash algorithm should be shown with the OTP value.  false
+ *      otherwise.
+ */
+bool SettingsHandler::showHashAlgorithm()
+{
+    return mShowAlgorithm;
+}
+
+/**
+ * @brief SettingsHandler::setShowHashAlgorithm - Set the setting that indicates if we
+ *      should show the hash algorithm with the OTP value.
+ *
+ * @param newvalue - true if we should show the hash algorithm.  false otherwise.
+ */
+void SettingsHandler::setShowHashAlgorithm(bool newvalue)
+{
+    mShowAlgorithm = newvalue;
+
+    mSettingsDatabase.setValue("Settings/showHashAlgorithm", mShowAlgorithm);
+}
+
+/**
  * @brief SettingsHandler::dataPath - Get the path the should be used to store data for this app.
  *
  * @return QString containing the path that should be used to store data files for this app.
@@ -165,4 +190,5 @@ SettingsHandler::SettingsHandler() :
     // Attempt to load the values that were set last.
     mShowIssuer = mSettingsDatabase.value("Settings/showIssuer", false).toBool();
     mShowHotpCounter = mSettingsDatabase.value("Settings/showHotpCounter", false).toBool();
+    mShowAlgorithm = mSettingsDatabase.value("Settings/showHashAlgoritm", false).toBool();
 }

@@ -55,6 +55,15 @@ Item {
 
                         onToggled: SettingsHandler.setShowHotpCounterValue(checked);
                     }
+
+                    CheckBox {
+                        id: showHashAlgorithm
+                        tristate: false
+                        checked: SettingsHandler.showHashAlgorithm();
+                        text: qsTr("Show hash algorithm");
+
+                        onToggled: SettingsHandler.setShowHashAlgorithm(checked);
+                    }
                 }
             }
 
