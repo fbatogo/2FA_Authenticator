@@ -28,7 +28,6 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
     unsigned char *dSecret;
     size_t dSize;
     QString calculatedCode;
-    int startTime;
 
     if (keydata == nullptr) {
         LOG_ERROR("No key data provided while attempting to calculate an OTP!");
@@ -80,8 +79,6 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
     // The code should be valid.
     keydata->setCodeValid(true);
     keydata->setCurrentCode(calculatedCode);
-
-    LOG_DEBUG(QString::fromStdString(keydata->toString()));
 }
 
 /**
