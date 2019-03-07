@@ -1,6 +1,7 @@
 #include "keyentry.h"
 
 #include <logger.h>
+#include <sstream>
 
 KeyEntry::KeyEntry() :
     QObject(nullptr)
@@ -18,7 +19,13 @@ KeyEntry::KeyEntry(const KeyEntry &toCopy) :
     setOutNumberCount(toCopy.outNumberCount());
     setTimeStep(toCopy.timeStep());
     setTimeOffset(toCopy.timeOffset());
+    setAlgorithm(toCopy.algorithm());
     setHotpCounter(toCopy.hotpCounter());
+    setIssuer(toCopy.issuer());
+    setInvalidReason(toCopy.invalidReason());
+    setCurrentCode(toCopy.currentCode());
+    setStartTime(toCopy.startTime());
+    setCodeValid(toCopy.codeValid());
 }
 
 void KeyEntry::clear()
@@ -35,6 +42,9 @@ void KeyEntry::clear()
     mHotpCounter = -1;           // HOTP isn't used by default.
     mIssuer.clear();
     mInvalidReason.clear();    
+    mCurrentCode.clear();
+    mStartTime = -1;
+    mCodeValid = false;
 }
 
 /**
@@ -214,6 +224,49 @@ void KeyEntry::setInvalidReason(const QString &newvalue)
     mInvalidReason = newvalue;
 }
 
+QString KeyEntry::currentCode() const
+{
+    return mCurrentCode;
+}
+
+void KeyEntry::setCurrentCode(const QString &newvalue)
+{
+    mCurrentCode = newvalue;
+}
+
+int KeyEntry::startTime() const
+{
+    return mStartTime;
+}
+
+void KeyEntry::setStartTime(int newvalue)
+{
+    mStartTime = newvalue;
+}
+
+bool KeyEntry::codeValid() const
+{
+    return mCodeValid;
+}
+
+void KeyEntry::setCodeValid(bool newvalue)
+{
+    mCodeValid = newvalue;
+}
+
+std::string KeyEntry::toString()
+{
+    std::stringstream result;
+
+    result << "[KeyEntry -- valid: ";
+    result << mValid << "  code valid: " << mCodeValid << "  identifier: " << mIdentifier.toStdString() << "  secret: " << mSecret.toStdString() << "  key type: ";
+    result << mKeyType << "  otp type: " << mOtpType << "  digits: " << mOutNumberCount << "  time step: " << mTimeStep << "  time offset: " << mTimeOffset;
+    result << "  algorithm: " << mAlgorithm << "  hotp counter: " << mHotpCounter << "  issuer: " << mIssuer.toStdString() << "  invalid reason: " << mInvalidReason.toStdString();
+    result << "  current code: " << mCurrentCode.toStdString() << "  start time: " << mStartTime << "]";
+
+    return result.str();
+}
+
 /**
  * @brief KeyEntry::operator = - Handle copying data when using the = operator.
  *
@@ -233,6 +286,26 @@ KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
     setAlgorithm(toCopy.algorithm());
     setHotpCounter(toCopy.hotpCounter());
     setIssuer(toCopy.issuer());
+    setInvalidReason(toCopy.invalidReason());
+    setCurrentCode(toCopy.currentCode());
+    setStartTime(toCopy.startTime());
+    setCodeValid(toCopy.codeValid());
 
     return *this;
+}
+
+/**
+ * @brief KeyEntry::boolToString - Convert a boolean value to a string representation.
+ *
+ * @param value - The boolean to convert to a string.
+ *
+ * @return std::string containing "true" or "false".
+ */
+std::string KeyEntry::boolToString(bool value)
+{
+    if (value) {
+        return "true";
+    }
+
+    return "false";
 }

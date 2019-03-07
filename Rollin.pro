@@ -38,8 +38,6 @@ SOURCES += \
     keystorage/database/databasekeystorage.cpp \
     interfacesingleton.cpp \
     uikeyentries.cpp \
-    otp/otpentry.cpp \
-    uiotpentries.cpp \
     otp/otphandler.cpp \
     uiclipboard.cpp \
     zbar/qrcodefilter.cpp \
@@ -66,8 +64,6 @@ HEADERS += \
     keystorage/database/databasekeystorage.h \
     interfacesingleton.h \
     uikeyentries.h \
-    otp/otpentry.h \
-    uiotpentries.h \
     otp/otphandler.h \
     uiclipboard.h \
     zbar/qrcodefilter.h \

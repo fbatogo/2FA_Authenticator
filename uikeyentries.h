@@ -14,6 +14,7 @@ public:
     ~UiKeyEntries();
 
     bool populateEntries(QList<KeyEntry> &toCopy);
+    bool calculateEntries();
 
     Q_INVOKABLE int count();
     Q_INVOKABLE KeyEntry *at(int i);

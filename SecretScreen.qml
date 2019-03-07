@@ -80,7 +80,7 @@ Component {
 
         // Populate the list model.
         function populateListModel() {
-            var otpEntryList = InterfaceSingleton.otpEntries();
+            var otpEntryList = InterfaceSingleton.calculateKeyEntries();
 
             // Make sure the list model is empty before we start to populate it.
             otpListModel.clear();
@@ -98,6 +98,7 @@ Component {
                 var code;
                 var parts;
 
+                console.log("Current code : " + temp.mCurrentCode);
                 if (temp.mValid === true) {
                     switch (temp.mCurrentCode.length) {
                     case 6:

@@ -7,6 +7,8 @@
 #include "../otpimpl/hotp.h"
 #include "../otpimpl/hmac.h"
 #include "../otpimpl/sha1hash.h"
+#include "../otpimpl/sha256hash.h"
+#include "../otpimpl/sha512hash.h"
 
 #include <time.h>
 
@@ -17,55 +19,69 @@ OtpHandler::OtpHandler()
 }
 
 /**
- * @brief OtpHandler::calculateFromKeyEntry - Given a KeyEntry object, calculate the
- *      OTP that we should currently be showing, and return it as part of an OtpEntry
- *      object.
+ * @brief OtpHandler::calculateOtpForKeyEntry - Calculate the OTP for the provided key entry.
  *
- * @param keydata - A KeyEntry object that contains the information we need to calcualte
- *      an OTP and return an OtpEntry object.
- *
- * @return OtpEntry pointer on success.  On error, nullptr will be returned.
+ * @param keydata - A pointer to a KeyEntry object that we want to calculate the OTP for.
  */
-OtpEntry *OtpHandler::calculateFromKeyEntry(const KeyEntry &keydata)
+void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
 {
     unsigned char *dSecret;
     size_t dSize;
     QString calculatedCode;
     int startTime;
 
+    if (keydata == nullptr) {
+        LOG_ERROR("No key data provided while attempting to calculate an OTP!");
+
+        // Nothing we can do.
+        return;
+    }
+
     // Make sure the key entry provided is valid.
-    if (!keydata.valid()) {
+    if (!keydata->valid()) {
         // It isn't valid, so just copy as much information as possible to our OtpEntry.
         LOG_ERROR("The key data provided to calculate the OTP from was invalid!");
-        return createOtpEntry(keydata, "", -1);
+
+        // Set the invalid reason, and flag the code as invalid.
+        keydata->setInvalidReason("The key data provided to calculate the OTP from was invalid!");
+        keydata->setCodeValid(false);
+        return;
     }
 
     // Start by converting the secret to the correct format for us to use.
-    if (!decodeSecret(keydata, &dSecret, &dSize)) {
-        LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata.identifier());
+    if (!decodeSecret((*keydata), &dSecret, &dSize)) {
+        LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata->identifier());
 
-        // Set our invalidReason, and return the otp object.
-        return createOtpEntry(keydata, "", -1, "Unable to decode the key secret value!");
+        // Set the invalid reason, and flag the code as invalid.
+        keydata->setInvalidReason("Unable to decode the key secret value!");
+        keydata->setCodeValid(false);
+        return;
     }
 
     // Calculate the OTP code.
-    calculatedCode = calculateCode(keydata, dSecret, dSize);
+    calculatedCode = calculateCode((*keydata), dSecret, dSize);
 
     // Free the memory from dSecret before checking the result.
     free(dSecret);
     dSecret = nullptr;
 
     if (calculatedCode.isEmpty()) {
-        LOG_ERROR("Unable to calculate the OTP value for identifier : " + keydata.identifier());
+        LOG_ERROR("Unable to calculate the OTP value for identifier : " + keydata->identifier());
 
-        // Set our invalidReason, and return the otp object.
-        return createOtpEntry(keydata, "", -1, "Unable to calculate the OTP value!");
+        // Set the invalid reason, and flag the code as invalid.
+        keydata->setInvalidReason("Unable to calculate the OTP value for identifier : " + keydata->identifier());
+        keydata->setCodeValid(false);
+        return;
     }
 
     // Calculate the number of seconds in to the lifetime of the OTP that we are.
-    startTime = getStartTime(keydata.timeStep());
+    keydata->setStartTime(getStartTime(keydata->timeStep()));
 
-    return createOtpEntry(keydata, calculatedCode, startTime);
+    // The code should be valid.
+    keydata->setCodeValid(true);
+    keydata->setCurrentCode(calculatedCode);
+
+    LOG_DEBUG(QString::fromStdString(keydata->toString()));
 }
 
 /**
@@ -179,7 +195,34 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
 {
     time_t now;
     std::string otp;
-    Totp totp(new Hmac(new Sha1Hash(), true), true);
+    Totp totp;
+    Hmac hmac;
+    HashTypeBase *hashToUse;
+
+    // Figure out what type of hash we should be using.
+    switch (keydata.algorithm()) {
+    case KEYENTRY_ALG_SHA1:
+        hashToUse = new Sha1Hash();
+        break;
+
+    case KEYENTRY_ALG_SHA256:
+        hashToUse = new Sha256Hash();
+        break;
+
+    case KEYENTRY_ALG_SHA512:
+        hashToUse = new Sha512Hash();
+        break;
+
+    default:
+        LOG_ERROR("Unknown hash algorithm identifier of : " + QString::number(keydata.algorithm()));
+        return "";
+    }
+
+    // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
+    hmac.setHashType(hashToUse, true);
+
+    // Then, set the HMAC object to use with the calculation, but keep ownership here.
+    totp.setHmac(&hmac, false);
 
     // Get the current time, so we can calculate the OTP.
     now = time(nullptr);
@@ -206,7 +249,35 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
 QString OtpHandler::calculateHotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
 {
     std::string otp;
-    Hotp hotp(new Hmac(new Sha1Hash(), true), true);
+    Hotp hotp;
+    Hmac hmac;
+    HashTypeBase *hashToUse;
+
+    // Figure out what type of hash we should be using.
+    switch (keydata.algorithm()) {
+    case KEYENTRY_ALG_SHA1:
+        hashToUse = new Sha1Hash();
+        break;
+
+    case KEYENTRY_ALG_SHA256:
+        hashToUse = new Sha256Hash();
+        break;
+
+    case KEYENTRY_ALG_SHA512:
+        hashToUse = new Sha512Hash();
+        break;
+
+    default:
+        LOG_ERROR("Unknown hash algorithm identifier of : " + QString::number(keydata.algorithm()));
+        return "";
+    }
+
+    // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
+    hmac.setHashType(hashToUse, true);
+
+    // Then, set the HMAC object to use with the calculation, but keep ownership here.
+    hotp.setHmac(&hmac, false);
+
 
     otp = hotp.calculate(decodedSecret, decodedSize, keydata.hotpCounter(), keydata.outNumberCount());
 
@@ -234,50 +305,4 @@ int OtpHandler::getStartTime(int timeStep)
 
     // Return the number of seconds beyond the time step that have elapsed.
     return (seconds & timeStep);
-}
-
-/**
- * @brief OtpHandler::createOtpEntry - Create an OTP entry using the information from a
- *      KeyEntry object, and other values we might need to use.
- *
- * @param keydata - The KeyData object that we want to create an OTP entry for.
- * @param calculatedCode - The code that has been calculated to be used.  If the keydata
- *      entry is invalid, this parameter should be an empty string.
- * @param startTime - The time that the calculatedCode originally became valid.  If the
- *      keydata object is invalid, this should be set to -1.
- * @param invalidReason - If this value is not an empty string, this invalid reason will
- *      be used in the resulting OtpEntry object.  If it *IS* an empty string, then the
- *      object will either be valid, or contain an invalidReason copied from the KeyEntry.
- *
- * @return OtpEntry pointer containing the useful components of the parameters provided.
- */
-OtpEntry *OtpHandler::createOtpEntry(const KeyEntry &keydata, const QString &calculatedCode, int startTime, const QString &invalidReason)
-{
-    OtpEntry *result;
-
-    // Create our OtpEntry object.
-    result = new OtpEntry();
-    if (result == nullptr) {
-        LOG_ERROR("Unable to allocate memory to store an OTP entry!");
-        return nullptr;
-    }
-
-    // Copy over the relevant values.
-    result->setIdentifier(keydata.identifier());
-    result->setCurrentCode(calculatedCode);
-    result->setStartTime(startTime);
-    result->setTimeStep(keydata.timeStep());
-    result->setIssuer(keydata.issuer());
-    result->setOtpType(keydata.otpType());
-    result->setHotpCounter(keydata.hotpCounter());
-
-    if (invalidReason.isEmpty()) {
-        result->setInvalidReason(keydata.invalidReason());
-        result->setValid(keydata.valid());
-    } else {
-        result->setInvalidReason(invalidReason);
-        result->setValid(false);
-    }
-
-    return result;
 }
