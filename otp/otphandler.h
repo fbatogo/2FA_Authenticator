@@ -1,7 +1,6 @@
 #ifndef OTPHANDLER_H
 #define OTPHANDLER_H
 
-#include "otpentry.h"
 #include "keystorage/keyentry.h"
 
 class OtpHandler
@@ -9,7 +8,7 @@ class OtpHandler
 public:
     OtpHandler();
 
-    static OtpEntry *calculateFromKeyEntry(const KeyEntry &keydata);
+    static void calculateOtpForKeyEntry(KeyEntry *keydata);
 
 protected:
     static bool decodeSecret(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize);
@@ -21,8 +20,6 @@ protected:
     static QString calculateHotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize);
 
     static int getStartTime(int timeStep);
-
-    static OtpEntry *createOtpEntry(const KeyEntry &keydata, const QString &calculatedCode, int startTime, const QString &invalidReason = "");
 };
 
 #endif // OTPHANDLER_H

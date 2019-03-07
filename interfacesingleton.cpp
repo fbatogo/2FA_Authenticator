@@ -96,6 +96,46 @@ QString InterfaceSingleton::version()
 }
 
 /**
+ * @brief InterfaceSingleton::calculateKeyEntries - Calculate the OTP values for all currently
+ *      known key entry objects, and return them.
+ *
+ * @return UiKeyEntries pointer on success.  nullptr on failure.
+ */
+UiKeyEntries *InterfaceSingleton::calculateKeyEntries()
+{
+    QList<KeyEntry> allKeys;
+    UiKeyEntries *result = nullptr;
+
+    allKeys.clear();
+
+    if (!mKeyStorage.getAllKeys(allKeys)) {
+        LOG_ERROR("Unable to get all of the keys stored in key storage!");
+    } else {
+        // We need to convert all of the KeyEntries in to dynamic allocations.
+        result = new UiKeyEntries();
+
+        if (!result->populateEntries(allKeys)) {
+            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (1)");
+
+            // Clean up.
+            delete result;
+            result = nullptr;
+        }
+
+        // Then, calculate all of the key entrie values.
+        if (!result->calculateEntries()) {
+            LOG_ERROR("Unrecoverable failure calculating key entries!");
+
+            // Clean up.
+            delete result;
+            result = nullptr;
+        }
+    }
+
+    return result;
+}
+
+/**
  * @brief InterfaceSingleton::keyEntries - Get the list of all key entries.
  *
  * @return UiKeyEntries object containing all of the secret key entries store in the
@@ -158,37 +198,6 @@ KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
 
     // Return a pointerized copy of the KeyEntry.
     return new KeyEntry(result);
-}
-
-/**
- * @brief InterfaceSingleton::otpEntries - Get the list of all key entries, calculate the
- *      OTP value, and add it to the resulting list.
- *
- * @return UiOtpEntries pointer for all of the KeyEntry objects.
- */
-UiOtpEntries *InterfaceSingleton::otpEntries()
-{
-    QList<KeyEntry> allKeys;
-    UiOtpEntries *result = nullptr;
-
-    allKeys.clear();
-
-    if (!mKeyStorage.getAllKeys(allKeys)) {
-        LOG_ERROR("Unable to get all of the OTP entries in storage!");
-    } else {
-        // We need to convert all of the KeyEntries in to dynamic allocations.
-        result = new UiOtpEntries();
-
-        if (!result->populateEntries(allKeys)) {
-            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (2)");
-
-            // Clean up.
-            delete result;
-            result = nullptr;
-        }
-    }
-
-    return result;
 }
 
 /**
