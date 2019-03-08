@@ -31,7 +31,9 @@ public:
     Q_INVOKABLE KeyEntry *keyEntryFromIdentifier(const QString &identifier);
     Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
     Q_INVOKABLE bool updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
+    Q_INVOKABLE bool updateKeyEntry(KeyEntry *toUpdate);
     Q_INVOKABLE bool deleteKey(QString identifier);
+    Q_INVOKABLE void incrementHotpCounter(QString identifier);
 
     Q_INVOKABLE bool isEncodedProperly(int encodingType, const QString &valueToCheck);
 

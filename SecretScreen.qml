@@ -98,7 +98,6 @@ Component {
                 var code;
                 var parts;
 
-                console.log("Current code : " + temp.mCurrentCode);
                 if (temp.mValid === true) {
                     switch (temp.mCurrentCode.length) {
                     case 6:
@@ -208,7 +207,6 @@ Component {
                             visible: ((!showError) && (otpType === 1) && (SettingsHandler.showHotpCounterValue()))
 
                             text: {
-                                console.log("HOTP Counter Value : " + hotpCounter);
                                 if (hotpCounter < 0) {
                                     return qsTr("Invalid HOTP Counter value!");
                                 }
@@ -272,10 +270,10 @@ Component {
                                 console.log("Getting new value.");
 
                                 // Increment the counter value.
-                                // XXX Implement!
+                                InterfaceSingleton.incrementHotpCounter(identifier);
 
                                 // Force update the display.
-                                // XXX Implement!
+                                populateListModel();
                             }
                         }
                     }

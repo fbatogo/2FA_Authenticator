@@ -385,6 +385,20 @@ bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int 
 }
 
 /**
+ * @brief InterfaceSingleton::updateKeyEntry - Update a KeyEntry in the database using
+ *      a pointer to a KeyEntry object.
+ *
+ * @param toUpdate - A pointer to the KeyEntry object to update in the database.
+ *
+ * @return true if the database was updated.  false on error.
+ */
+bool InterfaceSingleton::updateKeyEntry(KeyEntry *toUpdate)
+{
+    // XXX Implement!
+    return false;
+}
+
+/**
  * @brief InterfaceSingleton::deleteKey - Given a key identifier, delete it from the
  *      key storage.
  *
@@ -400,6 +414,41 @@ bool InterfaceSingleton::deleteKey(QString identifier)
     }
 
     return mKeyStorage.deleteKeyByIdentifier(identifier);
+}
+
+/**
+ * @brief InterfaceSingleton::incrementHotpCounter - Given the key identifier, increment
+ *      the HOTP counter by 1.
+ *
+ * @param identifier - The identifier for the HOTP counter that we want to increment.
+ */
+void InterfaceSingleton::incrementHotpCounter(QString identifier)
+{
+    KeyEntry *toIncrement;
+
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Cannot increment the HOTP counter for an empty identifier!");
+        return;
+    }
+
+    // Find the KeyEntry to use.
+    toIncrement = keyEntryFromIdentifier(identifier);
+    if (toIncrement == nullptr) {
+        LOG_ERROR("Unable to locate the key entry for identifier : " + identifier);
+        return;
+    }
+
+    // Make sure the KeyEntry is an HOTP entry.
+    if (toIncrement->otpType() != KEYENTRY_OTPTYPE_HOTP) {
+        LOG_ERROR("Cannot increment the HOTP counter for non-HOTP key with the identifier : " + identifier);
+        return;
+    }
+
+    // It is an HOTP type, so increment the counter.
+    toIncrement->setHotpCounter(toIncrement->hotpCounter()+1);
+
+    // Then, update the database entry.
+    // XXX FINISH!!!
 }
 
 /**
