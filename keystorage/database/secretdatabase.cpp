@@ -155,7 +155,7 @@ bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEnt
         return false;
     }
 
-    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount, timeStep=:timeStep, timeOffset=:timeOffset, algorithm=:algorithm, hotpCounter=:hotpCounter, issuer=:issuer", newEntry, query)) {
+    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount, timeStep=:timeStep, timeOffset=:timeOffset, algorithm=:algorithm, hotpCounter=:hotpCounter, issuer=:issuer where identifier='" + currentEntry.identifier() + "'", newEntry, query)) {
         // Already logged an error.  Just return.
         return false;
     }

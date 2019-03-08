@@ -184,8 +184,6 @@ KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
         return nullptr;
     }
 
-    LOG_DEBUG("Would find KeyEntry for : " + identifier);
-
     if (!mKeyStorage.keyByIdentifier(identifier, result)) {
         LOG_ERROR("Failed to locate the key entry for identifier : " + identifier);
         return nullptr;
@@ -302,8 +300,6 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
 bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
 {
     KeyEntry toUpdate;
-    KeyEntry *currentEntry;
-    bool updated;
 
     // Validate inputs.
     if (identifier.isEmpty()) {
@@ -357,31 +353,7 @@ bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int 
     toUpdate.setTimeStep(period);
     toUpdate.setTimeOffset(offset);
 
-    if (!toUpdate.valid()) {
-        LOG_ERROR("Failed to update KeyEntry object from the provided data!  The data is invalid!");
-        return false;
-    }
-
-    // Locate the current entry for key specified by the identifier.
-    currentEntry = keyEntryFromIdentifier(identifier);
-    if (nullptr == currentEntry) {
-        LOG_ERROR("Unable to locate the key entry for identifier '" + identifier + "'!  Cannot update the key!");
-        return false;
-    }
-
-    // Pass it in to be handled.
-    updated = mKeyStorage.updateKey((*currentEntry), toUpdate);
-
-    // Free the current entry.
-    delete currentEntry;
-    currentEntry = nullptr;
-
-    if (!updated) {
-        LOG_ERROR("Failed to update the key for identifier '" + identifier + "'!");
-        return false;
-    }
-
-    return true;
+    return updateKeyEntry(&toUpdate);
 }
 
 /**
@@ -394,8 +366,40 @@ bool InterfaceSingleton::updateKeyEntry(QString identifier, QString secret, int 
  */
 bool InterfaceSingleton::updateKeyEntry(KeyEntry *toUpdate)
 {
-    // XXX Implement!
-    return false;
+    KeyEntry *currentEntry;
+    bool updated;
+
+    // Validate inputs.
+    if (toUpdate == nullptr) {
+        LOG_ERROR("Unable to update a key entry.  The provided object is null!");
+        return false;
+    }
+
+    if (!toUpdate->valid()) {
+        LOG_ERROR("Failed to update KeyEntry object from the provided data!  The data is invalid!");
+        return false;
+    }
+
+    // Locate the current entry for key specified by the identifier.
+    currentEntry = keyEntryFromIdentifier(toUpdate->identifier());
+    if (nullptr == currentEntry) {
+        LOG_ERROR("Unable to locate the key entry for identifier '" + toUpdate->identifier() + "'!  Cannot update the key!");
+        return false;
+    }
+
+    // Pass it in to be handled.
+    updated = mKeyStorage.updateKey((*currentEntry), (*toUpdate));
+
+    // Free the current entry.
+    delete currentEntry;
+    currentEntry = nullptr;
+
+    if (!updated) {
+        LOG_ERROR("Failed to update the key for identifier '" + toUpdate->identifier() + "'!");
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -448,7 +452,9 @@ void InterfaceSingleton::incrementHotpCounter(QString identifier)
     toIncrement->setHotpCounter(toIncrement->hotpCounter()+1);
 
     // Then, update the database entry.
-    // XXX FINISH!!!
+    if (updateKeyEntry(toIncrement) == false) {
+        LOG_ERROR("Failed to increment the HOTP counter!  The displayed value won't be updated.");
+    }
 }
 
 /**

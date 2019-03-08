@@ -190,5 +190,5 @@ SettingsHandler::SettingsHandler() :
     // Attempt to load the values that were set last.
     mShowIssuer = mSettingsDatabase.value("Settings/showIssuer", false).toBool();
     mShowHotpCounter = mSettingsDatabase.value("Settings/showHotpCounter", false).toBool();
-    mShowAlgorithm = mSettingsDatabase.value("Settings/showHashAlgoritm", false).toBool();
+    mShowAlgorithm = mSettingsDatabase.value("Settings/showHashAlgorithm", false).toBool();
 }

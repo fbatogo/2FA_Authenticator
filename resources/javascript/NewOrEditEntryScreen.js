@@ -5,6 +5,7 @@
 .import Rollin.InterfaceSingleton 1.0 as InterfaceSingletonImpl
 .import Rollin.QRCodeSingleton 1.0 as QRCodeSingleton
 .import QtMultimedia 5.11 as QtMultimedia
+.import "utils.js" as Utils
 
 /**
  * init() - Configure the NewOrEditEntryScreen to be either in edit mode, or
@@ -32,13 +33,13 @@ function init() {
         siteNameInput.boxText = keyEntry.mIdentifier;
         secretValueInput.boxText = keyEntry.mSecret;
 
-        otpTypeText.text = otpTypeIntToString(keyEntry.mOtpType);
+        otpTypeText.text = Utils.otpTypeIntToString(keyEntry.mOtpType);
 
         digitCountValue.text = keyEntry.mOutNumberCount;
 
-        secretValueText.text =secretTypeIntToString(keyEntry.mKeyType);
+        secretValueText.text = Utils.secretTypeIntToString(keyEntry.mKeyType);
 
-        algorithmValue.text = hashAlgIntToString(keyEntry.mAlgorithm);
+        algorithmValue.text = Utils.hashAlgIntToString(keyEntry.mAlgorithm);
 
         periodValue.text = keyEntry.mTimeStep;
         offsetValue.text = keyEntry.mTimeOffset;
@@ -68,97 +69,6 @@ function init() {
 
     // See if the save button should be enabled, or not.
     checkEnableSave();
-}
-
-// Convert the secret encoding type of a string to the integer value used in the C++
-// code.
-function secretTypeToInt(secretEncoding) {
-    if (secretEncoding === "HEX") {
-        return 0;
-    } else if (secretEncoding === "Base32") {
-        return 1;
-    }
-
-    console.log("Unknown/unexpected secret encoding type : " + secretEncoding);
-    return -1;
-}
-
-// Convert the secret coding from the integer value used in the C++ code to a string.
-function secretTypeIntToString(secretEncodingInt) {
-    switch (secretEncodingInt) {
-    case 0:
-        // HEX
-        return "HEX";
-
-    case 1:
-        // Base32
-        return "Base32";
-    }
-
-    console.log("Unknown/unexpected secret encoding type : " + secretEncodingInt);
-    return "<UNKNOWN>";
-}
-
-// Convert the OTP type to an integer used to identify the OTP type in the C++
-// code.
-function otpTypeToInt(encodingType) {
-    if (encodingType === "TOTP") {
-        return 0;
-    } else if (encodingType === "HOTP") {
-        return 1;
-    }
-
-    console.log("Unknown/unexpected encoding type : " + encodingType);
-    return -1;
-}
-
-// Convert the OTP type string to the int value used to represent it in the
-// C++ code.
-function otpTypeIntToString(otpTypeInt) {
-    switch (otpTypeInt) {
-    case 0:
-        // TOTP
-        return "TOTP";
-
-    case 1:
-        // HOTP
-        return "HOTP";
-    }
-
-    console.log("Unknown/unexpected OTP type : " + otpTypeInt);
-    return "<UNKNOWN>";
-}
-
-// Convert a string that indiciates one of the hashing algorithms we can use, to the
-// integer value used in the C++ code.
-function hashAlgToInt(hashAlg) {
-    if (hashAlg === "SHA1") {
-        return 0;
-    } else if (hashAlg === "SHA256") {
-        return 1;
-    } else if (hashAlg === "SHA512") {
-        return 2;
-    }
-
-    console.log("Unknown/unexpected hash algorithm of '" + hashAlg + "'!");
-    return -1;
-}
-
-// Convert an integer value to the hash algorithm string to display.
-function hashAlgIntToString(hashAlg) {
-    switch (hashAlg) {
-    case 0:
-        return "SHA1";
-
-    case 1:
-        return "SHA256";
-
-    case 2:
-        return "SHA512";
-    }
-
-    console.log("Unknown/unexpected hash algorithm int : " + hashAlg);
-    return "<UNKNOWN>";
 }
 
 function onVisibleChanged(visible) {
@@ -259,14 +169,14 @@ function saveConfiguration() {
     var errorSet = false;
 
     // Convert the keyType index to the currect value.
-    otpType = otpTypeToInt(otpTypeText.text);
+    otpType = Utils.otpTypeToInt(otpTypeText.text);
     if (otpType < 0) {
         // Shouldn't be possible, but check anyway.
         showError(qsTr("Invalid OTP type!"));
         return;
     }
 
-    keyType = secretTypeToInt(secretValueText.text);
+    keyType = Utils.secretTypeToInt(secretValueText.text);
     if (keyType < 0) {
         // Shouldn't be possible, but check anyway.
         showError(qsTr("Invalid secret encoding!"));
@@ -281,7 +191,7 @@ function saveConfiguration() {
     }
     console.log("number count = " + numberCount);
 
-    algorithm = hashAlgToInt(algorithmValue.text);
+    algorithm = Utils.hashAlgToInt(algorithmValue.text);
     if (algorithm < 0) {
         // Should be impossible... but...
         showError(qsTr("Invalid algorithm value!"));
