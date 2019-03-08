@@ -1,4 +1,3 @@
-- Add SHA256 and SHA512 (fix so OTPs can be calculated using this hashes)
 - Finish implementing settings code (add option to show HASH type being used)
 - Add the ability to show HOTP values (finish)
 - Pull out large javascript blocks in to .js files for each screen.
