@@ -29,5 +29,6 @@
         <file>resources/widgets/BoxedTextInput.qml</file>
         <file>resources/widgets/OtpTimeInput.qml</file>
         <file>resources/refresh.svg</file>
+        <file>resources/javascript/utils.js</file>
     </qresource>
 </RCC>

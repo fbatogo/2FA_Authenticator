@@ -112,12 +112,18 @@ bool KeyStorage::getAllKeys(QList<KeyEntry> &result)
  */
 bool KeyStorage::addKey(const KeyEntry &entry, int keyStorageMethod)
 {
+    KeyEntry temp;
+
     if (!entry.valid()) {
         LOG_ERROR("Refusing to add an invalid key entry to key storage.");
         return false;
     }
 
-    // XXX Do a search to see if the key exists in any of the providers. (So we don't have it show up twice.)
+    // See if the entry alreeady exists somewhere.
+    if (keyByIdentifier(entry.identifier(), temp)) {
+        LOG_ERROR("Cannot add a key entry that already exists in a key provider!  Did you mean to update?");
+        return false;
+    }
 
     if (keyStorageMethod == KEYSTORAGE_METHOD_DEFAULT) {
         // Just use the first one in the list.
@@ -145,11 +151,24 @@ bool KeyStorage::addKey(const KeyEntry &entry, int keyStorageMethod)
  *
  * @return true if the key entry was updated.  false on error.
  */
-bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry)
+bool KeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry, int keyStorageMethod)
 {
     if ((!currentEntry.valid()) || (!newEntry.valid())) {
         LOG_ERROR("Refusing to update in invalid key entry in the key storage!");
         return false;
+    }
+
+    if (keyStorageMethod == KEYSTORAGE_METHOD_DEFAULT) {
+        // Just use the first one in the list.
+        return mKeyStorageDrivers.at(0)->updateKey(currentEntry, newEntry);
+    }
+
+    // Otherwise, search for the driver we want to use.
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->storageId() == keyStorageMethod) {
+            // Found it.  Update it in this storage method.
+            return mKeyStorageDrivers.at(i)->updateKey(currentEntry, newEntry);
+        }
     }
 
     return true;

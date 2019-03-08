@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import UiClipboard 1.0
 import Rollin.SettingsHandler 1.0
 
+import "resources/javascript/utils.js" as Utils
 import "resources/widgets/"
 
 Component {
@@ -128,9 +129,9 @@ Component {
                     // Calculate the percentage of time that has passed.
                     var timePercent = temp.mStartTime / temp.mTimeStep;
 
-                    otpListModel.append({ timeStep: temp.mTimeStep, identifier: temp.mIdentifier, otpCode: code, currentTimer: temp.mStartTime,  issuerText: temp.mIssuer, otpType: temp.mOtpType, hotpCounter: temp.mHotpCounter, circleShown: (360 * timePercent), showError: false, errorText: "" });
+                    otpListModel.append({ identifier: temp.mIdentifier, timeStep: temp.mTimeStep, otpCode: code, currentTimer: temp.mStartTime,  issuerText: temp.mIssuer, otpType: temp.mOtpType, hotpCounter: temp.mHotpCounter, algorithm: temp.mAlgorithm, circleShown: (360 * timePercent), showError: false, errorText: "" });
                 } else {
-                    otpListModel.append({ identifier: temp.mIdentifier, otpCode: "", issuerText: "", otpType: -1, hotpCounter: -1, showError: true, errorText: temp.mInvalidReason });
+                    otpListModel.append({ identifier: temp.mIdentifier, otpCode: "", issuerText: "", otpType: -1, hotpCounter: -1, algorithm: -1, showError: true, errorText: temp.mInvalidReason });
                 }
             }
         }
@@ -213,6 +214,17 @@ Component {
 
                                 return qsTr("HOTP Counter Value : %1").arg(hotpCounter);
                             }
+                        }
+
+                        // Show the hash method used, if enabled.
+                        Text {
+                            id: hashUsedLabel
+                            width: parent.width
+                            x: 25
+
+                            visible: ((!showError) && (SettingsHandler.showHashAlgorithm()))
+
+                            text: qsTr("Hash Type Used : %1").arg(Utils.hashAlgIntToString(algorithm));
                         }
 
                         Text {

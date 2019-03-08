@@ -6,6 +6,7 @@ import Rollin.InterfaceSingleton 1.0
 import Rollin.QRCodeSingleton 1.0
 
 import "resources/javascript/NewOrEditEntryScreen.js" as NewOrEdit
+import "resources/javascript/utils.js" as Utils
 import "resources/widgets/"
 
 Item {
@@ -25,7 +26,7 @@ Item {
         SelectAlgorithm {
             id: alg
 
-            onSelectedChanged: algorithmValue.text = NewOrEdit.hashAlgIntToString(selected);
+            onSelectedChanged: algorithmValue.text = Utils.hashAlgIntToString(selected);
         }
     }
 
@@ -36,7 +37,7 @@ Item {
         OtpTypeSelect {
             id: otpTypeSelect
 
-            onSelectedChanged: otpTypeText.text = NewOrEdit.otpTypeIntToString(selected);
+            onSelectedChanged: otpTypeText.text = Utils.otpTypeIntToString(selected);
         }
     }
 
@@ -47,7 +48,7 @@ Item {
         SelectSecretFormat {
             id: secretFormatSelect
 
-            onSelectedChanged: secretValueText.text = NewOrEdit.secretTypeIntToString(selected);
+            onSelectedChanged: secretValueText.text = Utils.secretTypeIntToString(selected);
         }
     }
 
@@ -191,7 +192,7 @@ Item {
                         row: 2
                         column: 2
                         showScreen: selectOtpType
-                        selected: NewOrEdit.otpTypeToInt(otpTypeText.text)
+                        selected: Utils.otpTypeToInt(otpTypeText.text)
                     }
 
                     TextMetrics {
@@ -222,7 +223,7 @@ Item {
                         row: 3
                         column: 2
                         showScreen: selectSecretFormatScreen
-                        selected: NewOrEdit.secretTypeToInt(secretValueText.text)
+                        selected: Utils.secretTypeToInt(secretValueText.text)
                     }
 
                     // Digit count
@@ -274,7 +275,7 @@ Item {
                         row: 5
                         column: 2
                         showScreen: selectAlgorithm //Qt.resolvedUrl("/SelectAlgorithm.qml")
-                        selected: NewOrEdit.hashAlgToInt(algorithmValue.text)
+                        selected: Utils.hashAlgToInt(algorithmValue.text)
                     }
 
                     // Period
