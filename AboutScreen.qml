@@ -3,6 +3,8 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import Rollin.InterfaceSingleton 1.0
 
+import "resources/widgets/"
+
 Item {
 
     Component.onCompleted: {
@@ -39,9 +41,8 @@ Item {
         ColumnLayout {
             anchors.fill: parent
 
-            Rectangle {
-                width: parent.width
-                height: 10
+            HorizontalPadding {
+                size: 10
             }
 
             RowLayout {
@@ -60,9 +61,8 @@ Item {
                 }
             }
 
-            Rectangle {
-                width: parent.width
-                height: 5
+            VerticalPadding {
+                size: 5
             }
 
             RowLayout {
@@ -81,14 +81,13 @@ Item {
                 }
             }
 
-            Rectangle {
-                width: parent.width
-                height: 10
+            VerticalPadding {
+                size: 10
             }
 
             RowLayout {
-                Rectangle {
-                    width: 10
+                HorizontalPadding {
+                    size: 10
                 }
 
                 Text {
@@ -102,8 +101,8 @@ Item {
             }
 
             RowLayout {
-                Rectangle {
-                    width: 10
+                HorizontalPadding {
+                    size: 10
                 }
 
                 Rectangle {
@@ -129,14 +128,13 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    width: 10
+                HorizontalPadding {
+                    size: 10
                 }
             }
 
-            Rectangle {
-                width: parent.width
-                height: 10
+            VerticalPadding {
+                size: 10
             }
         }
     }

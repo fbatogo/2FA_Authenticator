@@ -4,7 +4,7 @@ import QtQuick.Controls 2.4
 import Rollin.InterfaceSingleton 1.0
 
 import "resources/javascript/EntryScreenTools.js" as EntryScreenTools
-
+import "resources/widgets/"
 
 Item {
     Component.onCompleted: {
@@ -17,54 +17,21 @@ Item {
     ColumnLayout {
         anchors.fill: parent
 
-        Rectangle {
-            height: 10
-            color: "transparent"
+        VerticalPadding {
+            size: 10
         }
 
-        RowLayout {
-            Rectangle {
-                width: 15
-                color: "transparent"
-            }
-
-            Text {
-                text: qsTr("Please select the OTPs to delete : ");
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                color: "transparent"
-            }
-        }
-
-        RowLayout {
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
-
-            Rectangle {
-                height: 1
-                Layout.fillWidth: true
-                color: "transparent"
-                border.color: "grey"
-                border.width: 1
-            }
-
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
+        SubHeader {
+            textLeftPadding: 15
+            headerText: qsTr("Please select the OTPs to delete : ");
         }
 
         RowLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            Rectangle {
-                width: 5
-                color: "transparent"
+            HorizontalPadding {
+                size: 5
             }
 
             ListView {
@@ -101,30 +68,12 @@ Item {
                 id: toDeleteModel
             }
 
-            Rectangle {
-                width: 5
-                color: "transparent"
+            HorizontalPadding {
+                size: 5
             }
         }
 
-        RowLayout {
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
-
-            Rectangle {
-                height: 1
-                Layout.fillWidth: true
-                color: "transparent"
-                border.color: "grey"
-                border.width: 1
-            }
-
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
+        PaddedRowLine {
         }
 
         RowLayout {
@@ -178,9 +127,8 @@ Item {
             }
         }
 
-        Rectangle {
-            height: 10
-            color: "transparent"
+        VerticalPadding {
+            size: 10
         }
     }
 }
