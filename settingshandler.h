@@ -37,7 +37,7 @@ private:
     bool mShowIssuer;
     bool mShowAlgorithm;
 
-    QSettings mSettingsDatabase;
+    QSettings *mSettingsDatabase;
 };
 
 #endif // SETTINGSHANDLER_H

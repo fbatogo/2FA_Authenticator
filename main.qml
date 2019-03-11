@@ -93,7 +93,11 @@ ApplicationWindow {
         initialItem: secretScreen
         anchors.fill: parent
 
+        /*
         SecretScreen {
+            id: secretScreen
+        }*/
+        StartHereScreen {
             id: secretScreen
         }
     }

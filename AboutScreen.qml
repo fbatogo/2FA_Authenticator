@@ -53,7 +53,7 @@ Item {
                 Text {
                     width: parent.width
                     horizontalAlignment: Text.Center
-                    text: "Version " + InterfaceSingleton.version()
+                    text: qsTr("Version %1").arg(InterfaceSingleton.version())
                 }
 
                 Rectangle {
