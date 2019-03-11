@@ -31,5 +31,7 @@
         <file>resources/refresh.svg</file>
         <file>resources/javascript/utils.js</file>
         <file>resources/javascript/EntryScreenTools.js</file>
+        <file>StartHereScreen.qml</file>
+        <file>resources/startherearrow.svg</file>
     </qresource>
 </RCC>

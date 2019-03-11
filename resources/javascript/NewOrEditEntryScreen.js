@@ -20,7 +20,6 @@ function init() {
     if (editing) {
         getFromCameraButton.visible = false;
 
-        console.log("Identifier : " + identifier);
         var keyEntry = InterfaceSingletonImpl.InterfaceSingleton.keyEntryFromIdentifier(identifier);
 
         if (keyEntry === null) {

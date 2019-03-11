@@ -9,7 +9,11 @@
 SettingsHandler::~SettingsHandler()
 {
     // Make sure our settings are flushed to disk.  (Should be called in the QSettings dtor, but call it here to be safe.)
-    mSettingsDatabase.sync();
+    mSettingsDatabase->sync();
+
+    // Clean up.
+    delete mSettingsDatabase;
+    mSettingsDatabase = nullptr;
 }
 
 /**
@@ -65,7 +69,7 @@ void SettingsHandler::setShowHotpCounterValue(bool newvalue)
 {
     mShowHotpCounter = newvalue;
 
-    mSettingsDatabase.setValue("Settings/showHotpCounter", mShowHotpCounter);
+    mSettingsDatabase->setValue("Settings/showHotpCounter", mShowHotpCounter);
 }
 
 /**
@@ -90,7 +94,7 @@ void SettingsHandler::setShowIssuer(bool newvalue)
 {
     mShowIssuer = newvalue;
 
-    mSettingsDatabase.setValue("Settings/showIssuer", mShowIssuer);
+    mSettingsDatabase->setValue("Settings/showIssuer", mShowIssuer);
 }
 
 /**
@@ -115,7 +119,7 @@ void SettingsHandler::setShowHashAlgorithm(bool newvalue)
 {
     mShowAlgorithm = newvalue;
 
-    mSettingsDatabase.setValue("Settings/showHashAlgorithm", mShowAlgorithm);
+    mSettingsDatabase->setValue("Settings/showHashAlgorithm", mShowAlgorithm);
 }
 
 /**
@@ -166,8 +170,7 @@ bool SettingsHandler::dataDirectoryExistsOrIsCreated()
     return true;
 }
 
-SettingsHandler::SettingsHandler() :
-    mSettingsDatabase(QSettings::IniFormat, QSettings::UserScope, "Rollin", "Rollin")
+SettingsHandler::SettingsHandler()
 {
     // Start by assuming that this object is invalid.
     mValid = false;
@@ -184,11 +187,15 @@ SettingsHandler::SettingsHandler() :
         return;
     }
 
-    // Override the path to store our settings at.
-    mSettingsDatabase.setPath(QSettings::IniFormat, QSettings::UserScope, dataPath() + "/Rollin.ini");
+    LOG_DEBUG("Data path : " + dataPath());
+
+    // Create the settings object, and force it to write to our target directory.
+    mSettingsDatabase = new QSettings(dataPath() + "/Rollin.ini", QSettings::IniFormat);
 
     // Attempt to load the values that were set last.
-    mShowIssuer = mSettingsDatabase.value("Settings/showIssuer", false).toBool();
-    mShowHotpCounter = mSettingsDatabase.value("Settings/showHotpCounter", false).toBool();
-    mShowAlgorithm = mSettingsDatabase.value("Settings/showHashAlgorithm", false).toBool();
+    mShowIssuer = mSettingsDatabase->value("Settings/showIssuer", false).toBool();
+    mShowHotpCounter = mSettingsDatabase->value("Settings/showHotpCounter", false).toBool();
+    mShowAlgorithm = mSettingsDatabase->value("Settings/showHashAlgorithm", false).toBool();
+
+    LOG_DEBUG("Saving settings to  : " + mSettingsDatabase->fileName());
 }
