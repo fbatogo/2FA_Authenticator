@@ -2,8 +2,8 @@ QT += quick sql multimedia svg
 
 # If we aren't building on Windows, use the x11 extras.
 !win32 {
-    DEFINES += NO_ZBAR
-    #QT += x11extras
+    #DEFINES += NO_ZBAR
+    QT += x11extras
 } else {
     # On Windows, we don't currently support zbar.
     DEFINES *= NO_ZBAR
