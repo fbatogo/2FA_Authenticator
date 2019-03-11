@@ -3,25 +3,15 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import Rollin.InterfaceSingleton 1.0
 
+import "resources/javascript/EntryScreenTools.js" as EntryScreenTools
+
+
 Item {
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
         menuButton.source = "resources/back.svg";
 
-        populateToDeleteList();
-    }
-
-    function populateToDeleteList() {
-        var keys = InterfaceSingleton.keyEntries();
-
-        // Make sure the list is empty.
-        toDeleteModel.clear();
-
-        if (keys !== null) {
-            for (var i = 0; i < keys.count(); i++) {
-                toDeleteModel.append({ identifier: keys.at(i).mIdentifier, itemChecked: false });
-            }
-        }
+        EntryScreenTools.populateKeyItemModel(toDeleteModel);
     }
 
     ColumnLayout {
@@ -94,7 +84,14 @@ Item {
                 CheckBox {
                     id: checkbox
                     tristate: false
-                    checked: itemChecked
+                    checked: {
+                        if ((itemChecked === null) || (itemChecked === "undefined")) {
+                            // Default to false.
+                            return false;
+                        }
+
+                        return itemChecked;
+                    }
                     text: identifier
                     onToggled: itemChecked = checkbox.checked
                 }
@@ -162,7 +159,7 @@ Item {
 
                         // If there was an error deleting one of the keys, we want to stay on this screen, but update the list.
                         if (error) {
-                            populateToDeleteList();
+                            EntryScreenTools.populateKeyItemModel(toDeleteModel);
                             return;
                         }
 

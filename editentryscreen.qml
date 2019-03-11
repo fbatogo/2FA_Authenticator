@@ -3,6 +3,9 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import Rollin.InterfaceSingleton 1.0
 
+import "resources/javascript/EntryScreenTools.js" as EntryScreenTools
+import "resources/widgets/"
+
 Item {
     id: editEntryScreen
 
@@ -10,63 +13,18 @@ Item {
         // Change the icon on the toolbar to be the back button.
         menuButton.source = "resources/back.svg";
 
-        // XXX Populate the list of keys we can edit.
-        populateToEditList();
-    }
-
-    function populateToEditList() {
-        var keys = InterfaceSingleton.keyEntries();
-
-        // Make sure the list is empty.
-        toEditModel.clear();
-
-        for (var i = 0; i < keys.count(); i++) {
-            toEditModel.append({ identifier: keys.at(i).mIdentifier });
-        }
+        EntryScreenTools.populateKeyItemModel(toEditModel);
     }
 
     ColumnLayout {
         anchors.fill: parent
 
-        Rectangle {
-            height: 10
-            color: "transparent"
+        VerticalPadding {
+            size: 10
         }
 
-        RowLayout {
-            Rectangle {
-                width: 10
-                color: "transparent"
-            }
-
-            Text {
-                text: qsTr("Please select the OTP entry to edit : ");
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                color: "transparent"
-            }
-        }
-
-        RowLayout {
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
-
-            Rectangle {
-                height: 1
-                Layout.fillWidth: true
-                color: "transparent"
-                border.color: "grey"
-                border.width: 1
-            }
-
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
+        SubHeader {
+            headerText: qsTr("Please select the OTP entry to edit : ")
         }
 
         RowLayout {
@@ -102,13 +60,7 @@ Item {
                         anchors.fill: parent
                         z:1
 
-                        onClicked: {
-                            var error = false;
-                            console.log("Item clicked! -- " + identifier);
-
-                            // XXX Push the edit screen on the stack, and pass the identifier value that was clicked.
-                            screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"), {"editing" : true, "identifier" : identifier});
-                        }
+                        onClicked: screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"), {"editing" : true, "identifier" : identifier})
                     }
                 }
             }
@@ -117,35 +69,13 @@ Item {
                 id: toEditModel
             }
 
-            Rectangle {
-                width: 10
-                color: "transparent"
+            VerticalPadding {
+                size: 10
             }
         }
 
-        RowLayout {
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
-
-            Rectangle {
-                height: 1
-                Layout.fillWidth: true
-                color: "transparent"
-                border.color: "grey"
-                border.width: 1
-            }
-
-            Rectangle {
-                color: "transparent"
-                width: 5
-            }
-        }
-
-        Rectangle {
-            height: 5
-            color: "transparent"
+        VerticalPadding {
+            size: 5
         }
     }
 }

@@ -30,5 +30,6 @@
         <file>resources/widgets/OtpTimeInput.qml</file>
         <file>resources/refresh.svg</file>
         <file>resources/javascript/utils.js</file>
+        <file>resources/javascript/EntryScreenTools.js</file>
     </qresource>
 </RCC>
