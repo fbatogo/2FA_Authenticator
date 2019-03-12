@@ -17,6 +17,9 @@ CONFIG += c++11
 contains(QT, testlib) {
     message(Will use qDebug for logging...)
     DEFINES += USE_QDEBUG
+
+    # Make sure we build against the QTest library.
+    CONFIG += qtestlib
 }
 
 # The following define makes your compiler emit warnings if you use
