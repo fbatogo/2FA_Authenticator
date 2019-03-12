@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>ProgressCircle.qml</file>
         <file>SecretScreen.qml</file>
         <file>AboutScreen.qml</file>
         <file>NewOrEditEntryScreen.qml</file>
@@ -33,5 +32,7 @@
         <file>resources/javascript/EntryScreenTools.js</file>
         <file>StartHereScreen.qml</file>
         <file>resources/startherearrow.svg</file>
+        <file>resources/widgets/ProgressCircle.qml</file>
+        <file>resources/javascript/SecretScreen.js</file>
     </qresource>
 </RCC>

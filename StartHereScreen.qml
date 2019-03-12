@@ -1,115 +1,77 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
+import Rollin.InterfaceSingleton 1.0
 
-ColumnLayout {
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    spacing: 0
+Item {
+    onVisibleChanged: {
+        if (visible) {
+            // Make sure the hamburger is showing.
+            menuButton.source = "resources/menu.svg";
 
-    Rectangle {
-        Layout.fillWidth: true
-        height: 5
-        border.color: "blue"
-        border.width: 1
+            // See if we have any entries yet.
+            var otpEntryList = InterfaceSingleton.calculateKeyEntries();
+
+            console.log("Entry count : " + otpEntryList.count());
+            // If we have at least one entry, pop this screen off the stack.
+            if (otpEntryList.count() > 0) {
+                // Let the SecretScreen know that we are closing.
+                signalClosing();
+
+                // Then, pop this screen off the stack.
+                screenStack.pop();
+            }
+        }
     }
 
-    RowLayout {
+    // Signal to let the SecretScreen know that we intend to close, and it should update.
+    signal signalClosing()
+
+    ColumnLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
         spacing: 0
 
         Rectangle {
-            border.color: "yellow"
-            border.width: 1
-            width: 3
-            Layout.fillHeight: true
+            Layout.fillWidth: true
+            height: 5
         }
 
-        Image {
-            Layout.alignment: Qt.AlignTop
-            id: startHereArrow
-            source: "resources/startherearrow.svg"
-        }
-
-        ColumnLayout {
+        RowLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 0
 
             Rectangle {
-                Layout.fillWidth: true
-                //Layout.fillHeight: true
-                height: 10
-                //width: 10
-                /*height: {
-                    console.log("Height : " + startHereArrow.height);
-                    //return startHereArrow.height;
-                    return imageContainer.height;
-                }
-                */
-                //height: imageContainer.height
-                color: "green"
-                border.color: "green"
-                border.width: 1
-            }
-/*
-            Text {
+                width: 3
                 Layout.fillHeight: true
-                text: "testing!"
-            }*/
+            }
+
+            Rectangle {
+                id: container
+                width: startHereArrow.sourceSize.width
+                Layout.fillHeight: true
+
+                Image {
+                    Layout.alignment: Qt.AlignTop
+                    id: startHereArrow
+                    source: "resources/startherearrow.svg"
+                }
+            }
+
+            Rectangle {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                Text {
+                    anchors.fill: parent
+                    anchors.topMargin: (startHereArrow.sourceSize.height - 15)
+                    anchors.leftMargin: 5
+                    anchors.rightMargin: 5
+                    text: qsTr("Select the menu button, and then \"New\" to add your first OTP entry.")
+                    font.pointSize: 13
+                    wrapMode: Text.WordWrap
+                }
+            }
         }
     }
 }
-
-//        Layout.fillHeight: true
-//        Layout.fillWidth: true
-
-//            RowLayout {
-/*                Rectangle {
-                    width: 3
-                    height: startHereArrow.height
-                    //Layout.fillHeight: true
-                    color: "transparent"
-                    border.color: "green"
-                    border.width: 1
-                }
-
-                Image {
-                    id: startHereArrow
-                    x: 0
-                    y: 0
-                    source: "resources/startherearrow.svg"
-                }
-//            }
-
-        /*
-        Rectangle {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            border.color: "red"
-            border.width: 1
-        }*/
-
-/*
-        ColumnLayout {
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
-
-            Rectangle {
-                id: startHereUpperSpacer
-                height: startHereArrow.height * 0.9
-                Layout.fillWidth: true
-                color: "red"
-                border.color: "red"
-                border.width: 1
-            }
-/*
-            Text {
-                id: startHereText
-                text: qsTr("Use the menu button to create a new OTP entry.");
-            }
-
-        } */
-/*    }
-}
-*/

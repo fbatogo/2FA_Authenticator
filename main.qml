@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.3
 ApplicationWindow {
     id: window
 
+    signal updateOtpData()
+
     property string appName: "Rollin'"
 
     visible: true
@@ -50,10 +52,10 @@ ApplicationWindow {
             z:2
 
             onClicked: {
-                if (screenStack.depth === 1) {
-                    // Handle opening and closing the side bar.
+                if (menuButton.source.toString().indexOf("resources/menu.svg") >= 0) {
+                    // Open or close the side bar.
                     if (!drawer.opened) {
-                        drawer.open()
+                        drawer.open();
                     }
                 } else {
                     // Pop the widget off the stack.
@@ -93,13 +95,29 @@ ApplicationWindow {
         initialItem: secretScreen
         anchors.fill: parent
 
-        /*
         SecretScreen {
             id: secretScreen
-        }*/
-        StartHereScreen {
-            id: secretScreen
         }
+
+        Component {
+            id: showStartHereScreen
+
+            StartHereScreen {
+                id: startHereScreen
+
+                onSignalClosing: {
+                    console.log("Start here popping!");
+
+                    // Force update the SecretScreen.
+                    updateOtpData();
+                    //secretScreen.populateListModel();
+                }
+            }
+        }
+
+/*        StartHereScreen {
+            id: secretScreen
+        } */
     }
 }
 
