@@ -10,7 +10,7 @@ pipeline {
       steps {
 	  sh '''qmake -qt=qt5 QT+=testlib'''
 	  sh '''make -j2'''
-	  sh '''./Rollin'''
+	  sh '''./Rollin -o rolling-test-results.xml,xunitxml'''
       }
     }
   }
