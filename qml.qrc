@@ -34,5 +34,6 @@
         <file>resources/startherearrow.svg</file>
         <file>resources/widgets/ProgressCircle.qml</file>
         <file>resources/javascript/SecretScreen.js</file>
+        <file>resources/pencil.svg</file>
     </qresource>
 </RCC>

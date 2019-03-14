@@ -1,8 +1,4 @@
 - Convert zbar to not using qml-zbar, since we don't know the license?
-- Fix icon sizing on OTP rows.
-- Fix showing of newly added OTP values after popping the "Start Here Screen".
 - Remove excess debug output.
-- Fix tab order on the create/edit screen.
-- Fix the edit buttons on the create/edit screen.  (Change to something better?)
 - Write log data to the .Rollin directory?  (Or somewhere else?)
-- Fix click/tap boundaries on hamburger icon.
+- Opening the "New" menu item, then going back results in the hamburger missing.

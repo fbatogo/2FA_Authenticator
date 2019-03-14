@@ -41,25 +41,22 @@ ApplicationWindow {
             anchors.leftMargin: 5
             width: topToolbar.height
             height: topToolbar.height
-            z: 1
-        }
+            z: 1        
 
-        MouseArea {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            width: topToolbar.height
-            height: topToolbar.height
-            z:2
+            MouseArea {
+                anchors.fill: parent
+                z:2
 
-            onClicked: {
-                if (menuButton.source.toString().indexOf("resources/menu.svg") >= 0) {
-                    // Open or close the side bar.
-                    if (!drawer.opened) {
-                        drawer.open();
+                onClicked: {
+                    if (menuButton.source.toString().indexOf("resources/menu.svg") >= 0) {
+                        // Open or close the side bar.
+                        if (!drawer.opened) {
+                            drawer.open();
+                        }
+                    } else {
+                        // Pop the widget off the stack.
+                        screenStack.pop();
                     }
-                } else {
-                    // Pop the widget off the stack.
-                    screenStack.pop();
                 }
             }
         }

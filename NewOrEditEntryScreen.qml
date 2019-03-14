@@ -15,7 +15,11 @@ Item {
     property bool editing: false
     property string identifier: ""
 
-    Component.onCompleted: NewOrEdit.init();
+    Component.onCompleted: {
+        NewOrEdit.init();
+        siteNameInput.focus = true;
+        siteNameInput.forceActiveFocus();
+    }
 
     onVisibleChanged: NewOrEdit.onVisibleChanged(visible);
 
@@ -139,8 +143,11 @@ Item {
                         Layout.columnSpan: 2
                         totalHeight: siteNameLabel.height + 8
                         Layout.fillWidth: true
+                        focus: true
 
                         boxText: ""
+
+                        KeyNavigation.tab: secretValueInput
 
                         onEditingComplete: NewOrEdit.checkEnableSave();
                     }
@@ -165,6 +172,8 @@ Item {
                         Layout.fillWidth: true
 
                         boxText: ""
+
+                        KeyNavigation.tab: otpTypeButton
 
                         onEditingComplete: NewOrEdit.checkEnableSave();
                     }
@@ -193,6 +202,8 @@ Item {
                         column: 2
                         showScreen: selectOtpType
                         selected: Utils.otpTypeToInt(otpTypeText.text)
+
+                        KeyNavigation.tab: secretFormatButton
                     }
 
                     TextMetrics {
@@ -224,6 +235,8 @@ Item {
                         column: 2
                         showScreen: selectSecretFormatScreen
                         selected: Utils.secretTypeToInt(secretValueText.text)
+
+                        KeyNavigation.tab: digitCountButton
                     }
 
                     // Digit count
@@ -250,6 +263,8 @@ Item {
                         column: 2
                         showScreen: selectNumberOfDigitsScreen
                         selected: digitCountValue.text - 6
+
+                        KeyNavigation.tab: algorithmButton
                     }
 
                     // Algorithm
@@ -274,8 +289,10 @@ Item {
                         id: algorithmButton
                         row: 5
                         column: 2
-                        showScreen: selectAlgorithm //Qt.resolvedUrl("/SelectAlgorithm.qml")
+                        showScreen: selectAlgorithm
                         selected: Utils.hashAlgToInt(algorithmValue.text)
+
+                        KeyNavigation.tab: periodButton
                     }
 
                     // Period
@@ -302,6 +319,8 @@ Item {
                         column: 2
                         showScreen: selectTimeStepScreen
                         selected: periodValue.text
+
+                        KeyNavigation.tab: offsetButton
                     }
 
                     // Offset
@@ -328,6 +347,8 @@ Item {
                         column: 2
                         showScreen: selectTimeOffsetScreen
                         selected: offsetValue.text
+
+                        KeyNavigation.tab: siteNameInput
                     }
                 }
 
