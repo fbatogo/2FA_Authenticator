@@ -56,7 +56,7 @@ void hotpTests::invalidHotpTest()
     // the HMAC object to null to be sure we don't crash.
     invalidHotp.setHmac(nullptr, true);
 
-    QCOMPARE(invalidHotp.calculate(key, 20, 0, 6), "");
+    QCOMPARE(invalidHotp.calculate(key, 20, 0, 6), std::string(""));
 }
 
 void hotpTests::hotpTest1()

@@ -9,11 +9,11 @@ void QRCodeStringParserTests::qrCodeSimpleStringParserTests()
     QVERIFY(test->parseCode("otpauth://TYPE/LABEL?secret=secret"));
     QVERIFY(test->isOtpCode());
 
-    QCOMPARE(test->type(), "TYPE");
-    QCOMPARE(test->label(), "LABEL");
-    QCOMPARE(test->parametersAsString(), "secret=secret");
+    QCOMPARE(test->type(), QString("TYPE"));
+    QCOMPARE(test->label(), QString("LABEL"));
+    QCOMPARE(test->parametersAsString(), QString("secret=secret"));
 
-    QCOMPARE(test->parameterByKey("secret"), "secret");
+    QCOMPARE(test->parameterByKey("secret"), QString("secret"));
 }
 
 void QRCodeStringParserTests::qrCodeInvalidStringParserTests()
@@ -34,16 +34,16 @@ void QRCodeStringParserTests::qrCodeFullSetStringParametersTests()
     QVERIFY(test->parseCode("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
-    QCOMPARE(test->type(), "totp");
-    QCOMPARE(test->label(), "ACME Co:john.doe@email.com");
-    QCOMPARE(test->parametersAsString(), "secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30");
+    QCOMPARE(test->type(), QString("totp"));
+    QCOMPARE(test->label(), QString("ACME Co:john.doe@email.com"));
+    QCOMPARE(test->parametersAsString(), QString("secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30"));
 
     // Check each of the avp values.
-    QCOMPARE(test->parameterByKey("secret"), "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ");
-    QCOMPARE(test->parameterByKey("issuer"), "ACME Co");
-    QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
-    QCOMPARE(test->parameterByKey("digits"), "6");
-    QCOMPARE(test->parameterByKey("period"), "30");
+    QCOMPARE(test->parameterByKey("secret"), QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
+    QCOMPARE(test->parameterByKey("issuer"), QString("ACME Co"));
+    QCOMPARE(test->parameterByKey("algorithm"), QString("SHA1"));
+    QCOMPARE(test->parameterByKey("digits"), QString("6"));
+    QCOMPARE(test->parameterByKey("period"), QString("30"));
 }
 
 void QRCodeStringParserTests::qrCodeFullSetStringWithEqualsInValueTests()
@@ -54,16 +54,16 @@ void QRCodeStringParserTests::qrCodeFullSetStringWithEqualsInValueTests()
     QVERIFY(test->parseCode("otpauth://totp/ACME%20Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%3DCo&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
-    QCOMPARE(test->type(), "totp");
-    QCOMPARE(test->label(), "ACME Co:john.doe@email.com");
-    QCOMPARE(test->parametersAsString(), "secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%3DCo&algorithm=SHA1&digits=6&period=30");
+    QCOMPARE(test->type(), QString("totp"));
+    QCOMPARE(test->label(), QString("ACME Co:john.doe@email.com"));
+    QCOMPARE(test->parametersAsString(), QString("secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%3DCo&algorithm=SHA1&digits=6&period=30"));
 
     // Check each of the avp values.
-    QCOMPARE(test->parameterByKey("secret"), "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ");
-    QCOMPARE(test->parameterByKey("issuer"), "ACME=Co");
-    QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
-    QCOMPARE(test->parameterByKey("digits"), "6");
-    QCOMPARE(test->parameterByKey("period"), "30");
+    QCOMPARE(test->parameterByKey("secret"), QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
+    QCOMPARE(test->parameterByKey("issuer"), QString("ACME=Co"));
+    QCOMPARE(test->parameterByKey("algorithm"), QString("SHA1"));
+    QCOMPARE(test->parameterByKey("digits"), QString("6"));
+    QCOMPARE(test->parameterByKey("period"), QString("30"));
 }
 
 void QRCodeStringParserTests::qrCodeFullSetStringWithAmpTests()
@@ -74,15 +74,15 @@ void QRCodeStringParserTests::qrCodeFullSetStringWithAmpTests()
     QVERIFY(test->parseCode("otpauth://totp/ACME%26Co:john.doe@email.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%26Co&algorithm=SHA1&digits=6&period=30"));
     QVERIFY(test->isOtpCode());
 
-    QCOMPARE(test->type(), "totp");
-    QCOMPARE(test->label(), "ACME&Co:john.doe@email.com");
-    QCOMPARE(test->parametersAsString(), "secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%26Co&algorithm=SHA1&digits=6&period=30");
+    QCOMPARE(test->type(), QString("totp"));
+    QCOMPARE(test->label(), QString("ACME&Co:john.doe@email.com"));
+    QCOMPARE(test->parametersAsString(), QString("secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%26Co&algorithm=SHA1&digits=6&period=30"));
 
     // Check each of the avp values.
-    QCOMPARE(test->parameterByKey("secret"), "HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ");
-    QCOMPARE(test->parameterByKey("issuer"), "ACME&Co");
-    QCOMPARE(test->parameterByKey("algorithm"), "SHA1");
-    QCOMPARE(test->parameterByKey("digits"), "6");
-    QCOMPARE(test->parameterByKey("period"), "30");
+    QCOMPARE(test->parameterByKey("secret"), QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
+    QCOMPARE(test->parameterByKey("issuer"), QString("ACME&Co"));
+    QCOMPARE(test->parameterByKey("algorithm"), QString("SHA1"));
+    QCOMPARE(test->parameterByKey("digits"), QString("6"));
+    QCOMPARE(test->parameterByKey("period"), QString("30"));
 }
 
