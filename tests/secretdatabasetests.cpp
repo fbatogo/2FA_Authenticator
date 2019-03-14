@@ -96,8 +96,8 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     QVERIFY(readBack.valid());
 
     // And, make sure all the expected values are set.
-    QCOMPARE(readBack.identifier(), "id2");
-    QCOMPARE(readBack.secret(), "mysecret2");
+    QCOMPARE(readBack.identifier(), QString("id2"));
+    QCOMPARE(readBack.secret(), QString("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -122,7 +122,7 @@ void SecretDatabaseTests::getAllEntriesTest()
         QVERIFY(currentEntry.valid());
 
         if (currentEntry.identifier() == "id2") {
-            QCOMPARE(currentEntry.secret(), "mysecret2");
+            QCOMPARE(currentEntry.secret(), QString("mysecret2"));
             QCOMPARE(currentEntry.keyType(), KEYENTRY_KEYTYPE_BASE32);
             QCOMPARE(currentEntry.otpType(), KEYENTRY_OTPTYPE_HOTP);
             QCOMPARE(currentEntry.outNumberCount(), 7);
@@ -142,8 +142,8 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QVERIFY(mTestDatabase.getByIdentifier("id2", readBack));
 
     // Make sure the data is what we expect.
-    QCOMPARE(readBack.identifier(), "id2");
-    QCOMPARE(readBack.secret(), "mysecret2");
+    QCOMPARE(readBack.identifier(), QString("id2"));
+    QCOMPARE(readBack.secret(), QString("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -159,8 +159,8 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QVERIFY(mTestDatabase.getByIdentifier("id3", readBack));
 
     // Make sure the data is what we expect.
-    QCOMPARE(readBack.identifier(), "id3");
-    QCOMPARE(readBack.secret(), "mysecret2");
+    QCOMPARE(readBack.identifier(), QString("id3"));
+    QCOMPARE(readBack.secret(), QString("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -180,8 +180,8 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QVERIFY(mTestDatabase.getByIdentifier("id4", readBack));
 
     // Make sure the data is what we expect.
-    QCOMPARE(readBack.identifier(), "id4");
-    QCOMPARE(readBack.secret(), "mysecret4");
+    QCOMPARE(readBack.identifier(), QString("id4"));
+    QCOMPARE(readBack.secret(), QString("mysecret4"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
     QCOMPARE(readBack.outNumberCount(), 6);
