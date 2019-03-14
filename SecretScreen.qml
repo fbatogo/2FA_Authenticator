@@ -159,17 +159,20 @@ Component {
                         id: clockFrame
                         visible: (otpType !== 1)
 
-                        width: keyColumn.height
-                        height: keyColumn.height
+                        width: 32
+                        height: 32
 
                         ProgressCircle {
                             id: timer
-                            x: 5
-                            y: 5
-                            size: clockFrame.width - 10
+                            size: parent.height
                             arcBegin: 0
                             arcEnd: (360 - circleShown)
+                            animationDuration: 999
                         }
+                    }
+
+                    HorizontalPadding {
+                        size: 5
                     }
 
                     // Show a refresh button for HOTP values.
@@ -178,15 +181,13 @@ Component {
 
                         visible: (otpType === 1)
 
-                        width: keyColumn.height
-                        height: keyColumn.height
+                        width: 32
+                        height: 32
 
                         Image {
-                            x: 5
-                            y: 5
+                            anchors.fill: parent
                             source: "resources/refresh.svg"
-                            sourceSize.height: keyColumn.height - 20
-                            sourceSize.width: keyColumn.height - 20
+                            fillMode: Image.Stretch
                         }
 
                         MouseArea {
@@ -203,19 +204,23 @@ Component {
                         }
                     }
 
+                    HorizontalPadding {
+                        visible: (otpType === 1)
+                        size: 5
+                    }
+
                     // Show a copy button to copy the current value.
                     Rectangle {
                         id: copyButton
 
-                        width: keyColumn.height
-                        height: keyColumn.height
+                        width: 32
+                        height: 32
+                        color: "transparent"
 
                         Image {
-                            x: 5
-                            y: 5
+                            anchors.fill: parent
                             source: "resources/copy.svg"
-                            sourceSize.height: keyColumn.height - 10
-                            sourceSize.width: keyColumn.height - 10
+                            fillMode: Image.Stretch
                         }
 
                         MouseArea {

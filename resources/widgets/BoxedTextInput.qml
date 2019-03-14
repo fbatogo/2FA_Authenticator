@@ -5,6 +5,7 @@ Rectangle {
     property string liveText: ""
     property int totalHeight: 5
     property string boxColor: "black"
+    property string highlightColor: "blue"
     property var boxValidator: null
 
     signal editingComplete();
@@ -14,6 +15,13 @@ Rectangle {
 
     border.color: boxColor
     border.width: 1
+
+    onFocusChanged: {
+        if (focus) {
+            focus = false;
+            boxInput.focus = true;
+        }
+    }
 
     TextInput {
         id: boxInput
@@ -30,6 +38,16 @@ Rectangle {
         onEditingFinished: {
             boxText = boxInput.text;
             editingComplete();
+        }
+
+        onFocusChanged: {
+            if (focus) {
+                parent.border.color = highlightColor;
+                parent.border.width = 2;
+            } else {
+                parent.border.color = boxColor;
+                parent.border.width = 1;
+            }
         }
 
         onTextEdited: liveText = boxInput.text;
