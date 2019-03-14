@@ -20,4 +20,8 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      xunit ( tools: [ QtTest(pattern: "rolling-test-results.xml") ])
+  }
 }
