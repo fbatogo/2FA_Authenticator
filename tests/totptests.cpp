@@ -15,7 +15,7 @@ void totpTests::totpInvalidHmacTest()
     // to null to make sure we don't crash in the dtor.
     invalidTotp.setHmac(nullptr, true);
 
-    QCOMPARE(invalidTotp.calculate(invalidKey, 20, 0), "");
+    QCOMPARE(invalidTotp.calculate(invalidKey, 20, 0), std::string(""));
 }
 
 void totpTests::totpTestCase1()
