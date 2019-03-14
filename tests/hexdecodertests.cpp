@@ -51,7 +51,7 @@ void HexDecoderTests::hexDecoderTest1()
     decodedHex.push_back((unsigned char *)&upperResult);
 
     // Make sure that both lists are the same size.
-    QCOMPARE(hexToDecode.size(), decodedHex.size());
+    QCOMPARE2(hexToDecode.size(), decodedHex.size());
 
     for (size_t i = 0; i < hexToDecode.size(); i++) {
         // Decode the text.
@@ -59,14 +59,14 @@ void HexDecoderTests::hexDecoderTest1()
 
         if (i != 0) {
             // Make sure the size is 0x0f octets.
-            QCOMPARE(resultSize, 0x0f);
+            QCOMPARE2(resultSize, (unsigned long)0x0f);
         }
 
-        qDebug("(Test %d) Original String : %s", i, hexToDecode.at(i).c_str());
-        qDebug("(Test %d) Decoded String  : %s", i, TestUtils::binaryToString(result, resultSize).c_str());
+        qDebug("(Test %d) Original String : %s", (int)i, hexToDecode.at(i).c_str());
+        qDebug("(Test %d) Decoded String  : %s", (int)i, TestUtils::binaryToString(result, resultSize).c_str());
 
         if (memcmp(result, decodedHex.at(i), resultSize) != 0) {
-            qFatal("Test %d failed!", i);
+            qFatal("Test %d failed!", (int)i);
             QFAIL("");
         }
 
