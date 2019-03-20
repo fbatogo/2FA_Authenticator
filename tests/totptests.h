@@ -2,7 +2,6 @@
 #define TOTPTESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class totpTests : public QObject
 {
@@ -18,6 +17,6 @@ private slots:
     void totpTestCase6();
 };
 
-DECLARE_TEST(totpTests)
+//DECLARE_TEST(totpTests)
 
 #endif // TOTPTESTS_H

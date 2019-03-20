@@ -2,7 +2,6 @@
 #define SHA512TESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class Sha512Tests : public QObject
 {
@@ -12,6 +11,6 @@ private slots:
     void sha512ImplTests();
 };
 
-DECLARE_TEST(Sha512Tests)
+//DECLARE_TEST(Sha512Tests)
 
 #endif // SHA512TESTS_H

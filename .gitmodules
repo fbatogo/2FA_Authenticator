@@ -1,0 +1,6 @@
+[submodule "QtTestRunner"]
+	path = QtTestRunner
+	url = https://github.com/fbatogo/QtTestRunner.git
+[submodule "tests/QtTestRunner"]
+	path = tests/QtTestRunner
+	url = https://github.com/fbatogo/QtTestRunner.git

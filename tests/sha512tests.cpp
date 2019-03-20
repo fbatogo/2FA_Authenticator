@@ -1,5 +1,6 @@
 #include "sha512tests.h"
 
+#include <QtTest>
 #include <QDebug>
 
 extern "C" {

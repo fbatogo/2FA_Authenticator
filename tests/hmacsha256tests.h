@@ -2,7 +2,6 @@
 #define HMACSHA256TESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class HmacSha256Tests : public QObject
 {
@@ -18,6 +17,6 @@ private slots:
     void hmacTestCase7();
 };
 
-DECLARE_TEST(HmacSha256Tests)
+//DECLARE_TEST(HmacSha256Tests)
 
 #endif // HMACSHA256TESTS_H

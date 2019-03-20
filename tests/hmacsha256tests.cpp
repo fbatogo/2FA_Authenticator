@@ -1,5 +1,6 @@
 #include "hmacsha256tests.h"
 
+#include <QtTest>
 #include "../otpimpl/hmac.h"
 #include "../otpimpl/sha256hash.h"
 #include "testutils.h"

@@ -20,6 +20,9 @@ contains(QT, testlib) {
 
     # Make sure we build against the QTest library.
     CONFIG += qtestlib
+
+    # Include our test runner/helper.
+    include(QtTestRunner/QtTestRunner.pri)
 }
 
 # The following define makes your compiler emit warnings if you use
@@ -34,7 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    keystorage/database/secretdatabase.cpp \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
     logger.cpp \
@@ -56,7 +58,8 @@ SOURCES += \
     otpimpl/sha256hash.cpp \
     otpimpl/sha512hash.cpp \
     otpimpl/sha2.c \
-    settingshandler.cpp
+    settingshandler.cpp \
+    keystorage/database/secretdatabase.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \

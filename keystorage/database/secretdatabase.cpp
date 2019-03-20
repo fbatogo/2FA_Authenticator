@@ -65,14 +65,11 @@ bool SecretDatabase::open(const QString &path)
 bool SecretDatabase::close()
 {
     if (!mDatabase.isOpen()) {
-        LOG_ERROR("Unable to close a database that isn't open!");
-        return false;
+        LOG_DEBUG("Unable to close a database that isn't open!");
+        return true;
     }
 
     mDatabase.close();
-
-    // Release the reference.
-    mDatabase = QSqlDatabase();
 
     return true;            // I guess a close can't fail?
 }
