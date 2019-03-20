@@ -6,12 +6,11 @@ Item {
     onVisibleChanged: {
         if (visible) {
             // Make sure the hamburger is showing.
-            menuButton.source = "resources/menu.svg";
+            menuButton.source = "/resources/menu.svg";
 
             // See if we have any entries yet.
             var otpEntryList = InterfaceSingleton.calculateKeyEntries();
 
-            console.log("Entry count : " + otpEntryList.count());
             // If we have at least one entry, pop this screen off the stack.
             if (otpEntryList.count() > 0) {
                 // Let the SecretScreen know that we are closing.

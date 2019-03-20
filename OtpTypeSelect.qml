@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
+import Rollin.Logger 1.0
 
 import "resources/widgets/"
 
@@ -8,7 +9,7 @@ Item {
     property int selected: 0
 
     Component.onCompleted: {
-        console.log("OTP type : " + selected);
+        Log.logDebug("OTP type : " + selected);
 
         switch (selected) {
         case 0:

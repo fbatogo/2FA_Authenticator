@@ -8,7 +8,7 @@ Item {
     property int selected: 0
 
     Component.onCompleted: {
-        console.log("Hashing type : " + selected);
+        //console.log("Hashing type : " + selected);
 
         switch (selected) {
         case 0:

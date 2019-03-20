@@ -8,6 +8,7 @@
 #include "zbar/qrcodefilter.h"
 #include "zbar/qrcodestringparser.h"
 #include "settingshandler.h"
+#include "logger.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +22,8 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<QRCodeStringParser>("Rollin.QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
 
     qmlRegisterSingletonType<SettingsHandler>("Rollin.SettingsHandler", 1, 0, "SettingsHandler", SettingsHandler::getQmlSingleton);
+
+    qmlRegisterSingletonType<SettingsHandler>("Rollin.Logger", 1, 0, "Log", Logger::getQmlSingleton);
 
     qmlRegisterType<KeyEntry>("KeyEntry", 1, 0, "KeyEntry");
     qmlRegisterType<UiKeyEntries>("UiKeyEntries", 1, 0, "UiKeyEntries");

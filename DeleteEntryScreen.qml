@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import Rollin.InterfaceSingleton 1.0
+import Rollin.Logger 1.0
 
 import "resources/javascript/EntryScreenTools.js" as EntryScreenTools
 import "resources/widgets/"
@@ -9,7 +10,7 @@ import "resources/widgets/"
 Item {
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
-        menuButton.source = "resources/back.svg";
+        menuButton.source = "/resources/back.svg";
 
         EntryScreenTools.populateKeyItemModel(toDeleteModel);
     }
@@ -98,7 +99,7 @@ Item {
                         for (var i = 0; i < toDeleteModel.count; i++) {
                             if (toDeleteModel.get(i).itemChecked) {
                                 if (!InterfaceSingleton.deleteKey(toDeleteModel.get(i).identifier)) {
-                                    console.log("Unable to delete key with the identifier : " + toDeleteModel.get(i).identifier);
+                                    Log.logError("Unable to delete key with the identifier : " + toDeleteModel.get(i).identifier);
                                     error = true;
                                 } else {
                                     deleted = true;

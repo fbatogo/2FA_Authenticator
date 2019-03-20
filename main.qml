@@ -35,7 +35,7 @@ ApplicationWindow {
 
         Image {
             id: menuButton
-            source: "resources/menu.svg"
+            source: "/resources/menu.svg"
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.leftMargin: 5
@@ -103,18 +103,11 @@ ApplicationWindow {
                 id: startHereScreen
 
                 onSignalClosing: {
-                    console.log("Start here popping!");
-
                     // Force update the SecretScreen.
                     updateOtpData();
-                    //secretScreen.populateListModel();
                 }
             }
         }
-
-/*        StartHereScreen {
-            id: secretScreen
-        } */
     }
 }
 

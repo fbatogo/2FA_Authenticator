@@ -123,6 +123,31 @@ void SettingsHandler::setShowHashAlgorithm(bool newvalue)
 }
 
 /**
+ * @brief SettingsHandler::logToFile - Return the boolean that indicates if we should
+ *      be writing log data to a log file, or not.
+ *
+ * @return true if we should be writing to a log file.  false if we should not.
+ */
+bool SettingsHandler::logToFile()
+{
+    return mLogToFile;
+}
+
+/**
+ * @brief SettingsHandler::setLogToFile - Change the setting that indicates if we should
+ *      be writing to a log file, or not.
+ *
+ * @param newvalue - Set to true if we should be writing to a log file.  false if we should
+ *      not.
+ */
+void SettingsHandler::setLogToFile(bool newvalue)
+{
+    mLogToFile = newvalue;
+
+    mSettingsDatabase->setValue("Settings/logToFile", mLogToFile);
+}
+
+/**
  * @brief SettingsHandler::dataPath - Get the path the should be used to store data for this app.
  *
  * @return QString containing the path that should be used to store data files for this app.
@@ -178,6 +203,7 @@ SettingsHandler::SettingsHandler()
     // Set our default values.
     mShowHotpCounter = false;
     mShowIssuer = false;
+    mLogToFile = false;
 
     // Make sure the data directory exists, so that we can read or write our settings.
     if (!dataDirectoryExistsOrIsCreated()) {
@@ -196,6 +222,7 @@ SettingsHandler::SettingsHandler()
     mShowIssuer = mSettingsDatabase->value("Settings/showIssuer", false).toBool();
     mShowHotpCounter = mSettingsDatabase->value("Settings/showHotpCounter", false).toBool();
     mShowAlgorithm = mSettingsDatabase->value("Settings/showHashAlgorithm", false).toBool();
+    mLogToFile = mSettingsDatabase->value("Settings/logToFile", false).toBool();
 
     LOG_DEBUG("Saving settings to  : " + mSettingsDatabase->fileName());
 }
