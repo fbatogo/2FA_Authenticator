@@ -1,5 +1,6 @@
 #include "hmacsha512tests.h"
 
+#include <QtTest>
 #include "../otpimpl/hmac.h"
 #include "../otpimpl/sha512hash.h"
 #include "testutils.h"

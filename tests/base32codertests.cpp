@@ -1,5 +1,6 @@
 #include "base32codertests.h"
 
+#include <QtTest>
 #include "../otpimpl/base32coder.h"
 
 #include "testutils.h"

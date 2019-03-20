@@ -1,5 +1,6 @@
 #include "sha256tests.h"
 
+#include <QtTest>
 #include <QDebug>
 
 extern "C" {

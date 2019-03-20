@@ -2,7 +2,6 @@
 #define HMACSHA512TESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class HmacSha512Tests : public QObject
 {
@@ -18,6 +17,6 @@ private slots:
     void hmacTestCase7();
 };
 
-DECLARE_TEST(HmacSha512Tests)
+//DECLARE_TEST(HmacSha512Tests)
 
 #endif // HMACSHA512TESTS_H

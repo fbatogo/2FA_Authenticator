@@ -1,5 +1,6 @@
 #include "sha1tests.h"
 
+#include <QTest>
 #include <cstring>
 #include "../otpimpl/sha1hash.h"
 #include "../logger.h"

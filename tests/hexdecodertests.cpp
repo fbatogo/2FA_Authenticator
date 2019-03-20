@@ -1,5 +1,6 @@
 #include "hexdecodertests.h"
 
+#include <QtTest>
 #include <vector>
 #include <string>
 #include <QString>

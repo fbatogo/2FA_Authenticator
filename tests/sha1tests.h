@@ -1,9 +1,8 @@
 #ifndef SHA1TESTS_H
 #define SHA1TESTS_H
 
-#include <string>
 #include <QObject>
-#include "autotest.h"
+#include <string>
 
 class Sha1Tests : public QObject
 {
@@ -18,6 +17,5 @@ private:
 
 };
 
-DECLARE_TEST(Sha1Tests)
 
 #endif // SHA1TESTS_H

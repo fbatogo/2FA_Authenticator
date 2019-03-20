@@ -2,7 +2,6 @@
 #define BASE32CODERTESTS_H
 
 #include <QObject>
-#include "autotest.h"
 #include <vector>
 #include <string>
 
@@ -20,6 +19,6 @@ private:
     std::vector<std::string> getEncodedTextTests();
 };
 
-DECLARE_TEST(Base32CoderTests)
+//DECLARE_TEST(Base32CoderTests)
 
 #endif // BASE32DECODERTESTS_H

@@ -1,5 +1,6 @@
 #include "totptests.h"
 
+#include <QtTest>
 #include "../otpimpl/totp.h"
 #include "../otpimpl/sha1hash.h"
 #include "../otpimpl/hmac.h"
