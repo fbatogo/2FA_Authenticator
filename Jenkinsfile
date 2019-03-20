@@ -16,7 +16,7 @@ pipeline {
       steps {
 	  sh '''qmake -qt=qt5 QT+=testlib'''
 	  sh '''make -j2'''
-	  sh '''./Rollin -o rolling-test-results.xml,xml'''
+	  sh '''./Rollin --xml'''
       }
     }
   }
