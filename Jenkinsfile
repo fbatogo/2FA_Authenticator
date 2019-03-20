@@ -10,6 +10,9 @@ pipeline {
     stage('Checkout Code') {
       steps {
         git 'https://github.com/fbatogo/Rollin.git'
+
+	// Get the submodules as well.
+	sh '''git submodule update --init'''
       }
     }
     stage('Build and Run Tests') {
