@@ -1,17 +1,23 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <QObject>
 #include <QString>
+#include <QQmlEngine>
+#include <QJSEngine>
 
-class Logger
+class Logger : public QObject
 {
+    Q_OBJECT
+
 public:
     static Logger *getInstance();
+    static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-    void log(const QString &logline);
-    void logDebug(const QString &logline);
-    void logError(const QString &logline);
-    void logWarning(const QString &logline);
+    Q_INVOKABLE void log(const QString &logline);
+    Q_INVOKABLE void logDebug(const QString &logline);
+    Q_INVOKABLE void logError(const QString &logline);
+    Q_INVOKABLE void logWarning(const QString &logline);
 
 private:
     Logger();

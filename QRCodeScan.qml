@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 import QRFilter 1.0
 import Rollin.QRCodeSingleton 1.0
+import Rollin.Logger 1.0
 
 Item {
     property string readText: ""
@@ -11,10 +12,9 @@ Item {
 
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
-        menuButton.source = "resources/back.svg";
+        menuButton.source = "/resources/back.svg";
 
-        console.log("Device Name : " + camera.displayName);
-
+        Log.logDebug("Device Name : " + camera.displayName);
     }
 
     Camera {
@@ -34,7 +34,7 @@ Item {
 
             // If the code isn't valid, display a message, and return.
             if (!Rollin.QRCodeSingleton.isOtpCode()) {
-                console.log("Not a valid OTP QR code!");
+                Log.logError("Not a valid OTP QR code!");
 
                 // Set the error text, and show it.
                 errorText.text = qsTr("The QR code scanned wasn't a valid OTP QR code!");
@@ -71,10 +71,10 @@ Item {
                 showErrorTimer.stop();
             }
 
-            console.log("Code found!");
-            console.log("Code label : " + Rollin.QRCodeSingleton.label());
-            console.log("Code type : " + Rollin.QRCodeSingleton.type());
-            console.log("Code secret : " + Rollin.QRCodeSingleton.parameterByKey("secret"));
+            Log.logDebug("Code found!");
+            Log.logDebug("Code label : " + Rollin.QRCodeSingleton.label());
+            Log.logDebug("Code type : " + Rollin.QRCodeSingleton.type());
+            Log.logDebug("Code secret : " + Rollin.QRCodeSingleton.parameterByKey("secret"));
 
             popped = true;
             screenStack.pop();

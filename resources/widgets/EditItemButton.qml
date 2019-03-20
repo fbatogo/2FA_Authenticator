@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import Rollin.Logger 1.0
 
 Rectangle {
     property int row: 0
@@ -37,7 +38,7 @@ Rectangle {
 
             onClicked: {
                 if (showScreen === "") {
-                    console.log("ERROR : No screen set to show when button was clicked!");
+                    Log.logError("ERROR : No screen set to show when button was clicked!");
                     return;
                 }
 

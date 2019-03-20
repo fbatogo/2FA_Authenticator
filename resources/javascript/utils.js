@@ -1,5 +1,7 @@
 .pragma library
 
+.import Rollin.Logger 1.0 as Logger
+
 // Convert the secret encoding type of a string to the integer value used in the C++
 // code.
 function secretTypeToInt(secretEncoding) {
@@ -9,7 +11,7 @@ function secretTypeToInt(secretEncoding) {
         return 1;
     }
 
-    console.log("Unknown/unexpected secret encoding type : " + secretEncoding);
+    Logger.Log.logError("Unknown/unexpected secret encoding type : " + secretEncoding);
     return -1;
 }
 
@@ -25,7 +27,7 @@ function secretTypeIntToString(secretEncodingInt) {
         return "Base32";
     }
 
-    console.log("Unknown/unexpected secret encoding type : " + secretEncodingInt);
+    Logger.Log.logError("Unknown/unexpected secret encoding type : " + secretEncodingInt);
     return "<UNKNOWN>";
 }
 
@@ -38,7 +40,7 @@ function otpTypeToInt(encodingType) {
         return 1;
     }
 
-    console.log("Unknown/unexpected encoding type : " + encodingType);
+    Logger.Log.logError("Unknown/unexpected encoding type : " + encodingType);
     return -1;
 }
 
@@ -55,7 +57,7 @@ function otpTypeIntToString(otpTypeInt) {
         return "HOTP";
     }
 
-    console.log("Unknown/unexpected OTP type : " + otpTypeInt);
+    Logger.Log.logError("Unknown/unexpected OTP type : " + otpTypeInt);
     return "<UNKNOWN>";
 }
 
@@ -70,7 +72,7 @@ function hashAlgToInt(hashAlg) {
         return 2;
     }
 
-    console.log("Unknown/unexpected hash algorithm of '" + hashAlg + "'!");
+    Logger.Log.logError("Unknown/unexpected hash algorithm of '" + hashAlg + "'!");
     return -1;
 }
 
@@ -87,6 +89,6 @@ function hashAlgIntToString(hashAlg) {
         return "SHA512";
     }
 
-    console.log("Unknown/unexpected hash algorithm int : " + hashAlg);
+    Logger.Log.logError("Unknown/unexpected hash algorithm int : " + hashAlg);
     return "<UNKNOWN>";
 }

@@ -8,7 +8,7 @@ Item {
     property int selected: 0
 
     Component.onCompleted: {
-        console.log("Secret format : " + selected);
+        //console.log("Secret format : " + selected);
 
         switch (selected) {
         case 0:

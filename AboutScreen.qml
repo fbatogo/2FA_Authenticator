@@ -9,7 +9,7 @@ Item {
 
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
-        menuButton.source = "resources/back.svg";
+        menuButton.source = "/resources/back.svg";
 
         // Load the license text file, and stick it in the license text area.
         var rawFile = new XMLHttpRequest();

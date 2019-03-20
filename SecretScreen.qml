@@ -3,6 +3,7 @@ import Rollin.InterfaceSingleton 1.0
 import QtQuick.Layouts 1.3
 import UiClipboard 1.0
 import Rollin.SettingsHandler 1.0
+import Rollin.Logger 1.0
 
 import "resources/javascript/SecretScreen.js" as SecretScreenImpl;
 import "resources/javascript/utils.js" as Utils
@@ -15,7 +16,7 @@ Component {
 
             // If we don't have anything in our list model, show the StartHereScreen.
             if (otpListModel.count <= 0) {
-                console.log("No entries exist in the database.  Showing the 'StartHereScreen'.");
+                Log.logDebug("No entries exist in the database.  Showing the 'StartHereScreen'.");
                 screenStack.push(showStartHereScreen);
             }
 
@@ -193,7 +194,7 @@ Component {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                console.log("Getting new value.");
+                                Log.logDebug("Getting new value.");
 
                                 // Increment the counter value.
                                 InterfaceSingleton.incrementHotpCounter(identifier);
@@ -226,7 +227,7 @@ Component {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                console.log("Copied to the clipboard.");
+                                Log.logDebug("Copied to the clipboard.");
                                 clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
                             }
                         }

@@ -20,6 +20,26 @@ Logger *Logger::getInstance()
 }
 
 /**
+ * @brief Logger::getQmlSingleton - Return the singleton that should be used with
+ *      the QML code.
+ *
+ * @param engine - A pointer to the QML engine that will be used for the QML layouts.
+ * @param scriptEngine - A pointer to the QML script engine that will be used.
+ *
+ * @return QObject pointer to the singleton to use with the QML code.
+ */
+QObject *Logger::getQmlSingleton(QQmlEngine *, QJSEngine *)
+{
+    Logger *cSingleton;
+
+    cSingleton = getInstance();
+
+    QQmlEngine::setObjectOwnership(cSingleton, QQmlEngine::CppOwnership);
+
+    return static_cast<QObject *>(cSingleton);
+}
+
+/**
  * @brief Logger::log - Write a log line at "normal" level.
  *
  * @param logline - The log line to write.

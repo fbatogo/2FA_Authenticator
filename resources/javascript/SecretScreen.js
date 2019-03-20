@@ -1,16 +1,17 @@
 .import Rollin.InterfaceSingleton 1.0 as InterfaceSingletonImpl
 .import "utils.js" as Utils
+.import Rollin.Logger 1.0 as Logger
 
 function updateScreen(listModel) {
     // Make sure the hamburger is showing.
-    menuButton.source = "resources/menu.svg";
+    menuButton.source = "/resources/menu.svg";
 
     if ((listModel === null) || (listModel === undefined)) {
         console.error("No list model was defined to populate in updateScreen()!");
         return;
     }
 
-    console.log("Populating OTP list...");
+    //Logger.Log.logDebug("Populating OTP list...");
     // Also update the list model.
     populateListModel(listModel);
 }
@@ -35,7 +36,7 @@ function updateEntryState(listModel) {
                 listItem.currentTimer = 0;
 
                 if (!updatedOtps) {
-                    console.log("Get all OTP values...");
+                    //Logger.Log.logDebug("Get all OTP values...");
                     updatedOtps = true;
 
                     populateListModel(listModel);
@@ -79,7 +80,7 @@ function populateListModel(listModel) {
     }
 
     // Iterate each entry, and add it to the list.
-    console.log("Iterating entries...");
+    //Logger.Log.logDebug("Iterating entries...");
     for (var i = 0; i < otpEntryList.count(); i++) {
         var temp = otpEntryList.at(i);
         var code;

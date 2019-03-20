@@ -25,6 +25,9 @@ public:
     Q_INVOKABLE bool showHashAlgorithm();
     Q_INVOKABLE void setShowHashAlgorithm(bool newvalue);
 
+    Q_INVOKABLE bool logToFile();
+    Q_INVOKABLE void setLogToFile(bool newvalue);
+
     QString dataPath();
     bool dataDirectoryExistsOrIsCreated();
 
@@ -36,6 +39,7 @@ private:
     bool mShowHotpCounter;
     bool mShowIssuer;
     bool mShowAlgorithm;
+    bool mLogToFile;
 
     QSettings *mSettingsDatabase;
 };

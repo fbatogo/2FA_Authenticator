@@ -6,6 +6,7 @@
 .import Rollin.QRCodeSingleton 1.0 as QRCodeSingleton
 .import QtMultimedia 5.11 as QtMultimedia
 .import "utils.js" as Utils
+.import Rollin.Logger 1.0 as Logger
 
 /**
  * init() - Configure the NewOrEditEntryScreen to be either in edit mode, or
@@ -23,7 +24,7 @@ function init() {
         var keyEntry = InterfaceSingletonImpl.InterfaceSingleton.keyEntryFromIdentifier(identifier);
 
         if (keyEntry === null) {
-            console.log("Unable to locate the key entry to edit.");
+            Logger.Log.logError("Unable to locate the key entry to edit.");
             //  XXX Show an error.  However, this shouldn't happen!
             return;
         }
@@ -50,7 +51,7 @@ function init() {
         } else {
             // If we don't have any cameras available, disable the button to read a QR code.
             if ((!QtMultimedia.availableCameras) || (QtMultimedia.availableCameras.length <= 0)) {
-                console.log("No cameras found, disabling the acquire with camera button.");
+                Logger.Log.logDebug("No cameras found, disabling the acquire with camera button.");
                 getFromCameraButton.enabled = false;
 
                 // Change the text.
@@ -85,7 +86,7 @@ function onVisibleChanged(visible) {
             if (temp) {
                 secretValueInput.boxText = temp;
             } else {
-                console.log("No secret was found in the QR code!?");
+                Logger.Log.logError("No secret was found in the QR code!?");
 
                 // Do nothing.
                 return;
@@ -116,14 +117,14 @@ function checkEnableSave() {
     if ((siteNameInput.boxText === null) || (siteNameInput.boxText === "")) {
         // Don't allow saving yet.
         saveButton.enabled = false;
-        //console.log("Site name is empty.");
+        //Logger.Log.logError("Site name is empty.");
         return;
     }
 
     if ((secretValueInput.boxText === null) || (secretValueInput.boxText === "")) {
         // Don't allow saving yet.
         saveButton.enabled = false;
-        //console.log("Secret value is empty!");
+        //Logger.Log.logError("Secret value is empty!");
         return;
     }
 
@@ -132,7 +133,7 @@ function checkEnableSave() {
     } else if (secretValueText.text == "Base32") {
         encodingType = 1;
     } else {
-        console.log("Unknown encoding value '" + secretValueText.text + "'!");
+        Logger.Log.logError("Unknown encoding value '" + secretValueText.text + "'!");
         saveButton.enabled = false;
         return;
     }
@@ -143,7 +144,7 @@ function checkEnableSave() {
         // Set the error text so that the user knows why they can't save yet.
         showError(qsTr("The secret is not encoded properly!"));
         saveButton.enabled = false;
-        //console.log("Secret not encoded properly.");
+        //Logger.Log.logError("Secret not encoded properly.");
         return;
     }
 
@@ -163,7 +164,7 @@ function showError(newErrorText) {
 }
 
 function saveConfiguration() {
-    console.log("Saving key entries...");
+    Logger.Log.logDebug("Saving key entries...");
     var keyType, otpType, numberCount, algorithm, period, offset;
     var errorSet = false;
 
@@ -188,7 +189,7 @@ function saveConfiguration() {
         numberCount = -1;
         return;
     }
-    console.log("number count = " + numberCount);
+    Logger.Log.logDebug("number count = " + numberCount);
 
     algorithm = Utils.hashAlgToInt(algorithmValue.text);
     if (algorithm < 0) {

@@ -8,7 +8,7 @@ import "resources/widgets/"
 Item {
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
-        menuButton.source = "resources/back.svg";
+        menuButton.source = "/resources/back.svg";
     }
 
     Rectangle {
@@ -63,6 +63,15 @@ Item {
                         text: qsTr("Show hash algorithm");
 
                         onToggled: SettingsHandler.setShowHashAlgorithm(checked);
+                    }
+
+                    CheckBox {
+                        id: logToFile
+                        tristate: false
+                        checked: SettingsHandler.logToFile();
+                        text: qsTr("Log to a file");
+
+                        onToggled: SettingsHandler.setLogToFile(checked);
                     }
                 }
             }

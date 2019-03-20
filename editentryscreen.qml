@@ -11,7 +11,7 @@ Item {
 
     Component.onCompleted: {
         // Change the icon on the toolbar to be the back button.
-        menuButton.source = "resources/back.svg";
+        menuButton.source = "/resources/back.svg";
 
         EntryScreenTools.populateKeyItemModel(toEditModel);
     }
