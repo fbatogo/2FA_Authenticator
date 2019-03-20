@@ -3,14 +3,13 @@
 #include <QTest>
 #include <QFileInfo>
 #include "../keystorage/keyentry.h"
-#include "../keystorage/database/secretdatabase.h"
 
 #define TEST_DB "test.db"
 
-void SecretDatabaseTests::openDatabaseTest()
+// Make sure we have a database open and ready to go.
+void SecretDatabaseTests::initTestCase()
 {
     QFileInfo testFile(TEST_DB);
-    SecretDatabase testDatabase;
 
     // Make sure we can open the database.
     QVERIFY(testDatabase.open(TEST_DB));
@@ -23,10 +22,8 @@ void SecretDatabaseTests::openDatabaseTest()
     QCOMPARE(testDatabase.schemaVersion(), 1);
 }
 
-void SecretDatabaseTests::closeDatabaseTest()
+void SecretDatabaseTests::cleanupTestCase()
 {
-    SecretDatabase testDatabase;
-
     QVERIFY(testDatabase.close());
 
     // And, remove the test database file.
@@ -37,7 +34,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 {
     KeyEntry toWrite;
     KeyEntry readBack;
-    SecretDatabase testDatabase;
+//    SecretDatabase testDatabase;
 
     // Make sure our toWrite value is invalid to start with.
     QCOMPARE(toWrite.valid(), false);
@@ -71,7 +68,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 
 void SecretDatabaseTests::getAllEntriesTest()
 {
-    SecretDatabase testDatabase;
+//    SecretDatabase testDatabase;
     std::vector<KeyEntry> allEntries;
     KeyEntry currentEntry;
 
@@ -104,7 +101,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
 {
     KeyEntry readBack;
     KeyEntry newEntry;
-    SecretDatabase testDatabase;
+//    SecretDatabase testDatabase;
 
     // Find the id2 entry in the database.
     QVERIFY(testDatabase.getByIdentifier("id2", readBack));

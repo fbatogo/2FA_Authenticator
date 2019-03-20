@@ -2,18 +2,21 @@
 #define SECRETDATABASETESTS_H
 
 #include <QObject>
+#include "../keystorage/database/secretdatabase.h"
 
 class SecretDatabaseTests : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void openDatabaseTest();
-    void closeDatabaseTest();
+    void initTestCase();
+    void cleanupTestCase();
     void addDatabaseEntryKeyEntryTest();
     void getAllEntriesTest();
     void updateDatabaseEntryTest();
 
+private:
+    SecretDatabase testDatabase;
 };
 
 
