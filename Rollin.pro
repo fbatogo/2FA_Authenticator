@@ -22,7 +22,7 @@ contains(QT, testlib) {
     CONFIG += qtestlib
 
     # Include our test runner/helper.
-    include(QtTestRunner/QtTestRunner.pri)
+    include(tests/QtTestRunner/QtTestRunner.pri)
 }
 
 # The following define makes your compiler emit warnings if you use
