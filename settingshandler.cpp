@@ -145,6 +145,9 @@ void SettingsHandler::setLogToFile(bool newvalue)
     mLogToFile = newvalue;
 
     mSettingsDatabase->setValue("Settings/logToFile", mLogToFile);
+
+    // Change the state of the logger.
+    Logger::getInstance()->setLogToFile(mLogToFile);
 }
 
 /**

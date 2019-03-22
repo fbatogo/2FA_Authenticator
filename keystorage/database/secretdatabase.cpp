@@ -65,7 +65,7 @@ bool SecretDatabase::open(const QString &path)
 bool SecretDatabase::close()
 {
     if (!mDatabase.isOpen()) {
-        LOG_DEBUG("Unable to close a database that isn't open!");
+        // Do nothing.
         return true;
     }
 
