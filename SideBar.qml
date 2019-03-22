@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Rollin.Logger 1.0
 
 Drawer {
     id: drawer
@@ -109,31 +110,31 @@ Drawer {
                     switch(index) {
                     case 0:
                         // New Key Entry screen.
-                        console.info("New key entry clicked...");
+                        Log.logDebug("New key entry clicked...");
                         screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"));
                         break;
 
                     case 1:
                         // Edit key screen.
-                        console.info("Edit entry clicked.");
+                        Log.logDebug("Edit entry clicked.");
                         screenStack.push(Qt.resolvedUrl("editentryscreen.qml"));
                         break;
 
                     case 2:
                         // Delete Key Entry screen.
-                        console.info("Delete key entry clicked...");
+                        Log.logDebug("Delete key entry clicked...");
                         screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
                         break;
 
                     case 3:
                         // Setting screen
-                        console.info("Settings entry clicked...");
+                        Log.logDebug("Settings entry clicked...");
                         screenStack.push(Qt.resolvedUrl("Settings.qml"));
                         break;
 
                     case 4:
                         // About screen.
-                        console.info("About screen clicked...");
+                        Log.logDebug("About screen clicked...");
                         screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
                         break;
                     }

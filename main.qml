@@ -1,9 +1,18 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Rollin.SettingsHandler 1.0
+import Rollin.Logger 1.0
 
 ApplicationWindow {
     id: window
+
+    Component.onCompleted: {
+        if (SettingsHandler.logToFile()) {
+            // Enable the logger.
+            Log.setLogToFile(true);
+        }
+    }
 
     signal updateOtpData()
 

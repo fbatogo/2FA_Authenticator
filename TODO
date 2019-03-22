@@ -1,3 +1,5 @@
 - Convert zbar to not using qml-zbar, since we don't know the license?
-- Write log data to the .Rollin directory?  (Or somewhere else?)
+- Create icon.
+- Create flatpak.
+
 

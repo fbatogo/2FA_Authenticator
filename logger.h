@@ -5,14 +5,20 @@
 #include <QString>
 #include <QQmlEngine>
 #include <QJSEngine>
+#include <QFile>
+#include <QTextStream>
 
 class Logger : public QObject
 {
     Q_OBJECT
 
 public:
+    ~Logger();
+
     static Logger *getInstance();
     static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+    Q_INVOKABLE void setLogToFile(bool shouldLogToFile);
 
     Q_INVOKABLE void log(const QString &logline);
     Q_INVOKABLE void logDebug(const QString &logline);
@@ -20,7 +26,14 @@ public:
     Q_INVOKABLE void logWarning(const QString &logline);
 
 private:
+    void openLogFile();
+    void closeLogFile();
+    void logToFile(const QString &logline);
+
     Logger();
+
+    QFile mLogFile;
+    QTextStream mLogStream;
 };
 
 
