@@ -24,24 +24,25 @@ class KeyEntry : public QObject
 
     // Values used to store data about the key.
     Q_PROPERTY(bool mValid READ valid)
-    Q_PROPERTY(QString mIdentifier READ identifier WRITE setIdentifier)
-    Q_PROPERTY(QString mSecret READ secret WRITE setSecret)
-    Q_PROPERTY(int mKeyType READ keyType WRITE setKeyType)
-    Q_PROPERTY(int mOtpType READ otpType WRITE otpType)
-    Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount)
-    Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep)
-    Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset)
-    Q_PROPERTY(int mAlgorithm READ algorithm WRITE setAlgorithm)
-    Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter)
-    Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer)
+    Q_PROPERTY(QString mIdentifier READ identifier WRITE setIdentifier NOTIFY identifierChanged)
+    Q_PROPERTY(QString mSecret READ secret WRITE setSecret NOTIFY secretChanged)
+    Q_PROPERTY(int mKeyType READ keyType WRITE setKeyType NOTIFY keyTypeChanged)
+    Q_PROPERTY(int mOtpType READ otpType WRITE otpType NOTIFY otpTypeChanged)
+    Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount NOTIFY outNumberCountChanged)
+    Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep NOTIFY timeStepChanged)
+    Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset NOTIFY timeOffsetChanged)
+    Q_PROPERTY(int mAlgorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged)
+    Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter NOTIFY hotpCounterChanged)
+    Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer NOTIFY issuerChanged)
 
     // Values used to store the current calculation for the OTP.
-    Q_PROPERTY(QString mCurrentCode READ currentCode)
-    Q_PROPERTY(int mStartTime READ startTime)
-    Q_PROPERTY(bool mCodeValid READ codeValid)
+    Q_PROPERTY(QString mCurrentCode READ currentCode NOTIFY currentCodeChanged)
+    Q_PROPERTY(QString mPrintableCurrentCode READ printableCurrentCode NOTIFY printableCurrentCodeChanged)
+    Q_PROPERTY(int mStartTime READ startTime NOTIFY startTimeChanged)
+    Q_PROPERTY(bool mCodeValid READ codeValid NOTIFY codeValidChanged)
 
     // Get the reason this object appears to be invalid.
-    Q_PROPERTY(QString mInvalidReason READ invalidReason)
+    Q_PROPERTY(QString mInvalidReason READ invalidReason NOTIFY invalidReasonChanged)
 
 
 public:
@@ -96,16 +97,39 @@ public:
     QString currentCode() const;
     void setCurrentCode(const QString &newvalue);
 
+    QString printableCurrentCode() const;
+    void setPrintableCurrentCode(const QString &newvalue);
+
     int startTime() const;
     void setStartTime(int newvalue);
 
     bool codeValid() const;
     void setCodeValid(bool newvalue);
 
+    // Copy all of the values from another KeyEntry object.
+    void copyFromObject(const KeyEntry &toCopy);
+
     // Utility calls.
     std::string toString();
 
     KeyEntry& operator=(const KeyEntry& toCopy);
+
+signals:
+    void identifierChanged();
+    void secretChanged();
+    void keyTypeChanged();
+    void otpTypeChanged();
+    void outNumberCountChanged();
+    void timeStepChanged();
+    void timeOffsetChanged();
+    void algorithmChanged();
+    void hotpCounterChanged();
+    void issuerChanged();
+    void currentCodeChanged();
+    void printableCurrentCodeChanged();
+    void startTimeChanged();
+    void codeValidChanged();
+    void invalidReasonChanged();
 
 private:
     std::string boolToString(bool value);
@@ -123,6 +147,7 @@ private:
     QString mIssuer;
     QString mInvalidReason;
     QString mCurrentCode;
+    QString mPrintableCurrentCode;
     int mStartTime;
     bool mCodeValid;
 };

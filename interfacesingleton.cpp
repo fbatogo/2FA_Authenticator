@@ -7,9 +7,7 @@
 InterfaceSingleton::InterfaceSingleton() :
     QObject(nullptr)
 {
-    if (!mKeyStorage.initStorage()) {
-        LOG_ERROR("Unable to initialize the key storage!");
-    }
+    mKeyEntries = nullptr;
 }
 
 /**
@@ -19,9 +17,6 @@ InterfaceSingleton::InterfaceSingleton() :
  */
 InterfaceSingleton::~InterfaceSingleton()
 {
-    if (!mKeyStorage.freeStorage()) {
-        LOG_ERROR("Unable to free the key storage!");
-    }
 }
 
 InterfaceSingleton *InterfaceSingleton::getInstance()
@@ -96,46 +91,6 @@ QString InterfaceSingleton::version()
 }
 
 /**
- * @brief InterfaceSingleton::calculateKeyEntries - Calculate the OTP values for all currently
- *      known key entry objects, and return them.
- *
- * @return UiKeyEntries pointer on success.  nullptr on failure.
- */
-UiKeyEntries *InterfaceSingleton::calculateKeyEntries()
-{
-    QList<KeyEntry> allKeys;
-    UiKeyEntries *result = nullptr;
-
-    allKeys.clear();
-
-    if (!mKeyStorage.getAllKeys(allKeys)) {
-        LOG_ERROR("Unable to get all of the keys stored in key storage!");
-    } else {
-        // We need to convert all of the KeyEntries in to dynamic allocations.
-        result = new UiKeyEntries();
-
-        if (!result->populateEntries(allKeys)) {
-            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (1)");
-
-            // Clean up.
-            delete result;
-            result = nullptr;
-        }
-
-        // Then, calculate all of the key entrie values.
-        if (!result->calculateEntries()) {
-            LOG_ERROR("Unrecoverable failure calculating key entries!");
-
-            // Clean up.
-            delete result;
-            result = nullptr;
-        }
-    }
-
-    return result;
-}
-
-/**
  * @brief InterfaceSingleton::keyEntries - Get the list of all key entries.
  *
  * @return UiKeyEntries object containing all of the secret key entries store in the
@@ -143,27 +98,25 @@ UiKeyEntries *InterfaceSingleton::calculateKeyEntries()
  */
 UiKeyEntries *InterfaceSingleton::keyEntries()
 {
-    QList<KeyEntry> allKeys;
-    UiKeyEntries *result = nullptr;
+    if (nullptr == mKeyEntries) {
+        // Need to create the key entries object.
+        mKeyEntries = new UiKeyEntries();
 
-    allKeys.clear();
+        // Then, make sure we can populate it.
+        if (!mKeyEntries->populateEntries()) {
+            LOG_ERROR("Failed to populate the key entries object!");
 
-    if (!mKeyStorage.getAllKeys(allKeys)) {
-        LOG_ERROR("Unable to get all of the keys stored in key storage!");
-    } else {
-        // We need to convert all of the KeyEntries in to dynamic allocations.
-        result = new UiKeyEntries();
+            // Delete the container, since it is useless to us now.
+            delete mKeyEntries;
+            mKeyEntries = nullptr;
 
-        if (!result->populateEntries(allKeys)) {
-            LOG_ERROR("Unable to convert the key entries to a format suitable for the UI! (1)");
-
-            // Clean up.
-            delete result;
-            result = nullptr;
+            // And return a nullptr.
+            return nullptr;
         }
     }
 
-    return result;
+    // Return our pointer.  (NOTE: The pointer will continue to be owned by this object!)
+    return mKeyEntries;
 }
 
 /**
@@ -177,25 +130,12 @@ UiKeyEntries *InterfaceSingleton::keyEntries()
  */
 KeyEntry *InterfaceSingleton::keyEntryFromIdentifier(const QString &identifier)
 {
-    KeyEntry result;
-
-    if (identifier.isEmpty()) {
-        LOG_ERROR("Unable to locate a key with an empty identifier!");
+    if (nullptr == mKeyEntries) {
+        LOG_ERROR("Attempted to locate a key entry by identifier before key entries were loaded!");
         return nullptr;
     }
 
-    if (!mKeyStorage.keyByIdentifier(identifier, result)) {
-        LOG_ERROR("Failed to locate the key entry for identifier : " + identifier);
-        return nullptr;
-    }
-
-    if (!result.valid()) {
-        LOG_ERROR("KeyEntry returned wasn't valid!");
-        return nullptr;
-    }
-
-    // Return a pointerized copy of the KeyEntry.
-    return new KeyEntry(result);
+    return mKeyEntries->fromIdentifier(identifier);
 }
 
 /**
@@ -274,11 +214,11 @@ bool InterfaceSingleton::addKeyEntry(QString identifier, QString secret, int key
     }
 
     // Pass it in to be handled.
-    if (!mKeyStorage.addKey(toAdd)) {
+    if (!mKeyEntries->addKeyEntry(toAdd)) {
         LOG_ERROR("Unable to add the key data to the key storage method!");
         return false;
     }
-    LOG_DEBUG("Key was written to the key storage!");
+    LOG_DEBUG("New key was added!");
 
     return true;
 }
@@ -388,7 +328,7 @@ bool InterfaceSingleton::updateKeyEntry(KeyEntry *toUpdate)
     }
 
     // Pass it in to be handled.
-    updated = mKeyStorage.updateKey((*currentEntry), (*toUpdate));
+    updated = mKeyEntries->updateKeyEntry((*currentEntry), (*toUpdate));
 
     // Free the current entry.
     delete currentEntry;
@@ -412,12 +352,7 @@ bool InterfaceSingleton::updateKeyEntry(KeyEntry *toUpdate)
  */
 bool InterfaceSingleton::deleteKey(QString identifier)
 {
-    if (identifier.isEmpty()) {
-        LOG_ERROR("Unable to delete a key with an empty identifier!");
-        return false;
-    }
-
-    return mKeyStorage.deleteKeyByIdentifier(identifier);
+    return mKeyEntries->deleteKeyEntry(identifier);
 }
 
 /**

@@ -12,20 +12,7 @@ KeyEntry::KeyEntry() :
 KeyEntry::KeyEntry(const KeyEntry &toCopy) :
     QObject(nullptr)
 {
-    setIdentifier(toCopy.identifier());
-    setSecret(toCopy.secret());
-    setKeyType(toCopy.keyType());
-    setOtpType(toCopy.otpType());
-    setOutNumberCount(toCopy.outNumberCount());
-    setTimeStep(toCopy.timeStep());
-    setTimeOffset(toCopy.timeOffset());
-    setAlgorithm(toCopy.algorithm());
-    setHotpCounter(toCopy.hotpCounter());
-    setIssuer(toCopy.issuer());
-    setInvalidReason(toCopy.invalidReason());
-    setCurrentCode(toCopy.currentCode());
-    setStartTime(toCopy.startTime());
-    setCodeValid(toCopy.codeValid());
+    copyFromObject(toCopy);
 }
 
 void KeyEntry::clear()
@@ -43,6 +30,7 @@ void KeyEntry::clear()
     mIssuer.clear();
     mInvalidReason.clear();    
     mCurrentCode.clear();
+    mPrintableCurrentCode.clear();
     mStartTime = -1;
     mCodeValid = false;
 }
@@ -97,6 +85,7 @@ QString KeyEntry::identifier() const
 void KeyEntry::setIdentifier(const QString &newvalue)
 {
     mIdentifier = newvalue;
+    emit identifierChanged();
 }
 
 QString KeyEntry::secret() const
@@ -107,6 +96,7 @@ QString KeyEntry::secret() const
 void KeyEntry::setSecret(const QString &newvalue)
 {
     mSecret = newvalue;
+    emit secretChanged();
 }
 
 int KeyEntry::keyType() const
@@ -122,6 +112,7 @@ void KeyEntry::keyType(int &value)
 void KeyEntry::setKeyType(int newvalue)
 {
     mKeyType = newvalue;
+    emit keyTypeChanged();
 }
 
 int KeyEntry::otpType() const
@@ -137,6 +128,7 @@ void KeyEntry::otpType(int &value)
 void KeyEntry::setOtpType(int newvalue)
 {
     mOtpType = newvalue;
+    emit otpTypeChanged();
 }
 
 int KeyEntry::outNumberCount() const
@@ -152,6 +144,7 @@ void KeyEntry::outNumberCount(int &value)
 void KeyEntry::setOutNumberCount(int newvalue)
 {
     mOutNumberCount = newvalue;
+    emit outNumberCountChanged();
 }
 
 int KeyEntry::timeStep() const
@@ -167,6 +160,7 @@ void KeyEntry::timeStep(int &value)
 void KeyEntry::setTimeStep(int newvalue)
 {
     mTimeStep = newvalue;
+    emit timeStepChanged();
 }
 
 int KeyEntry::timeOffset() const
@@ -182,6 +176,7 @@ void KeyEntry::timeOffset(int &value)
 void KeyEntry::setTimeOffset(int newvalue)
 {
     mTimeOffset = newvalue;
+    emit timeOffsetChanged();
 }
 
 int KeyEntry::algorithm() const
@@ -192,6 +187,7 @@ int KeyEntry::algorithm() const
 void KeyEntry::setAlgorithm(int newvalue)
 {
     mAlgorithm = newvalue;
+    emit algorithmChanged();
 }
 
 int KeyEntry::hotpCounter() const
@@ -202,6 +198,7 @@ int KeyEntry::hotpCounter() const
 void KeyEntry::setHotpCounter(int newvalue)
 {
     mHotpCounter = newvalue;
+    emit hotpCounterChanged();
 }
 
 QString KeyEntry::issuer() const
@@ -212,6 +209,7 @@ QString KeyEntry::issuer() const
 void KeyEntry::setIssuer(const QString &newvalue)
 {
     mIssuer = newvalue;
+    emit issuerChanged();
 }
 
 QString KeyEntry::invalidReason() const
@@ -222,6 +220,7 @@ QString KeyEntry::invalidReason() const
 void KeyEntry::setInvalidReason(const QString &newvalue)
 {
     mInvalidReason = newvalue;
+    emit invalidReasonChanged();
 }
 
 QString KeyEntry::currentCode() const
@@ -232,6 +231,57 @@ QString KeyEntry::currentCode() const
 void KeyEntry::setCurrentCode(const QString &newvalue)
 {
     mCurrentCode = newvalue;
+    emit currentCodeChanged();
+
+    // Update the printable version of the code as well.
+    setPrintableCurrentCode(mCurrentCode);
+}
+
+/**
+ * @brief KeyEntry::printableCurrentCode - Return the current value of the
+ *      printable current code member variable.
+ *
+ * @return QString containing the printable current code.  If no code is set,
+ *      the string will be empty.
+ */
+QString KeyEntry::printableCurrentCode() const
+{
+    return mPrintableCurrentCode;
+}
+
+/**
+ * @brief KeyEntry::setPrintableCurrentCode - Given the current code, without any special
+ *      formatting, format it according to how we are configured.
+ *
+ * @param newvalue - The *UNFORMATTED* current code string.
+ */
+void KeyEntry::setPrintableCurrentCode(const QString &newvalue)
+{
+    mPrintableCurrentCode = newvalue;
+
+    // Figure out how we want to break up the code.
+    switch (newvalue.length()) {
+    case 6:
+        // Add a space between the 1st and 2nd 3 characters.
+        mPrintableCurrentCode.insert(3, " ");
+        break;
+
+    case 7:
+        // Add a space between the 1st 4 and the 2nd 3 characters.
+        mPrintableCurrentCode.insert(4, " ");
+        break;
+
+    case 8:
+        // Add a space between the 1st and 2nd 4 characters.
+        mPrintableCurrentCode.insert(4, " ");
+        break;
+
+    default:
+        // This shouldn't happen, but if it does, just show the code with no spaces.
+        break;
+    }
+
+    emit printableCurrentCodeChanged();
 }
 
 int KeyEntry::startTime() const
@@ -242,6 +292,7 @@ int KeyEntry::startTime() const
 void KeyEntry::setStartTime(int newvalue)
 {
     mStartTime = newvalue;
+    emit startTimeChanged();
 }
 
 bool KeyEntry::codeValid() const
@@ -252,6 +303,7 @@ bool KeyEntry::codeValid() const
 void KeyEntry::setCodeValid(bool newvalue)
 {
     mCodeValid = newvalue;
+    emit codeValidChanged();
 }
 
 std::string KeyEntry::toString()
@@ -276,20 +328,7 @@ std::string KeyEntry::toString()
  */
 KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
 {
-    setIdentifier(toCopy.identifier());
-    setSecret(toCopy.secret());
-    setKeyType(toCopy.keyType());
-    setOtpType(toCopy.otpType());
-    setOutNumberCount(toCopy.outNumberCount());
-    setTimeStep(toCopy.timeStep());
-    setTimeOffset(toCopy.timeOffset());
-    setAlgorithm(toCopy.algorithm());
-    setHotpCounter(toCopy.hotpCounter());
-    setIssuer(toCopy.issuer());
-    setInvalidReason(toCopy.invalidReason());
-    setCurrentCode(toCopy.currentCode());
-    setStartTime(toCopy.startTime());
-    setCodeValid(toCopy.codeValid());
+    copyFromObject(toCopy);
 
     return *this;
 }
@@ -308,4 +347,29 @@ std::string KeyEntry::boolToString(bool value)
     }
 
     return "false";
+}
+
+/**
+ * @brief KeyEntry::copyFromObject - Copy all of the values from the provided object in
+ *      to the current one.
+ *
+ * @param toCopy - The object that we want to copy the values from.
+ */
+void KeyEntry::copyFromObject(const KeyEntry &toCopy)
+{
+    setIdentifier(toCopy.identifier());
+    setSecret(toCopy.secret());
+    setKeyType(toCopy.keyType());
+    setOtpType(toCopy.otpType());
+    setOutNumberCount(toCopy.outNumberCount());
+    setTimeStep(toCopy.timeStep());
+    setTimeOffset(toCopy.timeOffset());
+    setAlgorithm(toCopy.algorithm());
+    setHotpCounter(toCopy.hotpCounter());
+    setIssuer(toCopy.issuer());
+    setInvalidReason(toCopy.invalidReason());
+    setCurrentCode(toCopy.currentCode());
+    setPrintableCurrentCode(toCopy.printableCurrentCode());
+    setStartTime(toCopy.startTime());
+    setCodeValid(toCopy.codeValid());
 }

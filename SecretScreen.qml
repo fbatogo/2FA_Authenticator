@@ -19,9 +19,6 @@ Component {
                 Log.logDebug("No entries exist in the database.  Showing the 'StartHereScreen'.");
                 screenStack.push(showStartHereScreen);
             }
-
-            // Start the timer.
-            updateTimer.start();
         }
 
         Connections {
@@ -37,17 +34,6 @@ Component {
             if (visible) {
                 SecretScreenImpl.updateScreen(otpListModel);
             }
-        }
-
-        Timer {
-            id: updateTimer
-
-            // Tick once a second, and update all of the timer graphics, along with
-            // updating the codes when the timers hit 0.
-            interval: 1000
-            repeat: true
-
-            onTriggered: SecretScreenImpl.updateEntryState(otpListModel);
         }
 
         ListView {
@@ -91,7 +77,7 @@ Component {
                             // The name of the site the key is for.
                             x: 5
                             y: 5
-                            text: identifier
+                            text: otpObject.mIdentifier
                             font.bold: true
                             font.pointSize: 14
                         }
@@ -105,11 +91,11 @@ Component {
                             visible: ((!showError) && (SettingsHandler.showIssuer()))
 
                             text: {
-                                if (issuerText === "") {
+                                if (otpObject.mIssuer === "") {
                                     return qsTr("Issuer : <Not Provided>");
                                 }
 
-                                return qsTr("Issuer : %1").arg(issuerText);
+                                return qsTr("Issuer : %1").arg(otpObject.mIssuer);
                             }
                         }
 
@@ -119,14 +105,14 @@ Component {
                             width: parent.width
                             x: 25
 
-                            visible: ((!showError) && (otpType === 1) && (SettingsHandler.showHotpCounterValue()))
+                            visible: ((!showError) && (otpObject.mOtpType === 1) && (SettingsHandler.showHotpCounterValue()))
 
                             text: {
-                                if (hotpCounter < 0) {
+                                if (otpObject.mHotpCounter < 0) {
                                     return qsTr("Invalid HOTP Counter value!");
                                 }
 
-                                return qsTr("HOTP Counter Value : %1").arg(hotpCounter);
+                                return qsTr("HOTP Counter Value : %1").arg(otpObject.mHotpCounter);
                             }
                         }
 
@@ -138,7 +124,7 @@ Component {
 
                             visible: ((!showError) && (SettingsHandler.showHashAlgorithm()))
 
-                            text: qsTr("Hash Type Used : %1").arg(Utils.hashAlgIntToString(algorithm));
+                            text: qsTr("Hash Type Used : %1").arg(Utils.hashAlgIntToString(otpObject.mAlgorithm));
                         }
 
                         Text {
@@ -147,7 +133,7 @@ Component {
 
                             visible: !showError
 
-                            text: otpCode
+                            text: otpObject.mPrintableCurrentCode
                             x: 25
                             color: "blue"
                             font.pointSize: 32
@@ -158,17 +144,16 @@ Component {
                     // Show the clock icon.
                     Rectangle {
                         id: clockFrame
-                        visible: (otpType !== 1)
+                        visible: (otpObject.mOtpType !== 1)
 
                         width: 32
                         height: 32
 
                         ProgressCircle {
-                            id: timer
+                            id: timerCircle
                             size: parent.height
-                            arcBegin: 0
-                            arcEnd: (360 - circleShown)
-                            animationDuration: 999
+                            maxTime: 30
+                            currentTime: (otpObject.mTimeStep - otpObject.mStartTime)
                         }
                     }
 
@@ -180,7 +165,7 @@ Component {
                     Rectangle {
                         id: hotpRefreshButton
 
-                        visible: (otpType === 1)
+                        visible: (otpObject.mOtpType === 1)
 
                         width: 32
                         height: 32
@@ -206,7 +191,7 @@ Component {
                     }
 
                     HorizontalPadding {
-                        visible: (otpType === 1)
+                        visible: (otpObject.mOtpType === 1)
                         size: 5
                     }
 
@@ -261,7 +246,7 @@ Component {
                             visible: showError
 
                             // The name of the site the key is for.
-                            text: identifier
+                            text: otpObject.mIdentifier
                             font.bold: true
                             font.pointSize: 14
                         }

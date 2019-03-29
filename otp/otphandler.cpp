@@ -75,6 +75,7 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
 
     // Calculate the number of seconds in to the lifetime of the OTP that we are.
     keydata->setStartTime(getStartTime(keydata->timeStep()));
+    LOG_DEBUG("New start time is : " + QString::number(keydata->startTime()));
 
     // The code should be valid.
     keydata->setCodeValid(true);
