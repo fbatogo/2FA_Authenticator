@@ -18,7 +18,7 @@ ZBarScanThread::ZBarScanThread(QObject *parent) :
  *
  * @param toProcess - The frame that we want to process with the QR code scanner.
  */
-void ZBarScanThread::queueFrameToProcess(const zbar::QZBarImage &toProcess)
+void ZBarScanThread::queueFrameToProcess(const zbar::MyQZBarImage &toProcess)
 {
     // Lock the queue.
     mQueueLock.lock();

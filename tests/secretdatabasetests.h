@@ -3,26 +3,21 @@
 
 #include <QObject>
 #include "../keystorage/database/secretdatabase.h"
-#include "autotest.h"
 
 class SecretDatabaseTests : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void databaseTests();
-
-private:
-    void removeOldDatabaseFile();
-    void openDatabaseTest();
-    void closeDatabaseTest();
+    void initTestCase();
+    void cleanupTestCase();
     void addDatabaseEntryKeyEntryTest();
     void getAllEntriesTest();
     void updateDatabaseEntryTest();
 
-    SecretDatabase mTestDatabase;
+private:
+    SecretDatabase testDatabase;
 };
 
-DECLARE_TEST(SecretDatabaseTests)
 
 #endif // SECRETDATABASETESTS_H

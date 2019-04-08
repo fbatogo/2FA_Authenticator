@@ -1,5 +1,5 @@
-#ifndef SHA1_H
-#define SHA1_H
+#ifndef SHA1IMPL_H
+#define SHA1IMPL_H
 
 /*
    SHA-1 in C
@@ -36,9 +36,8 @@ void SHA1Final(
     SHA1_CTX * context
     );
 
-void SHA1(
-    char *hash_out,
+void SHA1(char *hash_out,
     const char *str,
-    int len);
+    uint32_t len);
 
-#endif /* SHA1_H */
+#endif /* SHA1IMPL_H */

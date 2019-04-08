@@ -1,26 +1,28 @@
 #ifndef QRVIDEORUNNABLE_H
 #define QRVIDEORUNNABLE_H
 
+#ifndef NO_ZBAR
+
 #include <QObject>
 #include <QVideoFilterRunnable>
 
-#include "zbarscanthread.h"
+#include <zbar.h>
+
+class QRCodeFilter;
 
 class QRVideoRunnable : public QVideoFilterRunnable
 {
 public:
-#ifndef _WIN32
-    QRVideoRunnable(ZBarScanThread *scanner);
-#else
-    QRVideoRunnable();
-#endif // _WIN32
+    QRVideoRunnable(QRCodeFilter *filter);
 
     QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
 
 private:
-#ifndef _WIN32
-    ZBarScanThread *mScanThread;
-#endif // _WIN32
+    zbar::Image mImage;
+    zbar::ImageScanner mScanner;
+    QSize mFrameSize;
+    QRCodeFilter *mFilter;
 };
 
+#endif
 #endif // QRVIDEORUNNABLE_H

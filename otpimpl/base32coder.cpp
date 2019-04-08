@@ -172,6 +172,47 @@ unsigned char *Base32Coder::decode(std::string toDecode, size_t &decodedSize)
     return result;
 }
 
+/**
+ * @brief Base32Coder::isBase32Encoded - Check to see if the provided string is base32
+ *      encoded.
+ *
+ * @param toValidate - The string to validate the base32 encoding on.
+ *
+ * @return true if the string appears to be base32 encoded.  false otherwise.
+ */
+bool Base32Coder::isBase32Encoded(std::string toValidate)
+{
+    QString temp;
+
+    if (toValidate.empty()) {
+        LOG_ERROR("The string to validate for base32 encoding was empty!");
+        return false;
+    }
+
+    // The string length needs to be evenly divisible by 8.
+    if ((toValidate.length() % 8) != 0) {
+        LOG_ERROR("The string provided isn't base32 encoded.  The length is incorrect!");
+        return false;
+    }
+
+    // And, each character needs to be one of the characters allowed in the
+    // array above.
+    for (size_t i = 0; i < toValidate.length(); i++) {
+        if (((toValidate.at(i) < 'A') || (toValidate.at(i) > 'Z')) &&
+                ((toValidate.at(i) < '2') || (toValidate.at(i) > '7')) &&
+                (toValidate.at(i) != '=')) {
+            // The character is invalid.
+            temp.clear();
+            temp = toValidate.at(i);
+            LOG_DEBUG("The character '" + temp + "' at index " + QString::number(i) + " is not a valid base32 encoded character!");
+            return false;
+        }
+    }
+
+    // If we get here, then the string appears to be a valid base32 string.
+    return true;
+}
+
 bool Base32Coder::decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize)
 {
     if ((data == nullptr) || (target == nullptr)) {

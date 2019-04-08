@@ -1,20 +1,41 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <QObject>
 #include <QString>
+#include <QQmlEngine>
+#include <QJSEngine>
+#include <QFile>
+#include <QTextStream>
+#include <QMutex>
 
-class Logger
+class Logger : public QObject
 {
-public:
-    static Logger *getInstance();
+    Q_OBJECT
 
-    void log(const QString &logline);
-    void logDebug(const QString &logline);
-    void logError(const QString &logline);
-    void logWarning(const QString &logline);
+public:
+    ~Logger();
+
+    static Logger *getInstance();
+    static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+    Q_INVOKABLE void setLogToFile(bool shouldLogToFile);
+
+    Q_INVOKABLE void log(const QString &logline);
+    Q_INVOKABLE void logDebug(const QString &logline);
+    Q_INVOKABLE void logError(const QString &logline);
+    Q_INVOKABLE void logWarning(const QString &logline);
 
 private:
+    void openLogFile();
+    void closeLogFile();
+    void logToFile(const QString &logline);
+
     Logger();
+
+    QFile mLogFile;
+    QTextStream mLogStream;
+    QMutex mMutex;
 };
 
 

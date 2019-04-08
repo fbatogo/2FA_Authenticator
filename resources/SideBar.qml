@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Rollin.Logger 1.0
 
 Drawer {
     id: drawer
@@ -109,32 +110,32 @@ Drawer {
                     switch(index) {
                     case 0:
                         // New Key Entry screen.
-                        console.info("New key entry clicked...");
-                        screenStack.push(Qt.resolvedUrl("NewEntryScreen.qml"));
+                        Log.logDebug("New key entry clicked...");
+                        screenStack.push(Qt.resolvedUrl("NewOrEditEntryScreen.qml"));
                         break;
 
                     case 1:
-                        // Delete Key Entry screen.
-                        console.info("Delete key entry clicked...");
-                        screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
+                        // Edit key screen.
+                        Log.logDebug("Edit entry clicked.");
+                        screenStack.push(Qt.resolvedUrl("editentryscreen.qml"));
                         break;
 
                     case 2:
-                        // Setting screen
-                        console.info("Settings entry clicked...");
-                        screenStack.push(Qt.resolvedUrl("Settings.qml"));
+                        // Delete Key Entry screen.
+                        Log.logDebug("Delete key entry clicked...");
+                        screenStack.push(Qt.resolvedUrl("DeleteEntryScreen.qml"));
                         break;
 
                     case 3:
-                        // About screen.
-                        console.info("About screen clicked...");
-                        screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
+                        // Setting screen
+                        Log.logDebug("Settings entry clicked...");
+                        screenStack.push(Qt.resolvedUrl("Settings.qml"));
                         break;
 
                     case 4:
-                        // Quit option
-                        console.info("Quit selected.");
-                        Qt.quit();
+                        // About screen.
+                        Log.logDebug("About screen clicked...");
+                        screenStack.push(Qt.resolvedUrl("AboutScreen.qml"));
                         break;
                     }
                 }
@@ -151,6 +152,10 @@ Drawer {
         }
 
         ListElement {
+            name: qsTr("Edit")
+        }
+
+        ListElement {
             name: qsTr("Delete")
         }
 
@@ -160,10 +165,6 @@ Drawer {
 
         ListElement {
             name: qsTr("About")
-        }
-
-        ListElement {
-            name: qsTr("Quit")
         }
     }
 }

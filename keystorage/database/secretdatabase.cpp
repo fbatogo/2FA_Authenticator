@@ -42,6 +42,7 @@ bool SecretDatabase::open(const QString &path)
 
     if (!mDatabase.open()) {
         LOG_ERROR("Failed to open or create the database file : " + path);
+        LOG_ERROR("    Error : " + mDatabase.lastError().text());
         return false;
     }
 
@@ -64,8 +65,8 @@ bool SecretDatabase::open(const QString &path)
 bool SecretDatabase::close()
 {
     if (!mDatabase.isOpen()) {
-        LOG_ERROR("Unable to close a database that isn't open!");
-        return false;
+        // Do nothing.
+        return true;
     }
 
     mDatabase.close();
@@ -106,13 +107,13 @@ bool SecretDatabase::add(const KeyEntry &entry)
         // Double check it is what we expect.
         if (foundEntry.valid()) {
             if (foundEntry.identifier() == entry.identifier()) {
-                LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please us update()!");
+                LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please use update()!");
                 return false;
             }
         }
     }
 
-    if (!createBoundQuery("INSERT into secretData (identifier, secret, keyType, otpType, outNumberCount) VALUES (:identifier, :secret, :keyType, :otpType, :outNumberCount)", entry, query)) {
+    if (!createBoundQuery("INSERT into secretData (identifier, secret, keyType, otpType, outNumberCount, timeStep, timeOffset, algorithm, hotpCounter, issuer) VALUES (:identifier, :secret, :keyType, :otpType, :outNumberCount, :timeStep, :timeOffset, :algorithm, :hotpCounter, :issuer)", entry, query)) {
         // Already logged an error.  Just return.
         return false;
     }
@@ -151,7 +152,7 @@ bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEnt
         return false;
     }
 
-    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount", newEntry, query)) {
+    if (!createBoundQuery("UPDATE secretData set identifier=:identifier, secret=:secret, keyType=:keyType, otpType=:otpType, outNumberCount=:outNumberCount, timeStep=:timeStep, timeOffset=:timeOffset, algorithm=:algorithm, hotpCounter=:hotpCounter, issuer=:issuer where identifier='" + currentEntry.identifier() + "'", newEntry, query)) {
         // Already logged an error.  Just return.
         return false;
     }
@@ -159,6 +160,7 @@ bool SecretDatabase::update(const KeyEntry &currentEntry, const KeyEntry &newEnt
     // Execute the query.
     if (!query.exec()) {
         LOG_ERROR("Failed to update the key entry data in the database!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -186,6 +188,7 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, KeyEntry &result
     // Make the query.
     if (!query.exec("SELECT * from secretData where identifier='" + identifier + "'")) {
         LOG_ERROR("Unable to query the database by identifier!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -205,7 +208,8 @@ bool SecretDatabase::getByIdentifier(const QString &identifier, KeyEntry &result
  * @param result[OUT] - If this method returns true, this vector will contain all of the
  *      KeyEntry rows from the database.
  *
- * @return true if the rows were read.  false on error.
+ * @return true if the rows were read (even if they contained errors).
+ *      false on severe error, such as the database not being available.
  */
 bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 {
@@ -217,14 +221,16 @@ bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
 
     if (!query.exec("SELECT * from secretData")) {
         LOG_ERROR("Unable to query the database for all of the secret entries!");
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
     // Iterate each row, convert it to a KeyEntry, and stuff it in the result vector.
     while (query.next()) {
         if (!queryToKeyEntry(query, entry)) {
-            LOG_ERROR("Unable to convert a database result to a KeyEntry.");
-            return false;
+            LOG_WARNING("Unable to convert a database result to a KeyEntry.");
+            // Continue anyway.  We want to include invalid key entries in the
+            // resulting data.
         }
 
         // Add it to the result list.
@@ -248,6 +254,7 @@ bool SecretDatabase::deleteByIdentifier(const QString &identifier)
 
     if (!query.exec()) {
         LOG_ERROR("Failed to delete the key with identifier : " + identifier);
+        LOG_ERROR("     Detailed Error : " + query.lastError().text());
         return false;
     }
 
@@ -273,6 +280,7 @@ int SecretDatabase::schemaVersion(bool logError)
     // Execute the query.
     if (!query.exec()) {
         LOG_CONDITIONAL_ERROR(logError, "Failed to get the schema version!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
+        LOG_CONDITIONAL_ERROR(logError, "     Detailed Error : " + query.lastError().text());
         return -1;
     }
 
@@ -329,6 +337,7 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
 {
     if (!sqlQuery.prepare(query)) {
         LOG_ERROR("Unable to prepare the query : " + query);
+        LOG_ERROR("     Detailed Error : " + sqlQuery.lastError().text());
         return false;
     }
 
@@ -338,6 +347,11 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
     sqlQuery.bindValue(":keyType", toBind.keyType());
     sqlQuery.bindValue(":otpType", toBind.otpType());
     sqlQuery.bindValue(":outNumberCount", toBind.outNumberCount());
+    sqlQuery.bindValue(":timeStep", toBind.timeStep());
+    sqlQuery.bindValue(":timeOffset", toBind.timeOffset());
+    sqlQuery.bindValue(":algorithm", toBind.algorithm());
+    sqlQuery.bindValue(":hotpCounter", toBind.hotpCounter());
+    sqlQuery.bindValue(":issuer", toBind.issuer());
 
     return true;
 }
@@ -357,43 +371,92 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
 {
     QString tempStr;
     int tempInt;
+    bool success = true;        // Keep a positive attitude! :-)
 
+    // Attempt to read all of the data from the database, even if we get an error reading
+    // any of the entries.   If we *DO* get an error reading any entries, add an
+    // invalidReason to the resulting KeyEntry object that indicates why it failed.
     if (!queryEntryToString(query, "identifier", tempStr)) {
+        result.setInvalidReason("Unable to read the identifier from the database!");
         LOG_ERROR("Failed to get the identifier from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setIdentifier(tempStr);
     }
-
-    result.setIdentifier(tempStr);
 
     if (!queryEntryToString(query, "secret", tempStr)) {
+        result.setInvalidReason("Unable to read the secret value from the database!");
         LOG_ERROR("Failed to get the secret from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setSecret(tempStr);
     }
-
-    result.setSecret(tempStr);
 
     if (!queryEntryToInt(query, "keyType", tempInt)) {
+        result.setInvalidReason("Failed to read the key type from the database!");
         LOG_ERROR("Failed to get the key type from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setKeyType(tempInt);
     }
-
-    result.setKeyType(tempInt);
 
     if (!queryEntryToInt(query, "otpType", tempInt)) {
+        result.setInvalidReason("Failed to get the OTP type from the database!");
         LOG_ERROR("Failed to get the OTP type from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setOtpType(tempInt);
     }
-
-    result.setOtpType(tempInt);
 
     if (!queryEntryToInt(query, "outNumberCount", tempInt)) {
+        result.setInvalidReason("Failed to get the number of digits to show!");
         LOG_ERROR("Failed to get the number of numbers to return from the database query row!");
-        return false;
+        success = false;
+    } else {
+        result.setOutNumberCount(tempInt);
     }
 
-    result.setOutNumberCount(tempInt);
+    if (!queryEntryToInt(query, "timeStep", tempInt)) {
+        result.setInvalidReason("Failed to get the time step from the database!");
+        LOG_ERROR("Failed to get the time step to return from the database query row!");
+        success = false;
+    } else {
+        result.setTimeStep(tempInt);
+    }
 
-    return true;
+    if (!queryEntryToInt(query, "timeOffset", tempInt)) {
+        result.setInvalidReason("Failed to get the time offset from the database!");
+        LOG_ERROR("Failed to get the time offset to return from the database query row!");
+        success = false;
+    } else {
+        result.setTimeOffset(tempInt);
+    }
+
+    if (!queryEntryToInt(query, "algorithm", tempInt)) {
+        result.setInvalidReason("Failed to get the hash algorithm from the database!");
+        LOG_ERROR("Failed to get the algorithm to return from the database query row!");
+        success = false;
+    } else {
+        result.setAlgorithm(tempInt);
+    }
+
+    if (!queryEntryToInt(query, "hotpCounter", tempInt)) {
+        result.setInvalidReason("Failed to get the HOTP counter from the database!");
+        LOG_ERROR("Failed to get the HOTP counter to return from the database query row!");
+        success = false;
+    } else {
+        result.setHotpCounter(tempInt);
+    }
+
+    if (!queryEntryToString(query, "issuer", tempStr)) {
+        result.setInvalidReason("Failed to get the issuer from the database!");
+        LOG_ERROR("Failed to get the key issuer name to return from the database query row!");
+        success = false;
+    } else {
+        result.setIssuer(tempStr);
+    }
+
+    return success;
 }
 
 /**
@@ -488,7 +551,7 @@ bool SecretDatabase::upgradeToVersion1()
     QSqlQuery query;
 
     // Start by creating the table for the data and the schema.
-    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int)")) {
+    if (!query.exec("CREATE TABLE secretData(identifier text primary key, secret text, keyType int, otpType int, outNumberCount int, timeStep int, timeOffset int, algorithm int, hotpCounter int, issuer text)")) {
         LOG_ERROR("Failed to create the secret key table in the database!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
         return false;
     }

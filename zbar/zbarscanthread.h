@@ -8,7 +8,7 @@
 #include <QMutex>
 #include <QImage>
 
-#include "qzbarimage.h"
+#include "myqzbarimage.h"
 #include <zbar.h>
 
 class ZBarScanThread : public QThread
@@ -18,7 +18,7 @@ class ZBarScanThread : public QThread
 public:
     ZBarScanThread(QObject *parent = nullptr);
 
-    void queueFrameToProcess(const zbar::QZBarImage &toProcess);
+    void queueFrameToProcess(const zbar::MyQZBarImage &toProcess);
 
     void requestThreadTerminate();
 
@@ -33,7 +33,7 @@ protected:
 private:
     void emitCode(const QString &foundCode);
 
-    QQueue<zbar::QZBarImage> mToProcessQueue;
+    QQueue<zbar::MyQZBarImage> mToProcessQueue;
     QMutex mQueueLock;
     zbar::ImageScanner mImageScanner;
     bool mShouldTerminate;

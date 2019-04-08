@@ -7,14 +7,17 @@ message(Building unit test binary...)
 HEADERS += \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
-    $$PWD/autotest.h \
     $$PWD/sha1tests.h \
     $$PWD/hmacsha1tests.h \
     $$PWD/testutils.h \
     $$PWD/hotptests.h \
     $$PWD/totptests.h \
     $$PWD/base32codertests.h \
-    $$PWD/hexdecodertests.h
+    $$PWD/hexdecodertests.h \
+    $$PWD/sha256tests.h \
+    $$PWD/sha512tests.h \
+    $$PWD/hmacsha256tests.h \
+    $$PWD/hmacsha512tests.h
 
 SOURCES += \
     $$PWD/secretdatabasetests.cpp \
@@ -25,8 +28,13 @@ SOURCES += \
     $$PWD/hotptests.cpp \
     $$PWD/totptests.cpp \
     $$PWD/base32codertests.cpp \
-    $$PWD/hexdecodertests.cpp
+    $$PWD/hexdecodertests.cpp \
+    $$PWD/sha256tests.cpp \
+    $$PWD/sha512tests.cpp \
+    $$PWD/hmacsha256tests.cpp \
+    $$PWD/hmacsha512tests.cpp \
+    $$PWD/main.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.
-SOURCES += $$PWD/testmain.cpp
+SOURCES +=

@@ -1,5 +1,6 @@
 #include "base32codertests.h"
 
+#include <QtTest>
 #include "../otpimpl/base32coder.h"
 
 #include "testutils.h"
@@ -66,6 +67,26 @@ void Base32CoderTests::decoderTest1()
         // Clean up.
         free(testPtr);
         free(toCompare);
+    }
+}
+
+void Base32CoderTests::isBase32EncodedTests()
+{
+    std::vector<std::string> toTest;
+
+    // Start with valid tests.
+    toTest = getEncodedTextTests();
+
+    // Skip the value at index 0, because an empty string would be invalid.
+    for (size_t i = 1; i < toTest.size(); i++) {
+        QVERIFY(Base32Coder::isBase32Encoded(toTest.at(i)));
+    }
+
+    // Then, use the original clear text as negative tests.
+    toTest = getClearTextTests();
+
+    for (size_t i = 0; i < toTest.size(); i++) {
+        QVERIFY(!Base32Coder::isBase32Encoded(toTest.at(i)));
     }
 }
 

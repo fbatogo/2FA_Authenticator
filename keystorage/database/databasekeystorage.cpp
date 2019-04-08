@@ -2,8 +2,7 @@
 
 #include <QDir>
 #include <logger.h>
-
-#define DOT_DIRECTORY       ".2FA"          // The name of the dot directory we will use in the user home directory.
+#include "settingshandler.h"
 
 DatabaseKeyStorage::DatabaseKeyStorage()
 {
@@ -34,14 +33,14 @@ int DatabaseKeyStorage::storageId()
  */
 bool DatabaseKeyStorage::initKeyStorage()
 {
-    // Make sure the .2FA directory exists.
-    if (!dotDirectoryExistsOrIsCreated()) {
+    // Make sure the .Rollin directory exists.
+    if (!SettingsHandler::getInstance()->dataDirectoryExistsOrIsCreated()) {
         LOG_ERROR("Unable to create the directory to store the key entry database!");
         return false;
     }
 
     // Open/create the SecretDatabase file.
-    return mSecretDatabase.open(getDotDirectory() + "keydatabase.db");
+    return mSecretDatabase.open(SettingsHandler::getInstance()->dataPath() + "keydatabase.db");
 }
 
 /**
@@ -133,51 +132,3 @@ bool DatabaseKeyStorage::freeKeyStorage()
     // Otherwise, just retur success.
     return true;
 }
-
-/**
- * @brief DatabaseKeyStorage::getDotDirectory - Return the path to the user's .2FA directory.
- *
- * @return QString containing the path to the users .2FA directory.
- */
-QString DatabaseKeyStorage::getDotDirectory()
-{
-    QString dotDirectory;
-
-    // Start by getting the user home directory.
-    dotDirectory = QDir::homePath();
-
-    if (!dotDirectory.endsWith("/")) {
-        // Add the slash.
-        dotDirectory += "/";
-    }
-
-    // Then, add the directory name.
-    dotDirectory += DOT_DIRECTORY;
-    dotDirectory += "/";
-
-    return dotDirectory;
-}
-
-/**
- * @brief DatabaseKeyStorage::dotDirectoryExistsOrIsCreated - Check to see if the .2FA directory
- *      exists in the user home directory.  If it doesn't, then attempt to create it.
- *
- * @return true if the directory exists, or was created.  false if the directory doesn't exist,
- *      and couldn't be created.
- */
-bool DatabaseKeyStorage::dotDirectoryExistsOrIsCreated()
-{    
-    QDir targetDir(getDotDirectory());
-
-    if (!targetDir.exists()) {
-        LOG_DEBUG("The dot directory doesn't exist.  Attempting to create it...");
-
-        if (!targetDir.mkpath(".")) {
-            LOG_ERROR("Unable to create the dot directory to store the key entry database!");
-            return false;
-        }
-    }
-
-    return true;
-}
-

@@ -6,13 +6,16 @@
 class Hmac
 {
 public:
+    Hmac();
     Hmac(HashTypeBase *hashType, bool deleteInCtor = false);
     ~Hmac();
+
+    void setHashType(HashTypeBase *hashType, bool takeOwnership = false);
 
     unsigned char *calculate(const unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
 
 private:
-    void freeClassData();
+    void clear();
 
     HashTypeBase *mHashType;
     unsigned char *mHashResult;

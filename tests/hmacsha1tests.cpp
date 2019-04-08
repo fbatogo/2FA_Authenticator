@@ -1,5 +1,6 @@
 #include "hmacsha1tests.h"
 
+#include <QtTest>
 #include "../otpimpl/hmac.h"
 #include "../otpimpl/sha1hash.h"
 #include "testutils.h"
@@ -10,6 +11,21 @@
 #include <iomanip>
 
 // Test vectors taken from RFC 2202 at https://tools.ietf.org/html/rfc2202
+
+void HmacSha1Tests::hmacNoHashTest()
+{
+    Hmac invalidHmac;
+    unsigned char *randomJunk;
+    unsigned char *data;
+    size_t resultSize;
+
+    // Set the object to delete the hash object, but set the hash object to null
+    // to make sure we don't crash.
+    invalidHmac.setHashType(nullptr, true);
+
+    // Attempt to do an HMAC without a hash algorithm set.
+    QCOMPARE(invalidHmac.calculate(randomJunk, 20, data, 20, resultSize), nullptr);
+}
 
 void HmacSha1Tests::hmacTestCase1()
 {
@@ -41,6 +57,9 @@ void HmacSha1Tests::hmacTestCase1()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase2()
@@ -70,6 +89,9 @@ void HmacSha1Tests::hmacTestCase2()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase3()
@@ -105,6 +127,9 @@ void HmacSha1Tests::hmacTestCase3()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase4()
@@ -134,6 +159,8 @@ void HmacSha1Tests::hmacTestCase4()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase5()
@@ -166,6 +193,9 @@ void HmacSha1Tests::hmacTestCase5()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase6()
@@ -198,6 +228,9 @@ void HmacSha1Tests::hmacTestCase6()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }
 
 void HmacSha1Tests::hmacTestCase7()
@@ -231,4 +264,7 @@ void HmacSha1Tests::hmacTestCase7()
         qDebug("Got      : %s", TestUtils::binaryToString(result, resultSize).c_str());
         QVERIFY(memcmp(result, expectedDigest1, 20) == 0);
     }
+
+    free(key);
+    free(data);
 }

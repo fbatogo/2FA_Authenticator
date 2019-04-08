@@ -9,7 +9,7 @@ Item {
 
     property string siteName: ""
     property string otpSecret: ""
-
+/*
     Component.onCompleted: {
         // If we don't have any cameras available, disable the button to read a QR code.
         if (QtMultimedia.availableCameras.length <= 0) {
@@ -20,7 +20,7 @@ Item {
             getFromCameraButton.text = qsTr("No cameras found.");
         }
     }
-
+*/
     Rectangle {
         anchors.fill: parent
         color: "white"

@@ -4,6 +4,13 @@
 #include <iostream>
 #include "../logger.h"
 
+Hmac::Hmac()
+{
+    mHashType = nullptr;
+    mHashResult = nullptr;
+    mDeleteInCtor = false;
+}
+
 Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
 {
     mHashType = hashType;
@@ -13,13 +20,28 @@ Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
 
 Hmac::~Hmac()
 {
-    // If we have a result stored, free the memory.
-    freeClassData();
+    clear();
+}
 
-    if (mDeleteInCtor) {
-        delete mHashType;
-    }
-    mHashType = nullptr;
+/**
+ * @brief Hmac::setHashType - Set the hash algorithm to use to create an HMAC.  This
+ *      is an alternative to using the ctor to set this.
+ *
+ * @param hashType - A HashTypeBase object that implements the hash algorithm to be used
+ *      to create an HMAC.
+ * @param takeOwnership - If true, then the hashType object will be deleted when this
+ *      object is destroyed, so the caller MUST NOT delete the object.  If false, then
+ *      the caller remains responsible for deleting the hash object when everything is
+ *      done using it.
+ */
+void Hmac::setHashType(HashTypeBase *hashType, bool takeOwnership)
+{
+    // Clean out anything that might already be configured.
+    clear();
+
+    // Set the new values.
+    mHashType = hashType;
+    mDeleteInCtor = takeOwnership;
 }
 
 /**
@@ -50,6 +72,13 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
     if ((key == nullptr) || (data == nullptr)) {
         // Nothing we can do.
         LOG_ERROR("Either the key or data block provided to HMAC was NULL!");
+        return nullptr;
+    }
+
+    // Make sure we are properly configured to do the hashing.
+    if (mHashType == nullptr) {
+        // Need to have the object set before we can calculate the HMAC.
+        LOG_ERROR("No hash object was configured when attempting to create an HMAC value!");
         return nullptr;
     }
 
@@ -111,6 +140,23 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
     // Set the result size.
     resultSize = mHashType->hashResultLength();
 
+    // Free the memory we used.
+    if (keyIpad != nullptr) {
+        free(keyIpad);
+        keyIpad = nullptr;
+    }
+
+    if (keyOpad != nullptr) {
+        free(keyOpad);
+        keyOpad = nullptr;
+    }
+
+    // If we have a previous hash result, free it before saving the new value.
+    if (mHashResult != nullptr) {
+        free(mHashResult);
+        mHashResult = nullptr;
+    }
+
     // Allocate the memory to store the hash result.
     mHashResult = static_cast<unsigned char *>(calloc(1, mHashType->hashResultLength()));
     if (mHashResult == nullptr) {
@@ -126,13 +172,20 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
 }
 
 /**
- * @brief Hmac::freeClassData - Free the hash result data buffer.
+ * @brief Hmac::clear - Clean up the internal variables, deleting any objects that we are
+ *      configured to delete.
  */
-inline void Hmac::freeClassData()
+void Hmac::clear()
 {
+    // If we have a result stored, free the memory.
     if (mHashResult != nullptr) {
         free(mHashResult);
         mHashResult = nullptr;
     }
+
+    if (mDeleteInCtor) {
+        delete mHashType;
+    }
+    mHashType = nullptr;
 }
 

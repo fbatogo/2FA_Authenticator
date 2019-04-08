@@ -1,9 +1,34 @@
 QT += quick sql multimedia svg
+
+# If we aren't building on Windows, use the x11 extras.
+!win32 {
+    #DEFINES += NO_ZBAR
+    QT += x11extras
+} else {
+    # On Windows, we don't currently support zbar.
+    DEFINES *= NO_ZBAR
+
+    #INCLUDEPATH += "C:/Program Files (x86)/ZBar/include"
+    #LIBS += "C:/Program Files (x86)/ZBar/lib/libzbar-0.lib"
+}
+
 CONFIG += c++11
+
+# If we are told to use the address sanitizer.
+asan {
+    QMAKE_CFLAGS += -fsanitize=address #-fsanitize-address-use-after-scope
+    QMAKE_LFLAGS += -fsanitize=address
+}
 
 contains(QT, testlib) {
     message(Will use qDebug for logging...)
     DEFINES += USE_QDEBUG
+
+    # Make sure we build against the QTest library.
+    CONFIG += qtestlib
+
+    # Include our test runner/helper.
+    include(tests/QtTestRunner/QtTestRunner.pri)
 }
 
 # The following define makes your compiler emit warnings if you use
@@ -18,20 +43,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    keystorage/database/secretdatabase.cpp \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
     logger.cpp \
     keystorage/database/databasekeystorage.cpp \
-    interfacesingleton.cpp \
-    uikeyentries.cpp \
-    otp/otpentry.cpp \
-    uiotpentries.cpp \
     otp/otphandler.cpp \
     uiclipboard.cpp \
     zbar/qrcodefilter.cpp \
     zbar/qrvideorunnable.cpp \
-    zbar/zbarscanthread.cpp \
     zbar/qrcodestringparser.cpp \
     otpimpl/hotp.cpp \
     otpimpl/hmac.cpp \
@@ -39,7 +58,14 @@ SOURCES += \
     otpimpl/sha1hash.cpp \
     otpimpl/totp.cpp \
     otpimpl/base32coder.cpp \
-    otpimpl/hexdecoder.cpp
+    otpimpl/hexdecoder.cpp \
+    otpimpl/sha256hash.cpp \
+    otpimpl/sha512hash.cpp \
+    otpimpl/sha2.c \
+    settingshandler.cpp \
+    keystorage/database/secretdatabase.cpp \
+    generalinfosingleton.cpp \
+    keyentriessingleton.cpp
 
 HEADERS += \
     keystorage/database/secretdatabase.h \
@@ -48,16 +74,10 @@ HEADERS += \
     keystorage/keystorage.h \
     logger.h \
     keystorage/database/databasekeystorage.h \
-    interfacesingleton.h \
-    uikeyentries.h \
-    otp/otpentry.h \
-    uiotpentries.h \
     otp/otphandler.h \
     uiclipboard.h \
     zbar/qrcodefilter.h \
     zbar/qrvideorunnable.h \
-    zbar/zbarscanthread.h \
-    zbar/qzbarimage.h \
     zbar/qrcodestringparser.h \
     otpimpl/hotp.h \
     otpimpl/hmac.h \
@@ -66,7 +86,14 @@ HEADERS += \
     otpimpl/sha1hash.h \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
-    otpimpl/hexdecoder.h
+    otpimpl/hexdecoder.h \
+    zbar/myqzbarimage.h \
+    otpimpl/sha256hash.h \
+    otpimpl/sha512hash.h \
+    otpimpl/sha2.h \
+    settingshandler.h \
+    generalinfosingleton.h \
+    keyentriessingleton.h
 
 RESOURCES += qml.qrc
 
@@ -91,10 +118,16 @@ message($$QT)
 contains(QT, testlib) {
     # Include the test source files.
     include(tests/tests.pri)
+
+    CONFIG -= qml_debug
 } else {
     # Use our 'normal' main.cpp in the build.
     SOURCES += main.cpp
 }
+
+# Uncomment and rebuild to use address sanitizer.
+#QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+#LIBS += -lasan
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

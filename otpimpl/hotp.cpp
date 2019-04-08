@@ -4,6 +4,12 @@
 #include "sha1hash.h"
 #include "../logger.h"
 
+Hotp::Hotp()
+{
+    mHmacToUse = nullptr;
+    mShouldDelete = false;
+}
+
 Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -12,11 +18,26 @@ Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 
 Hotp::~Hotp()
 {
-    if (mShouldDelete) {
-        delete mHmacToUse;
-    }
+    clear();
+}
 
-    mHmacToUse = nullptr;
+/**
+ * @brief Hotp::setHmac - Set the HMAC object to use when calculating the HOTP value.
+ *
+ * @param hmacToUse - The HMAC object that should be used to calculate the HOTP value.
+ * @param takeOwnership - If true, this object will take ownership of the HMAC object, and
+ *      will delete it in the dtor.  If false, the caller is responsible for freeing the
+ *      HMAC object when it knows it is no longer in use.
+ */
+void Hotp::setHmac(Hmac *hmacToUse, bool takeOwnership)
+{
+    // If we are currently set to take ownership of the HMAC object, and an HMAC object
+    // is set, clean it up.
+    clear();
+
+    // Set the new values to use.
+    mHmacToUse = hmacToUse;
+    mShouldDelete = takeOwnership;
 }
 
 /**
@@ -42,6 +63,12 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
         return "";
     }
 
+    // Make sure we are configured properly.
+    if (mHmacToUse == nullptr) {
+        LOG_ERROR("No HMAC object was set when attempting to calculate an HOTP value!");
+        return "";
+    }
+
     if ((digits < 6) || (digits > 8)) {
         LOG_ERROR("The number of digits provided must be 6, 7, or 8!");
         return "";
@@ -62,6 +89,19 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
     }
 
     return calculateHotpFromHmac(hashValue, resultSize, digits, addChecksum, truncationOffset);
+}
+
+/**
+ * @brief Hotp::clear - If necessary, delete the current HMAC object.  Then, set the current
+ *      object to be a nullptr.
+ */
+void Hotp::clear()
+{
+    if ((mShouldDelete) && (mHmacToUse != nullptr)) {
+        delete mHmacToUse;
+    }
+
+    mHmacToUse = nullptr;
 }
 
 /**
@@ -109,6 +149,12 @@ std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSi
 
     // Convert the truncated value to a 32 bit number.
     truncData = (((truncValue[0] & 0x7f) << 24) | ((truncValue[1] & 0xff) << 16) | ((truncValue[2] & 0xff) << 8) | (truncValue[3] & 0xff));
+
+    // Free the memory from the truncation.
+    if (truncValue != nullptr) {
+        free(truncValue);
+        truncValue = nullptr;
+    }
 
     // Then, calculate the otp.
     otp = truncData % DIGITS_POWER[calcDigits];
@@ -178,9 +224,9 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  * @return unsigned char pointer to the dynamically truncated value.  The caller will take
  *      ownership of this pointer and *MUST* free it!  On error, nullptr will be returned.
  */
-unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, int truncateOffset)
+unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, size_t truncateOffset)
 {
-    unsigned char offset;
+    size_t offset;
     unsigned char *result;
 
     if (hmac == nullptr) {
@@ -188,7 +234,7 @@ unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize,
         return nullptr;
     }
 
-    if ((truncateOffset >= 0) && (truncateOffset < (hmacSize - 4))) {
+    if (truncateOffset < (hmacSize - 4)) {
         // Use the provided truncation value.
         offset = static_cast<size_t>(truncateOffset);
     } else {

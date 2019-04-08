@@ -1,28 +1,16 @@
 #include "qrcodestringparser.h"
 
 #include <QUrl>
+#include <QMutexLocker>
 #include "logger.h"
 
 QRCodeStringParser::QRCodeStringParser(QObject *parent) :
     QObject(parent)
 {
-    mIsOtpCode = false;
-    mType.clear();
-    mLabel.clear();
-    mParameterString.clear();
-    mAttributeValues.clear();
-}
+    // Start by allocating our mutex.
+    mMutex = new QMutex(QMutex::Recursive);
 
-QRCodeStringParser::QRCodeStringParser(const QString &codeRead, QObject *parent) :
-    QObject(parent)
-{
-    mIsOtpCode = false;
-    mType.clear();
-    mLabel.clear();
-    mParameterString.clear();
-    mAttributeValues.clear();
-
-    parseCode(codeRead);
+    clear();
 }
 
 /**
@@ -33,7 +21,38 @@ QRCodeStringParser::QRCodeStringParser(const QString &codeRead, QObject *parent)
  */
 bool QRCodeStringParser::isOtpCode() const
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     return mIsOtpCode;
+}
+
+/**
+ * @brief QRCodeStringParser::isCodeProcessing - Return a true/false value that indicates if this
+ *      QR code is being processed, or not.
+ *
+ * @return true if the code is being processed.  false otherwise.
+ */
+bool QRCodeStringParser::isCodeProcessing() const
+{
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
+    return mCodeProcessing;
+}
+
+/**
+ * @brief QRCodeStringParser::setCodeProcessing - Set the flag that indicates if this QR code is
+ *      being processed by the UI.
+ *
+ * @param newval - true if the UI should be processing the code.  false otherwise.
+ */
+void QRCodeStringParser::setCodeProcessing(bool newval)
+{
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
+    mCodeProcessing = newval;
 }
 
 /**
@@ -43,6 +62,9 @@ bool QRCodeStringParser::isOtpCode() const
  */
 QString QRCodeStringParser::type() const
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     return mType;
 }
 
@@ -54,6 +76,9 @@ QString QRCodeStringParser::type() const
  */
 QString QRCodeStringParser::label() const
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     return mLabel;
 }
 
@@ -65,6 +90,9 @@ QString QRCodeStringParser::label() const
  */
 QString QRCodeStringParser::parametersAsString() const
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     return mParameterString;
 }
 
@@ -79,7 +107,84 @@ QString QRCodeStringParser::parametersAsString() const
  */
 QString QRCodeStringParser::parameterByKey(const QString &key)
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     return mAttributeValues.value(key);
+}
+
+/**
+ * @brief QRCodeStringParser::updateEngine - Cache a pointer to the QQmlEngine that
+ *      was used when this object was created by the QML engine.
+ *
+ * @param engine - The new engine pointer to cache.
+ */
+void QRCodeStringParser::updateEngine(QQmlEngine *engine)
+{
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
+    mQmlEngine = engine;
+}
+
+/**
+ * @brief QRCodeStringParser::getInstance - Return the singleton instance for the QR
+ *      code string parser.
+ *
+ * @return QRCodeStringParser pointer to the singleton.
+ */
+QRCodeStringParser::~QRCodeStringParser()
+{
+    // Clean up the mutex.
+    delete mMutex;
+    mMutex = nullptr;
+}
+
+QRCodeStringParser *QRCodeStringParser::getInstance()
+{
+    static QRCodeStringParser singleton;
+
+    return &singleton;
+}
+
+/**
+ * @brief QRCodeStringParser::getQmlSingleton - Return the singleton that will be used by
+ *      the QML engine.
+ *
+ * @param engine - A pointer to the active QML engine.
+ * @param scriptEngine - A pointer to the active QML script engine.
+ *
+ * @return QObject pointer to the singleton.
+ */
+QObject *QRCodeStringParser::getQmlSingleton(QQmlEngine *engine, QJSEngine *)
+{
+    QRCodeStringParser *cSingleton;
+
+    cSingleton = getInstance();
+
+    cSingleton->updateEngine(engine);
+
+    QQmlEngine::setObjectOwnership(cSingleton, QQmlEngine::CppOwnership);
+
+    return static_cast<QObject *>(cSingleton);
+}
+
+/**
+ * @brief QRCodeStringParser::clear - Reset all data values in this object back to their
+ *      default values.
+ */
+void QRCodeStringParser::clear()
+{
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
+    mIsOtpCode = false;
+    mType.clear();
+    mLabel.clear();
+    mParameterString.clear();
+    mAttributeValues.clear();
+    mCodeProcessing = false;
+    mQmlEngine = nullptr;
 }
 
 /**
@@ -99,9 +204,14 @@ QString QRCodeStringParser::parameterByKey(const QString &key)
  *          - period - (Optional if TOTP) The period that a TOTP code will be valid for.  The default is 30 seconds.
  *
  * @param toParse - The string that was read by ZBar.
+ *
+ * @return true if the code was a valid OTP QR code.  false otherwise.
  */
-void QRCodeStringParser::parseCode(const QString &toParse)
+bool QRCodeStringParser::parseCode(const QString &toParse)
 {
+    QMutexLocker locker(mMutex);
+    Q_UNUSED(locker);
+
     QString stripped;
     ResultWithRemainder result;
 
@@ -111,7 +221,7 @@ void QRCodeStringParser::parseCode(const QString &toParse)
     if (!toParse.startsWith("otpauth://")) {
         LOG_ERROR("The QR code read doesn't appear to be a valid OTP code!");
         mIsOtpCode = false;
-        return;
+        return mIsOtpCode;
     }
 
     // Get the URI with the scheme stripped off.
@@ -142,15 +252,20 @@ void QRCodeStringParser::parseCode(const QString &toParse)
     if (parameterByKey("secret").isEmpty()) {
         LOG_ERROR("No OTP secret was included in the QR code!");
         mIsOtpCode = false;
-        return;
+        return mIsOtpCode;
     }
 
     // If we get here, then the URI is valid.
     mIsOtpCode = true;
 
+    // Indicate that we are waiting for the UI to process the code.
+    mCodeProcessing = true;
+
     LOG_DEBUG("Type : " + mType);
     LOG_DEBUG("Label : " + mLabel);
     LOG_DEBUG("Parameters : " + mParameterString);
+
+    return mIsOtpCode;
 }
 
 /**

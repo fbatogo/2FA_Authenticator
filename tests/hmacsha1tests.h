@@ -2,13 +2,13 @@
 #define HMACSHA1TESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class HmacSha1Tests : public QObject
 {
     Q_OBJECT
 
 private slots:
+    void hmacNoHashTest();
     void hmacTestCase1();
     void hmacTestCase2();
     void hmacTestCase3();
@@ -21,6 +21,6 @@ private:
     std::string binaryToString(unsigned char *bytes, size_t bytesLength);
 };
 
-DECLARE_TEST(HmacSha1Tests)
+//DECLARE_TEST(HmacSha1Tests)
 
 #endif // HMACSHA1TESTS_H

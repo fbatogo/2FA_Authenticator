@@ -2,7 +2,6 @@
 #define HEXDECODERTESTS_H
 
 #include <QObject>
-#include "autotest.h"
 
 class HexDecoderTests : public QObject
 {
@@ -10,8 +9,9 @@ class HexDecoderTests : public QObject
 
 private slots:
     void hexDecoderTest1();
+    void isHexEncodedTest();
 };
 
-DECLARE_TEST(HexDecoderTests)
+//DECLARE_TEST(HexDecoderTests)
 
 #endif // HEXDECODERTESTS_H

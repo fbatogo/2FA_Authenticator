@@ -1,17 +1,40 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>ProgressCircle.qml</file>
-        <file>SecretScreen.qml</file>
-        <file>AboutScreen.qml</file>
-        <file>NewEntryScreen.qml</file>
-        <file>DeleteEntryScreen.qml</file>
-        <file>Settings.qml</file>
-        <file>resources/menu.svg</file>
-        <file>resources/copy.svg</file>
-        <file>QRCodeScan.qml</file>
         <file>resources/licenses.txt</file>
-        <file>SideBar.qml</file>
+        <file>resources/javascript/NewOrEditEntryScreen.js</file>
+        <file>resources/widgets/SubHeader.qml</file>
+        <file>resources/widgets/PaddedRowLine.qml</file>
+        <file>resources/widgets/VerticalPadding.qml</file>
+        <file>resources/widgets/FillEmptySpace.qml</file>
+        <file>resources/widgets/HorizontalPadding.qml</file>
+        <file>resources/widgets/EditItemButton.qml</file>
+        <file>resources/widgets/BoxedTextInput.qml</file>
+        <file>resources/widgets/OtpTimeInput.qml</file>
+        <file>resources/javascript/utils.js</file>
+        <file>resources/javascript/EntryScreenTools.js</file>
+        <file>resources/widgets/ProgressCircle.qml</file>
+        <file>resources/javascript/SecretScreen.js</file>
+        <file>resources/AboutScreen.qml</file>
+        <file>resources/DeleteEntryScreen.qml</file>
+        <file>resources/editentryscreen.qml</file>
+        <file>resources/main.qml</file>
+        <file>resources/NewEntryScreen.qml</file>
+        <file>resources/NewOrEditEntryScreen.qml</file>
+        <file>resources/OtpTypeSelect.qml</file>
+        <file>resources/QRCodeScan.qml</file>
+        <file>resources/SecretScreen.qml</file>
+        <file>resources/SelectAlgorithm.qml</file>
+        <file>resources/SelectDigitLength.qml</file>
+        <file>resources/SelectSecretFormat.qml</file>
+        <file>resources/Settings.qml</file>
+        <file>resources/SideBar.qml</file>
+        <file>resources/StartHereScreen.qml</file>
+        <file>resources/images/back.svg</file>
+        <file>resources/images/copy.svg</file>
+        <file>resources/images/menu.svg</file>
+        <file>resources/images/pencil.svg</file>
+        <file>resources/images/refresh.svg</file>
+        <file>resources/images/startherearrow.svg</file>
     </qresource>
 </RCC>
