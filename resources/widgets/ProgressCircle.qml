@@ -18,8 +18,6 @@ Item {
 
 
     onCurrentTimeChanged: {
-        console.log("Current time changed! = " + currentTime);
-
         // Make sure the animation is stopped.
         circleAnimation.stop();
 
@@ -32,8 +30,7 @@ Item {
         } else {
             circleAnimation.from = ((currentTime / maxTime) * 360);
         }
-        console.log("Max time : " + maxTime);
-        console.log("Current time : " + currentTime);
+
         circleAnimation.duration = (currentTime * 1000);
 
         circleAnimation.start();
@@ -54,10 +51,6 @@ Item {
         easing.type: Easing.Linear
         to: 0
         running: false
-
-        onRunningChanged: {
-            console.log("Running changed : " + running);
-        }
     }
 
     Canvas {

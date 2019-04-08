@@ -1,0 +1,54 @@
+{
+    "id": "org.open1x.Rollin",
+    "branch": "master",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.11",
+    "sdk": "org.kde.Sdk",
+    "command": "Rollin",
+    "finish-args": ["--socket=x11", "--socket=wayland", "--filesystem=home", "--socket=session-bus", "--socket=system-bus" ],
+    "modules": [
+	{
+            "name": "zbar",
+            "config-opts": [
+                "--without-qt",
+                "--without-gtk",
+                "--without-xv",
+                "--without-imagemagick",
+                "--disable-video",
+                "--without-python",
+                "--enable-codes=qrcode"
+            ],
+            "sources": [{
+                    "type": "git",
+                    "url": "git://git.linuxtv.org/zbar.git",
+                    "commit": "14900c67eccfb97e152063296f20cd32aa787578"
+                },
+                {
+                    "type": "script",
+                    "dest-filename": "autogen.sh",
+                    "commands": [
+                        "autoreconf -vfi -W none"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Rollin",
+            "buildsystem": "simple",
+            "build-commands": [
+                "qmake PREFIX=/app",
+		"make -j2",
+		"pwd",
+		"qmake -install qinstall -exe Rollin /app/bin/Rollin",
+		"ls -al",
+		"ls -al /app"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/fbatogo/Rollin.git"
+                }
+            ]
+        }
+    ]
+}
