@@ -1,0 +1,5 @@
+- Convert zbar to not using qml-zbar, since we don't know the license?
+- Create icon.
+- Create flatpak.
+
+
