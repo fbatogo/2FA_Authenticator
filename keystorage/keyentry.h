@@ -48,6 +48,7 @@ class KeyEntry : public QObject
 public:
     KeyEntry();
     KeyEntry(const KeyEntry &toCopy);
+    ~KeyEntry();
 
     void clear();
 

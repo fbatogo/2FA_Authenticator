@@ -15,6 +15,11 @@ KeyEntry::KeyEntry(const KeyEntry &toCopy) :
     copyFromObject(toCopy);
 }
 
+KeyEntry::~KeyEntry()
+{
+
+}
+
 void KeyEntry::clear()
 {
     // Set default values.
@@ -328,7 +333,9 @@ std::string KeyEntry::toString()
  */
 KeyEntry &KeyEntry::operator=(const KeyEntry &toCopy)
 {
-    copyFromObject(toCopy);
+    if (this != &toCopy) {
+        copyFromObject(toCopy);
+    }
 
     return *this;
 }
