@@ -26,7 +26,7 @@ pipeline {
           sh '''gcov base32coder.cpp hexdecoder.cpp hmac.cpp hotp.cpp sha1hash.cpp sha1impl.c sha256hash.cpp sha2.c sha512hash.cpp totp.cpp keyentry.cpp keystorage.cpp databasekeystorage.cpp secretdatabase.cpp otphandler.cpp'''    // Run coverage output.
 
           // Clean out the coverage files for files we don't care about.
-          sh '''rm moc_*.gcda moc_*gcda base32codertests.gcda base32codertests.gcno base32codertests.h.gcov'''
+          sh '''rm base32codertests.gcda base32codertests.gcno base32codertests.h.gcov'''
       }
     }
     stage('SonarQube analysis') {
