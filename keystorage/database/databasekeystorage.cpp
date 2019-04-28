@@ -148,6 +148,8 @@ bool DatabaseKeyStorage::freeKeyStorage()
 DatabaseKeyStorage &DatabaseKeyStorage::operator=(const DatabaseKeyStorage &toCopy)
 {
     copy(toCopy);
+
+    return (*this);
 }
 
 /**

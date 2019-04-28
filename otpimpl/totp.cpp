@@ -9,6 +9,11 @@ Totp::Totp()
     mShouldDelete = false;
 }
 
+Totp::Totp(Totp &toCopy)
+{
+    copy(toCopy);
+}
+
 Totp::Totp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -70,6 +75,13 @@ std::string Totp::calculate(const unsigned char *key, size_t keyLength, uint64_t
     return hotp.calculate(key, keyLength, calcTime, digits);
 }
 
+Totp &Totp::operator=(const Totp &toCopy)
+{
+    copy(toCopy);
+
+    return (*this);
+}
+
 /**
  * @brief Totp::clear - Clear out the values stored in this object, deleting any objects
  *      that we are configured to delete.
@@ -81,4 +93,15 @@ void Totp::clear()
     }
 
     mHmacToUse = nullptr;
+}
+
+/**
+ * @brief Totp::copy - Copy the members of the \c toCopy object in to this object.
+ *
+ * @param toCopy - The object to copy members from.
+ */
+void Totp::copy(const Totp &toCopy)
+{
+    mHmacToUse = toCopy.mHmacToUse;
+    mShouldDelete = toCopy.mShouldDelete;
 }

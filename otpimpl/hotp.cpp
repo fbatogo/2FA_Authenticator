@@ -10,6 +10,11 @@ Hotp::Hotp()
     mShouldDelete = false;
 }
 
+Hotp::Hotp(Hotp &toCopy)
+{
+    copy(toCopy);
+}
+
 Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
 {
     mHmacToUse = hmacToUse;
@@ -89,6 +94,13 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
     }
 
     return calculateHotpFromHmac(hashValue, resultSize, digits, addChecksum, truncationOffset);
+}
+
+Hotp &Hotp::operator=(const Hotp &toCopy)
+{
+    copy(toCopy);
+
+    return (*this);
 }
 
 /**
@@ -255,4 +267,15 @@ unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize,
     }
 
     return result;
+}
+
+/**
+ * @brief Hotp::copy - Copy the members of the \c toCopy object in to this object.
+ *
+ * @param toCopy - The object to copy data from.
+ */
+void Hotp::copy(const Hotp &toCopy)
+{
+    mHmacToUse = toCopy.mHmacToUse;
+    mShouldDelete = toCopy.mShouldDelete;
 }

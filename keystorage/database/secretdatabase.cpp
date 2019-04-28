@@ -17,6 +17,11 @@ SecretDatabase::SecretDatabase()
     mDatabase = QSqlDatabase::addDatabase("QSQLITE");
 }
 
+SecretDatabase::SecretDatabase(SecretDatabase &toCopy)
+{
+    copy(toCopy);
+}
+
 SecretDatabase::~SecretDatabase()
 {
     // Make sure the database is closed.
@@ -320,6 +325,13 @@ int SecretDatabase::schemaVersion(bool logError)
     return result;
 }
 
+SecretDatabase &SecretDatabase::operator=(const SecretDatabase &toCopy)
+{
+    copy(toCopy);
+
+    return (*this);
+}
+
 /**
  * @brief SecretDatabase::createBoundQuery - Update a QSqlQuery object using the provided
  *      query string, and bound with the values from the provided KeyEntry.
@@ -538,6 +550,17 @@ bool SecretDatabase::upgradeSchema(int from)
     }
 
     return true;
+}
+
+/**
+ * @brief SecretDatabase::copy - Copy the values from \c toCopy in to the members in
+ *      this object.
+ *
+ * @param toCopy - The object to copy the members from.
+ */
+void SecretDatabase::copy(const SecretDatabase &toCopy)
+{
+    mDatabase = toCopy.mDatabase;
 }
 
 /**

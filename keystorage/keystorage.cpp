@@ -14,6 +14,11 @@ KeyStorage::KeyStorage()
     mAvailable = false;
 }
 
+KeyStorage::KeyStorage(KeyStorage &toCopy)
+{
+    copy(toCopy);
+}
+
 KeyStorage::~KeyStorage()
 {
     // Clean up the keystorage drivers that are registered.
@@ -214,6 +219,13 @@ bool KeyStorage::freeStorage()
     return true;
 }
 
+KeyStorage &KeyStorage::operator=(const KeyStorage &toCopy)
+{
+    copy(toCopy);
+
+    return (*this);
+}
+
 /**
  * @brief KeyStorage::findKeyByIdentifier - Search all providers and return the key entry for the identifier along with
  *      the storage id for the method that stored it.
@@ -239,4 +251,16 @@ bool KeyStorage::findKeyByIdentifier(const QString &identifier, KeyEntry &result
 
     LOG_DEBUG("Unable to locate the key with identifier '" + identifier + "'.");
     return false;
+}
+
+/**
+ * @brief KeyStorage::copy - Copy the members from 'toCopy' in to the current
+ *  object.
+ *
+ * @param toCopy - The object to copy data from.
+ */
+void KeyStorage::copy(const KeyStorage &toCopy)
+{
+    mKeyStorageDrivers = toCopy.mKeyStorageDrivers;
+    mAvailable = toCopy.mAvailable;
 }

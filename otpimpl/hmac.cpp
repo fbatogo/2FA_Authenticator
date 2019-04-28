@@ -11,6 +11,11 @@ Hmac::Hmac()
     mDeleteInCtor = false;
 }
 
+Hmac::Hmac(Hmac &toCopy)
+{
+    copy(toCopy);
+}
+
 Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
 {
     mHashType = hashType;
@@ -171,6 +176,13 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
     return mHashResult;
 }
 
+Hmac &Hmac::operator=(const Hmac &toCopy)
+{
+    copy(toCopy);
+
+    return (*this);
+}
+
 /**
  * @brief Hmac::clear - Clean up the internal variables, deleting any objects that we are
  *      configured to delete.
@@ -187,5 +199,19 @@ void Hmac::clear()
         delete mHashType;
     }
     mHashType = nullptr;
+}
+
+/**
+ * @brief Hmac::copy - Copy the members of the \c toCopy object in to the current
+ *      object.
+ *
+ * @param toCopy - The object to copy from.
+ */
+void Hmac::copy(const Hmac &toCopy)
+{
+    // XXX Copying isn't going to work properly...  Need to fix this.
+    mHashType = toCopy.mHashType;
+    mHashResult = toCopy.mHashResult;
+    mDeleteInCtor = toCopy.mDeleteInCtor;
 }
 
