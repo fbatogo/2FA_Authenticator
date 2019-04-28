@@ -18,7 +18,7 @@ pipeline {
     stage('Build and Run Tests') {
       steps {
 	  sh '''qmake -qt=qt5 QT+=testlib'''
-          sh '''/usr/local/sonar/wrapper/build-wrapper-linux-x86-64 --out-dir bw_output make clean all'''
+          sh '''/usr/local/sonar/wrapper/build-wrapper-linux-x86-64 --out-dir bw_output make -j4 clean all'''
       
 //	  sh '''make -j2'''
 	  sh '''./Rollin --xml'''
