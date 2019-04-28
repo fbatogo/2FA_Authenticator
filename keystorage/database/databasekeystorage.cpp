@@ -8,6 +8,11 @@ DatabaseKeyStorage::DatabaseKeyStorage()
 {
 }
 
+DatabaseKeyStorage::DatabaseKeyStorage(DatabaseKeyStorage &toCopy)
+{
+    copy(toCopy);
+}
+
 DatabaseKeyStorage::~DatabaseKeyStorage()
 {
     // Make sure we close the database when this object is destroyed.
@@ -131,4 +136,27 @@ bool DatabaseKeyStorage::freeKeyStorage()
 
     // Otherwise, just retur success.
     return true;
+}
+
+/**
+ * @brief DatabaseKeyStorage::operator = - Copy the values of the provided object in to the current
+ *      object.
+ * @param toCopy - The object to copy to this one.
+ *
+ * @return this object with the requested data copied to it.
+ */
+DatabaseKeyStorage &DatabaseKeyStorage::operator=(const DatabaseKeyStorage &toCopy)
+{
+    copy(toCopy);
+}
+
+/**
+ * @brief DatabaseKeyStorage::copy - The implementation for copying data from another object in to
+ *      this one.
+ *
+ * @param toCopy - The object to copy data from.
+ */
+void DatabaseKeyStorage::copy(const DatabaseKeyStorage &toCopy)
+{
+    mSecretDatabase = toCopy.mSecretDatabase;
 }

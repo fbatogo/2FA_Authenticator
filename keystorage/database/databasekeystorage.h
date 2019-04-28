@@ -10,6 +10,7 @@ class DatabaseKeyStorage : public KeyStorageBase
 {
 public:
     DatabaseKeyStorage();
+    DatabaseKeyStorage(DatabaseKeyStorage &toCopy);
     ~DatabaseKeyStorage();
 
     int storageId();
@@ -22,7 +23,11 @@ public:
     bool deleteKeyByIdentifier(const QString &identifier);
     bool freeKeyStorage();
 
+    DatabaseKeyStorage& operator=(const DatabaseKeyStorage& toCopy);
+
 private:
+    void copy(const DatabaseKeyStorage &toCopy);
+
     SecretDatabase mSecretDatabase;
 };
 
