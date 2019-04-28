@@ -24,6 +24,27 @@ pipeline {
 //	  sh '''./Rollin --xml'''
       }
     }
+    stage('SonarQube analysis') {
+        
+      steps {
+            
+        script {
+          
+          // requires SonarQube Scanner 2.8+
+          
+          def scannerHome = tool 'SonarQube Scanner';
+          
+          withSonarQubeEnv('SonarQube in the Cloud') {
+            
+            sh "${scannerHome}/bin/sonar-scanner"
+          
+          }
+            
+        }
+        
+      }
+    
+    }    
   }
   post {
     always {
