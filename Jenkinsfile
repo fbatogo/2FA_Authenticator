@@ -18,8 +18,10 @@ pipeline {
     stage('Build and Run Tests') {
       steps {
 	  sh '''qmake -qt=qt5 QT+=testlib'''
-	  sh '''make -j2'''
-	  sh '''./Rollin --xml'''
+          sh '''/usr/local/sonar/wrapper/build-wrapper-linux-x86-64 --out-dir bw_output make clean all'''
+      
+//	  sh '''make -j2'''
+//	  sh '''./Rollin --xml'''
       }
     }
   }
