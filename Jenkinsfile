@@ -23,6 +23,7 @@ pipeline {
       
 //	  sh '''make -j2'''
 	  sh '''./Rollin --xml'''
+          sh '''gcov main.cpp'''    // Run coverage output.
       }
     }
     stage('SonarQube analysis') {
