@@ -221,6 +221,10 @@ bool KeyStorage::freeStorage()
 
 KeyStorage &KeyStorage::operator=(const KeyStorage &toCopy)
 {
+    if (this == &toCopy) {
+        return (*this);
+    }
+
     copy(toCopy);
 
     return (*this);

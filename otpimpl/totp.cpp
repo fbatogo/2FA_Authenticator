@@ -77,6 +77,10 @@ std::string Totp::calculate(const unsigned char *key, size_t keyLength, uint64_t
 
 Totp &Totp::operator=(const Totp &toCopy)
 {
+    if (this == &toCopy) {
+        return (*this);
+    }
+
     copy(toCopy);
 
     return (*this);

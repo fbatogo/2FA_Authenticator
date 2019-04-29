@@ -178,6 +178,10 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
 
 Hmac &Hmac::operator=(const Hmac &toCopy)
 {
+    if (this == &toCopy) {
+        return (*this);
+    }
+
     copy(toCopy);
 
     return (*this);

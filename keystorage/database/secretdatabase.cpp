@@ -327,6 +327,10 @@ int SecretDatabase::schemaVersion(bool logError)
 
 SecretDatabase &SecretDatabase::operator=(const SecretDatabase &toCopy)
 {
+    if (this == &toCopy) {
+        return (*this);
+    }
+
     copy(toCopy);
 
     return (*this);

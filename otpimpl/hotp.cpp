@@ -98,6 +98,10 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
 
 Hotp &Hotp::operator=(const Hotp &toCopy)
 {
+    if (this == &toCopy) {
+        return (*this);
+    }
+
     copy(toCopy);
 
     return (*this);
