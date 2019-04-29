@@ -39,7 +39,7 @@ ByteArray::ByteArray(const std::string &stringToCopy)
 
 ByteArray::ByteArray(ByteArray &toCopy)
 {
-    copy(toCopy);
+    (*this) = toCopy;
 }
 
 ByteArray::~ByteArray()
@@ -55,7 +55,7 @@ void ByteArray::clear()
 {
     if (nullptr != mByteArray) {
         // Free the memory.
-        free(mByteArray);
+        delete mByteArray;
         mByteArray = nullptr;
     }
 
@@ -133,13 +133,16 @@ void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 
     // Allocate the memory we need to store the array, plus one extra character to be
     // sure we pick up a null character.
-    mByteArray = static_cast<char *>(calloc(1, (mByteArrayLength + 1)));
+    mByteArray = new char[mByteArrayLength + 1];
     if (nullptr == mByteArray) {
         // Couldn't allocate memory, set everything to 0 and null.
         mByteArray = nullptr;
         mByteArrayLength = 0;
         return;
     }
+
+    // Zero out the array.
+    memset(mByteArray, 0x00, (mByteArrayLength + 1));
 
     // Then, copy the data from arrayToCopy in to our target array.
     memcpy(mByteArray, arrayToCopy, mByteArrayLength);
@@ -174,7 +177,7 @@ ByteArray &ByteArray::operator=(ByteArray &toCopy)
         return (*this);
     }
 
-    copy(toCopy);
+    fromCharArray(toCopy.mByteArray, toCopy.mByteArrayLength);
 
     return (*this);
 }
@@ -231,27 +234,5 @@ bool ByteArray::operator==(ByteArray &toCompare)
 bool ByteArray::operator!=(ByteArray &toCompare)
 {
     return !((*this) == toCompare);
-}
-
-/**
- * @brief ByteArray::copy - Copy the byte array data from another object into this one.
- *
- * @param toCopy - The object that we want to copy the byte array data from.
- */
-void ByteArray::copy(ByteArray &toCopy)
-{
-    // If this object already contains data, we need to free it.
-    clear();
-
-    // Then, copy the character array from the other object.
-    mByteArray = static_cast<char *>(calloc(1, (toCopy.mByteArrayLength + 1)));
-    if (nullptr == mByteArray) {
-        // Couldn't allocate the memory.  Just return.
-        return;
-    }
-
-    // Copy the data.
-    memcpy(mByteArray, toCopy.mByteArray, toCopy.mByteArrayLength);
-    mByteArrayLength = toCopy.mByteArrayLength;
 }
 

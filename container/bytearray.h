@@ -35,7 +35,6 @@ public:
     bool operator!=(ByteArray &toCompare);
 
 private:
-    void copy(ByteArray &toCopy);
 
     char *mByteArray;
     size_t mByteArrayLength;

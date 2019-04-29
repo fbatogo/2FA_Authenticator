@@ -61,6 +61,12 @@ void ByteArrayTests::operatorTests()
     // They should match again.
     QVERIFY(testByteArray1 == testByteArray2);
 
+    // Same length string, but slightly different text.
+    testByteArray2 = std::string("This is a test char array!");
+
+    // They should note match.
+    QVERIFY(testByteArray1 != testByteArray2);
+
     // Copy the data with the copy ctor.
     testByteArray3 = new ByteArray(testByteArray1);
 
@@ -73,7 +79,7 @@ void ByteArrayTests::operatorTests()
 
 void ByteArrayTests::fromStringTests()
 {
-    ByteArray testByteArray("This is a test char array.");
+    ByteArray testByteArray(std::string("This is a test char array."));
 
     // Change the value using a string.
     testByteArray.fromStdString(std::string("This is a different test char array."));
