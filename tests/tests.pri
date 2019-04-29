@@ -5,6 +5,7 @@ message(Building unit test binary...)
 
 # Add the extra source files that we use for testing.
 HEADERS += \
+    $$PWD/container/bytearraytests.h \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
     $$PWD/sha1tests.h \
@@ -20,6 +21,7 @@ HEADERS += \
     $$PWD/hmacsha512tests.h
 
 SOURCES += \
+    $$PWD/container/bytearraytests.cpp \
     $$PWD/secretdatabasetests.cpp \
     $$PWD/qrcodestringparsertests.cpp \
     $$PWD/sha1tests.cpp \

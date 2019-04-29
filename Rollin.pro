@@ -47,6 +47,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    container/bytearray.cpp \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
     logger.cpp \
@@ -72,6 +73,7 @@ SOURCES += \
     keyentriessingleton.cpp
 
 HEADERS += \
+    container/bytearray.h \
     keystorage/database/secretdatabase.h \
     keystorage/keystoragebase.h \
     keystorage/keyentry.h \
