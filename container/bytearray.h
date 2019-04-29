@@ -21,10 +21,18 @@ public:
     char at(size_t idx);
     size_t size();
 
+    void fromStdString(const std::string &stringToCopy);
+    void fromCharArray(const char *arrayToCopy, size_t length = 0);
+
     std::string toString();
 
+    // Assignment operators.
     ByteArray &operator=(ByteArray &toCopy);
+    ByteArray &operator=(const std::string &toCopy);
+
+    // Comparison operators.
     bool operator==(ByteArray &toCompare);
+    bool operator!=(ByteArray &toCompare);
 
 private:
     void copy(ByteArray &toCopy);

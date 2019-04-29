@@ -17,6 +17,7 @@
 #include "sha256tests.h"
 #include "sha512tests.h"
 #include "totptests.h"
+#include "container/bytearraytests.h"
 
 int main(int argc, char *argv[])
 {
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
     tests.addTest(new Sha256Tests());
     tests.addTest(new Sha512Tests());
     tests.addTest(new totpTests());
+    tests.addTest(new ByteArrayTests());
 
     return tests.executeAll();
 }

@@ -9,10 +9,10 @@ class ByteArrayTests : public QObject
 
 private slots:
     void toStringTests();
+    void emptyStringTests();
     void atTests();
     void operatorTests();
     void fromStringTests();
-    void fromCharArrayTests();
 };
 
 #endif // BYTEARRAYTESTS_H

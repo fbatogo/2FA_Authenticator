@@ -22,33 +22,19 @@ ByteArray::ByteArray()
  */
 ByteArray::ByteArray(const char *arrayToCopy, size_t length)
 {
-    mByteArrayLength = length;
+    mByteArray = nullptr;
+    mByteArrayLength = 0;
 
-    // If the length is 0, then we are dealing with a null terminated string.  So, figure
-    // out how long the string is.
-    if (0 == mByteArrayLength) {
-        mByteArrayLength = strlen(arrayToCopy);
-    }
-
-    // Allocate the memory we need to store the array, plus one extra character to be
-    // sure we pick up a null character.
-    mByteArray = static_cast<char *>(calloc(1, (mByteArrayLength + 1)));
-    if (nullptr == mByteArray) {
-        // Couldn't allocate memory, set everything to 0 and null.
-        mByteArray = nullptr;
-        mByteArrayLength = 0;
-        return;
-    }
-
-    // Then, copy the data from arrayToCopy in to our target array.
-    memcpy(mByteArray, arrayToCopy, mByteArrayLength);
+    fromCharArray(arrayToCopy, length);
 }
 
 ByteArray::ByteArray(const std::string &stringToCopy)
 {
+    mByteArray = nullptr;
+    mByteArrayLength = 0;
+
     // Copy the data, and length from the string.
-    mByteArray = strdup(stringToCopy.c_str());
-    mByteArrayLength = stringToCopy.length();
+    fromStdString(stringToCopy);
 }
 
 ByteArray::ByteArray(ByteArray &toCopy)
@@ -109,6 +95,57 @@ size_t ByteArray::size()
 }
 
 /**
+ * @brief ByteArray::fromStdString - Convert a standard string to a byte array.
+ *
+ * @param stringToCopy - The string that we want to copy to our byte array.
+ */
+void ByteArray::fromStdString(const std::string &stringToCopy)
+{
+    // Clean out anything already in memory.
+    clear();
+
+    // Copy the data, and length from the string.
+    mByteArray = strdup(stringToCopy.c_str());
+    mByteArrayLength = stringToCopy.length();
+}
+
+/**
+ * @brief ByteArray::fromCharArray - Copy a char pointer full of data to our
+ *      byte array.
+ *
+ * @param arrayToCopy - A pointer to the data to copy.
+ * @param length - (Optional) If arrayToCopy is a null terminated string, then
+ *      this value can be 0.  Otherwise, it should be the length of the data that
+ *      we want to copy from arrayToCopy.
+ */
+void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
+{
+    // Clean out anything that might be hanging around.
+    clear();
+
+    mByteArrayLength = length;
+
+    // If the length is 0, then we are dealing with a null terminated string.  So, figure
+    // out how long the string is.
+    if (0 == mByteArrayLength) {
+        mByteArrayLength = strlen(arrayToCopy);
+    }
+
+    // Allocate the memory we need to store the array, plus one extra character to be
+    // sure we pick up a null character.
+    mByteArray = static_cast<char *>(calloc(1, (mByteArrayLength + 1)));
+    if (nullptr == mByteArray) {
+        // Couldn't allocate memory, set everything to 0 and null.
+        mByteArray = nullptr;
+        mByteArrayLength = 0;
+        return;
+    }
+
+    // Then, copy the data from arrayToCopy in to our target array.
+    memcpy(mByteArray, arrayToCopy, mByteArrayLength);
+}
+
+/**
  * @brief ByteArray::toString - Return the byte array as a standard string.
  *
  * @return std::string containing the data from the byte array stored in this object.
@@ -143,6 +180,21 @@ ByteArray &ByteArray::operator=(ByteArray &toCopy)
 }
 
 /**
+ * @brief ByteArray::operator = - Copy the contents of a standard string to this ByteArray
+ *      object.
+ *
+ * @param toCopy - The string to copy the data from.
+ *
+ * @return ByteArray with the string contents copied.
+ */
+ByteArray &ByteArray::operator=(const std::string &toCopy)
+{
+    this->fromStdString(toCopy);
+
+    return (*this);
+}
+
+/**
  * @brief ByteArray::operator == - Compare the contents of this object to the contents
  *      of another object of the same type.
  *
@@ -169,6 +221,19 @@ bool ByteArray::operator==(ByteArray &toCompare)
 }
 
 /**
+ * @brief ByteArray::operator != - Compare the contents of this object to the contents
+ *      of another object of the same type, and return true if they are different.
+ *
+ * @param toCompare - The object to compare this one with.
+ *
+ * @return true if they don't match.  false if they do.
+ */
+bool ByteArray::operator!=(ByteArray &toCompare)
+{
+    return !((*this) == toCompare);
+}
+
+/**
  * @brief ByteArray::copy - Copy the byte array data from another object into this one.
  *
  * @param toCopy - The object that we want to copy the byte array data from.
@@ -189,3 +254,4 @@ void ByteArray::copy(ByteArray &toCopy)
     memcpy(mByteArray, toCopy.mByteArray, toCopy.mByteArrayLength);
     mByteArrayLength = toCopy.mByteArrayLength;
 }
+
