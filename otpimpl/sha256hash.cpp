@@ -6,7 +6,7 @@ extern "C" {
 
 #include <cstring>
 
-unsigned char *Sha256Hash::hash(unsigned char *bytes, size_t bytesLength)
+std::shared_ptr<ByteArray> Sha256Hash::hash(unsigned char *bytes, size_t bytesLength)
 {
     sha256_ctx ctx;
 

@@ -13,7 +13,7 @@ public:
     Sha1Hash() = default;
     ~Sha1Hash() = default;
 
-    unsigned char *hash(unsigned char *bytes, size_t bytesLength);
+    std::shared_ptr<ByteArray> hash(const std::shared_ptr<ByteArray> &toHash);
     size_t hashResultLength();
     size_t hashBlockLength();
 

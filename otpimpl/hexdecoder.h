@@ -8,17 +8,17 @@ class HexDecoder
 public:
     HexDecoder();
 
-    unsigned char *decode(std::string hexString, size_t &resultSize);
+    unsigned char *decode(const std::string &hexString, size_t &resultSize);
 
-    static bool isHexEncoded(std::string toTest);
+    static bool isHexEncoded(const std::string &toTest);
 
 private:
-    unsigned char decodeOneByte(std::string oneByte);
+    unsigned char decodeOneByte(const std::string &oneByte);
     unsigned char decodeOneNibble(char oneNibble);
 
-    static std::string cleanup(std::string toClean);
-    static std::string replaceInString(std::string sourceString, std::string toReplace, std::string replaceWith, bool global = true);
-    static bool replaceSingleInstance(std::string sourceString, std::string toReplace, std::string replaceWith, std::string &result);
+    static std::string cleanup(const std::string &toClean);
+    static std::string replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, bool global = true);
+    static bool replaceSingleInstance(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, std::string &result);
 };
 
 #endif // HEXDECODER_H

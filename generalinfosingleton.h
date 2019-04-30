@@ -7,7 +7,7 @@
 
 #include "keyentriessingleton.h"
 
-#define APP_VERSION "0.01"
+const QString APP_VERSION="0.01";
 
 class GeneralInfoSingleton : public QObject
 {

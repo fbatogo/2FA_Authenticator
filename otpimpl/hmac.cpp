@@ -8,7 +8,6 @@ Hmac::Hmac()
 {
     mHashType = nullptr;
     mHashResult = nullptr;
-    mDeleteInCtor = false;
 }
 
 Hmac::Hmac(Hmac &toCopy)
@@ -16,11 +15,10 @@ Hmac::Hmac(Hmac &toCopy)
     copy(toCopy);
 }
 
-Hmac::Hmac(HashTypeBase *hashType, bool deleteInCtor)
+Hmac::Hmac(std::shared_ptr<HashTypeBase> hashType) :
+    mHashType(hashType)
 {
-    mHashType = hashType;
     mHashResult = nullptr;
-    mDeleteInCtor = deleteInCtor;
 }
 
 Hmac::~Hmac()
@@ -34,19 +32,14 @@ Hmac::~Hmac()
  *
  * @param hashType - A HashTypeBase object that implements the hash algorithm to be used
  *      to create an HMAC.
- * @param takeOwnership - If true, then the hashType object will be deleted when this
- *      object is destroyed, so the caller MUST NOT delete the object.  If false, then
- *      the caller remains responsible for deleting the hash object when everything is
- *      done using it.
  */
-void Hmac::setHashType(HashTypeBase *hashType, bool takeOwnership)
+void Hmac::setHashType(const std::shared_ptr<ByteArray> &hashType)
 {
     // Clean out anything that might already be configured.
     clear();
 
     // Set the new values.
     mHashType = hashType;
-    mDeleteInCtor = takeOwnership;
 }
 
 /**
@@ -54,16 +47,12 @@ void Hmac::setHashType(HashTypeBase *hashType, bool takeOwnership)
  *      this object was created.
  *
  * @param key - The key data that should be used to generate the HMAC.
- * @param keyLength - The length of the key data provided.
  * @param data - The data that we want to get the HMAC for.
- * @param dataLength - The length of the data that we want to get the HMAC for.
- * @param resultSize - If this method returns true, this parameter will contain the length of the
- *      HMAC data that was returned.
  *
  * @return unsigned char * containing the calculated HMAC value.  On error, nullptr will be
  *      returned.
  */
-unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize)
+std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data)
 {
     unsigned char *keyIpad;
     size_t keyIpadLength;
@@ -156,21 +145,11 @@ unsigned char *Hmac::calculate(const unsigned char *key, size_t keyLength, unsig
         keyOpad = nullptr;
     }
 
-    // If we have a previous hash result, free it before saving the new value.
-    if (mHashResult != nullptr) {
-        free(mHashResult);
-        mHashResult = nullptr;
-    }
+    // Clear the hash result.
+    mHashResult = nullptr;
 
-    // Allocate the memory to store the hash result.
-    mHashResult = static_cast<unsigned char *>(calloc(1, mHashType->hashResultLength()));
-    if (mHashResult == nullptr) {
-        LOG_ERROR("Failed to allocate memory to return the one block of HMAC data!");
-        return nullptr;
-    }
-
-    // Copy the result data.
-    memcpy(mHashResult, result, mHashType->hashResultLength());
+    // Store the hash result.
+    mHashResult->fromCharArray(static_cast<char *>(result), mHashType->hashResultLength());
 
     // And, return the result.
     return mHashResult;
@@ -193,15 +172,6 @@ Hmac &Hmac::operator=(const Hmac &toCopy)
  */
 void Hmac::clear()
 {
-    // If we have a result stored, free the memory.
-    if (mHashResult != nullptr) {
-        free(mHashResult);
-        mHashResult = nullptr;
-    }
-
-    if (mDeleteInCtor) {
-        delete mHashType;
-    }
     mHashType = nullptr;
 }
 
@@ -213,9 +183,7 @@ void Hmac::clear()
  */
 void Hmac::copy(const Hmac &toCopy)
 {
-    // XXX Copying isn't going to work properly...  Need to fix this.
     mHashType = toCopy.mHashType;
     mHashResult = toCopy.mHashResult;
-    mDeleteInCtor = toCopy.mDeleteInCtor;
 }
 

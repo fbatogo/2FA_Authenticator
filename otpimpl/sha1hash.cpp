@@ -17,18 +17,22 @@ extern "C" {
  *      owned by this object, and *MUST NOT* be freed by the caller!  On error, nullptr
  *      is returned.
  */
-unsigned char *Sha1Hash::hash(unsigned char *bytes, size_t bytesLength)
+std::shared_ptr<ByteArray> Sha1Hash::hash(const std::shared_ptr<ByteArray> &toHash)
 {
-    if (bytes == nullptr) {
+    std::shared_ptr<ByteArray> result;
+
+    if (toHash == nullptr) {
         // Nothing we can do.
         return nullptr;
     }
 
     memset(&mHashResult, 0x00, 20);
 
-    SHA1(reinterpret_cast<char *>(&mHashResult), reinterpret_cast<char *>(bytes), static_cast<int>(bytesLength));
+    SHA1(reinterpret_cast<char *>(&mHashResult), toHash->toChar(), static_cast<int>(toHash->toCharSize()));
 
-    return reinterpret_cast<unsigned char *>(&mHashResult);
+    result->fromCharArray(reinterpret_cast<char *>(&mHashResult), 20);
+
+    return result;
 }
 
 /**

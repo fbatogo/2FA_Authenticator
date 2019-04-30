@@ -15,9 +15,9 @@ Hotp::Hotp(Hotp &toCopy)
     copy(toCopy);
 }
 
-Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete)
+Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete) :
+    mHmacToUse(hmacToUse)
 {
-    mHmacToUse = hmacToUse;
     mShouldDelete = shouldDelete;
 }
 

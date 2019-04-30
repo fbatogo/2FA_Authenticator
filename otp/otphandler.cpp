@@ -217,7 +217,7 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
     }
 
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac.setHashType(hashToUse, true);
+    hmac.setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation, but keep ownership here.
     totp.setHmac(&hmac, false);

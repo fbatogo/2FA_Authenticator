@@ -20,7 +20,7 @@ HexDecoder::HexDecoder()
  * @return unsigned char pointer to the converted hex data.  If the input string is empty, or an error occurrs,
  *      nullptr will be returned.
  */
-unsigned char *HexDecoder::decode(std::string hexString, size_t &resultSize)
+unsigned char *HexDecoder::decode(const std::string &hexString, size_t &resultSize)
 {
     std::string smashed;
     unsigned char *result;
@@ -70,7 +70,7 @@ unsigned char *HexDecoder::decode(std::string hexString, size_t &resultSize)
  *
  * @return true if the string appears to be hex encoded.  false otherwise.
  */
-bool HexDecoder::isHexEncoded(std::string toTest)
+bool HexDecoder::isHexEncoded(const std::string &toTest)
 {
     QString temp;
     std::string toValidate;
@@ -115,7 +115,7 @@ bool HexDecoder::isHexEncoded(std::string toTest)
  * @return unsigned char version of the 2 character string provided.  On error, an error will be logged, and
  *      0x00 will be returned.
  */
-unsigned char HexDecoder::decodeOneByte(std::string oneByte)
+unsigned char HexDecoder::decodeOneByte(const std::string &oneByte)
 {
     if (oneByte.length() != 2) {
         LOG_ERROR("The value to convert to hex wasn't one byte!  It was " + QString::number(oneByte.length()) + " byte(s) long!");
@@ -165,7 +165,7 @@ unsigned char HexDecoder::decodeOneNibble(char oneNibble)
  *
  * @return std::string stripped of extra characters allowed in a hex string.
  */
-std::string HexDecoder::cleanup(std::string toClean)
+std::string HexDecoder::cleanup(const std::string &toClean)
 {
     std::string smashed;
 
@@ -197,7 +197,7 @@ std::string HexDecoder::cleanup(std::string toClean)
  *
  * @return
  */
-std::string HexDecoder::replaceInString(std::string sourceString, std::string toReplace, std::string replaceWith, bool global)
+std::string HexDecoder::replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, bool global)
 {
     std::string result;
 
@@ -227,7 +227,7 @@ std::string HexDecoder::replaceInString(std::string sourceString, std::string to
  *
  * @return true if an instance of 'toReplace' was replaced.  false otherwise.
  */
-bool HexDecoder::replaceSingleInstance(std::string sourceString, std::string toReplace, std::string replaceWith, std::string &result)
+bool HexDecoder::replaceSingleInstance(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, std::string &result)
 {
     size_t index = 0;
 

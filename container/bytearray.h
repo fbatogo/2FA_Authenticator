@@ -12,7 +12,7 @@ class ByteArray
 public:
     ByteArray();
     ByteArray(const char *arrayToCopy, size_t length = 0);
-    ByteArray(const std::string &stringToCopy);
+    explicit ByteArray(const std::string &stringToCopy);
     ByteArray(ByteArray &toCopy);
     ~ByteArray();
 
@@ -25,6 +25,8 @@ public:
     void fromCharArray(const char *arrayToCopy, size_t length = 0);
 
     std::string toString();
+    char *toChar() const;
+    size_t toCharSize() const;
 
     // Assignment operators.
     ByteArray &operator=(ByteArray &toCopy);

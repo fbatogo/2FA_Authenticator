@@ -119,7 +119,7 @@ std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
  *
  * @return unsigned char pointer to the decoded data.
  */
-unsigned char *Base32Coder::decode(std::string toDecode, size_t &decodedSize)
+unsigned char *Base32Coder::decode(const std::string &toDecode, size_t &decodedSize)
 {
     unsigned char *result;
     size_t blocks;
@@ -180,7 +180,7 @@ unsigned char *Base32Coder::decode(std::string toDecode, size_t &decodedSize)
  *
  * @return true if the string appears to be base32 encoded.  false otherwise.
  */
-bool Base32Coder::isBase32Encoded(std::string toValidate)
+bool Base32Coder::isBase32Encoded(const std::string &toValidate)
 {
     QString temp;
 

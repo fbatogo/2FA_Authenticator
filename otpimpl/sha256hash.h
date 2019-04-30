@@ -9,7 +9,7 @@ public:
     Sha256Hash() = default;
     ~Sha256Hash() = default;
 
-    unsigned char *hash(unsigned char *bytes, size_t bytesLength);
+    std::shared_ptr<ByteArray> hash(unsigned char *bytes, size_t bytesLength);
     size_t hashResultLength();
     size_t hashBlockLength();
 

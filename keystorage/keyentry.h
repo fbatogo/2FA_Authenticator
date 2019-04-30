@@ -4,18 +4,18 @@
 #include <QObject>
 #include <QString>
 
-#define KEYENTRY_KEYTYPE_HEX      0
-#define KEYENTRY_KEYTYPE_BASE32   1
-#define KEYENTRY_KEYTYPE_MAX      1     // The highest key type value we can encode.
+const size_t KEYENTRY_KEYTYPE_HEX=0;
+const size_t KEYENTRY_KEYTYPE_BASE32=1;
+const size_t KEYENTRY_KEYTYPE_MAX=1;     // The highest key type value we can encode.
 
-#define KEYENTRY_OTPTYPE_TOTP     0
-#define KEYENTRY_OTPTYPE_HOTP     1
-#define KEYENTRY_OTPTYPE_MAX      1     // The highest otp type value we can encode.
+const size_t KEYENTRY_OTPTYPE_TOTP=0;
+const size_t KEYENTRY_OTPTYPE_HOTP=1;
+const size_t KEYENTRY_OTPTYPE_MAX=1;     // The highest otp type value we can encode.
 
-#define KEYENTRY_ALG_SHA1         0
-#define KEYENTRY_ALG_SHA256       1
-#define KEYENTRY_ALG_SHA512       2
-#define KEYENTRY_ALG_MAX          3     // The highest algorithm value we can encode.
+const size_t KEYENTRY_ALG_SHA1=0;
+const size_t KEYENTRY_ALG_SHA256=1;
+const size_t KEYENTRY_ALG_SHA512=2;
+const size_t KEYENTRY_ALG_MAX=3;     // The highest algorithm value we can encode.
 
 // This class needs to be derived from QObject so that we can easily use it in the QML code.
 class KeyEntry : public QObject

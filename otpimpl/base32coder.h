@@ -9,9 +9,9 @@ public:
     Base32Coder();
 
     std::string encode(unsigned char *toEncode, size_t toEncodeSize);
-    unsigned char *decode(std::string toDecode, size_t &decodedSize);
+    unsigned char *decode(const std::string &toDecode, size_t &decodedSize);
 
-    static bool isBase32Encoded(std::string toValidate);
+    static bool isBase32Encoded(const std::string &toValidate);
 
 private:
     bool decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize);

@@ -1,19 +1,21 @@
 #ifndef HMAC_H
 #define HMAC_H
 
+#include <memory>
 #include "hashtypebase.h"
+#include "container/bytearray.h"
 
 class Hmac
 {
 public:
     Hmac();
     Hmac(Hmac &toCopy);
-    Hmac(HashTypeBase *hashType, bool deleteInCtor = false);
+    Hmac(std::shared_ptr<HashTypeBase> hashType);
     ~Hmac();
 
-    void setHashType(HashTypeBase *hashType, bool takeOwnership = false);
+    void setHashType(const std::shared_ptr<ByteArray> &hashType);
 
-    unsigned char *calculate(const unsigned char *key, size_t keyLength, unsigned char *data, size_t dataLength, size_t &resultSize);
+    std::shared_ptr<ByteArray> calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data);
 
     Hmac& operator=(const Hmac& toCopy);
 
@@ -21,9 +23,8 @@ private:
     void clear();
     void copy(const Hmac &toCopy);
 
-    HashTypeBase *mHashType;
-    unsigned char *mHashResult;
-    bool mDeleteInCtor;             // Should we handle deletion of mHashType?
+    std::shared_ptr<HashTypeBase> mHashType;
+    std::shared_ptr<ByteArray> mHashResult;
 };
 
 #endif // HMAC_H

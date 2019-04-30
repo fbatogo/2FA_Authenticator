@@ -8,7 +8,7 @@ extern "C" {
 
 #include <cstring>
 
-unsigned char *Sha512Hash::hash(unsigned char *bytes, size_t bytesLength)
+std::shared_ptr<ByteArray> Sha512Hash::hash(unsigned char *bytes, size_t bytesLength)
 {
     sha512_ctx ctx;
 

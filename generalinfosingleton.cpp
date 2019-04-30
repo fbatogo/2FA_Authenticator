@@ -112,11 +112,12 @@ bool GeneralInfoSingleton::isEncodedProperly(int encodingType, const QString &va
 
     case KEYENTRY_KEYTYPE_BASE32:
         return Base32Coder::isBase32Encoded(valueToCheck.toStdString());
-    }
 
-    // If we get here, we don't understand the encodingType, so return false.
-    LOG_ERROR("Unknown secret encoding type of '" + QString::number(encodingType) + "'!");
-    return false;
+    default:
+        // If we get here, we don't understand the encodingType, so return false.
+        LOG_ERROR("Unknown secret encoding type of '" + QString::number(encodingType) + "'!");
+        return false;
+    }
 }
 
 /**
