@@ -164,12 +164,12 @@ std::string ByteArray::toString()
 }
 
 /**
- * @brief ByteArray::toChar - Return the internal pointer to the byte array data stored
+ * @brief ByteArray::toCharArrayPtr - Return the internal pointer to the byte array data stored
  *      in this object.
  *
  * @return char pointer to the data stored in this object.
  */
-char *ByteArray::toChar() const
+char *ByteArray::toCharArrayPtr() const
 {
     return mByteArray;
 }
@@ -180,7 +180,7 @@ char *ByteArray::toChar() const
  *
  * @return size_t containing the length of the byte array stored in this object.
  */
-size_t ByteArray::toCharSize() const
+size_t ByteArray::toCharArraySize() const
 {
     return mByteArrayLength;
 }

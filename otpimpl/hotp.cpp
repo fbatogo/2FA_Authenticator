@@ -7,7 +7,6 @@
 Hotp::Hotp()
 {
     mHmacToUse = nullptr;
-    mShouldDelete = false;
 }
 
 Hotp::Hotp(Hotp &toCopy)
@@ -15,10 +14,9 @@ Hotp::Hotp(Hotp &toCopy)
     copy(toCopy);
 }
 
-Hotp::Hotp(Hmac *hmacToUse, bool shouldDelete) :
+Hotp::Hotp(std::shared_ptr<Hmac> &hmacToUse) :
     mHmacToUse(hmacToUse)
 {
-    mShouldDelete = shouldDelete;
 }
 
 Hotp::~Hotp()
@@ -34,7 +32,7 @@ Hotp::~Hotp()
  *      will delete it in the dtor.  If false, the caller is responsible for freeing the
  *      HMAC object when it knows it is no longer in use.
  */
-void Hotp::setHmac(Hmac *hmacToUse, bool takeOwnership)
+void Hotp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
 {
     // If we are currently set to take ownership of the HMAC object, and an HMAC object
     // is set, clean it up.
@@ -42,7 +40,6 @@ void Hotp::setHmac(Hmac *hmacToUse, bool takeOwnership)
 
     // Set the new values to use.
     mHmacToUse = hmacToUse;
-    mShouldDelete = takeOwnership;
 }
 
 /**

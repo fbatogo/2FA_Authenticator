@@ -195,20 +195,20 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
     std::string otp;
     Totp totp;
     Hmac hmac;
-    HashTypeBase *hashToUse;
+    std::shared_ptr<HashTypeBase> hashToUse;
 
     // Figure out what type of hash we should be using.
     switch (keydata.algorithm()) {
     case KEYENTRY_ALG_SHA1:
-        hashToUse = new Sha1Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
         break;
 
     case KEYENTRY_ALG_SHA256:
-        hashToUse = new Sha256Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha256Hash());
         break;
 
     case KEYENTRY_ALG_SHA512:
-        hashToUse = new Sha512Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha512Hash());
         break;
 
     default:
@@ -248,21 +248,21 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const unsigned char *
 {
     std::string otp;
     Hotp hotp;
-    Hmac hmac;
-    HashTypeBase *hashToUse;
+    std::shared_ptr<Hmac> hmac;
+    std::shared_ptr<HashTypeBase> hashToUse;
 
     // Figure out what type of hash we should be using.
     switch (keydata.algorithm()) {
     case KEYENTRY_ALG_SHA1:
-        hashToUse = new Sha1Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
         break;
 
     case KEYENTRY_ALG_SHA256:
-        hashToUse = new Sha256Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha256Hash());
         break;
 
     case KEYENTRY_ALG_SHA512:
-        hashToUse = new Sha512Hash();
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha512Hash());
         break;
 
     default:
@@ -270,11 +270,13 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const unsigned char *
         return "";
     }
 
+    hmac = std::shared_ptr<Hmac>(new Hmac());
+
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac.setHashType(hashToUse, true);
+    hmac->setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation, but keep ownership here.
-    hotp.setHmac(&hmac, false);
+    hotp.setHmac(hmac);
 
 
     otp = hotp.calculate(decodedSecret, decodedSize, keydata.hotpCounter(), keydata.outNumberCount());

@@ -13,7 +13,7 @@ public:
     Hmac(std::shared_ptr<HashTypeBase> hashType);
     ~Hmac();
 
-    void setHashType(const std::shared_ptr<ByteArray> &hashType);
+    void setHashType(const std::shared_ptr<HashTypeBase> &hashType);
 
     std::shared_ptr<ByteArray> calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data);
 

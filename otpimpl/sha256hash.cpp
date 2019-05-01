@@ -6,22 +6,21 @@ extern "C" {
 
 #include <cstring>
 
-std::shared_ptr<ByteArray> Sha256Hash::hash(unsigned char *bytes, size_t bytesLength)
+ByteArray Sha256Hash::hash(const ByteArray &toHash)
 {
     sha256_ctx ctx;
+    unsigned char hashResult[32];
 
-    if (bytes == nullptr) {
-        // Nothing we can do.
-        return nullptr;
-    }
-
-    memset(&mHashResult, 0x00, sizeof(mHashResult));
+    memset(&hashResult, 0x00, sizeof(hashResult));
 
     sha256_init(&ctx);
-    sha256_update(&ctx, bytes, bytesLength);
-    sha256_final(&ctx, (unsigned char *)&mHashResult);
+    sha256_update(&ctx, reinterpret_cast<unsigned char*>(toHash.toCharArrayPtr()), static_cast<int>(toHash.toCharArraySize()));
+    sha256_final(&ctx, reinterpret_cast<unsigned char *>(&hashResult));
 
-    return reinterpret_cast<unsigned char *>(&mHashResult);
+    // Store it in our member variable.
+    mHashResult.fromCharArray(reinterpret_cast<char *>(&hashResult), sizeof(hashResult));
+
+    return mHashResult;
 }
 
 size_t Sha256Hash::hashResultLength()

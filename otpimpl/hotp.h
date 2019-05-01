@@ -12,10 +12,10 @@ class Hotp
 public:
     Hotp();
     Hotp(Hotp &toCopy);
-    Hotp(Hmac *hmacToUse, bool shouldDelete = false);
+    Hotp(std::shared_ptr<Hmac> &hmacToUse);
     ~Hotp();
 
-    void setHmac(Hmac *hmacToUse, bool takeOwnership = false);
+    void setHmac(std::shared_ptr<Hmac> &hmacToUse);
 
     std::string calculate(const unsigned char *key, size_t keyLength, uint64_t counter, size_t digits, bool addChecksum = false, int truncationOffset = -1);
 
@@ -31,8 +31,7 @@ private:
 
     void copy(const Hotp &toCopy);
 
-    Hmac *mHmacToUse;
-    bool mShouldDelete;
+    std::shared_ptr<Hmac> mHmacToUse;
 };
 
 #endif // HOTP_H

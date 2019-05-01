@@ -25,8 +25,8 @@ public:
     void fromCharArray(const char *arrayToCopy, size_t length = 0);
 
     std::string toString();
-    char *toChar() const;
-    size_t toCharSize() const;
+    char *toCharArrayPtr() const;
+    size_t toCharArraySize() const;
 
     // Assignment operators.
     ByteArray &operator=(ByteArray &toCopy);

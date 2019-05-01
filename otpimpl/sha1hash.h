@@ -13,12 +13,9 @@ public:
     Sha1Hash() = default;
     ~Sha1Hash() = default;
 
-    std::shared_ptr<ByteArray> hash(const std::shared_ptr<ByteArray> &toHash);
+    ByteArray hash(const ByteArray &toHash);
     size_t hashResultLength();
     size_t hashBlockLength();
-
-private:
-    unsigned char mHashResult[20];
 };
 
 #endif // SHA1HASH_H

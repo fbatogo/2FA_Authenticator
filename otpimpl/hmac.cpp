@@ -33,7 +33,7 @@ Hmac::~Hmac()
  * @param hashType - A HashTypeBase object that implements the hash algorithm to be used
  *      to create an HMAC.
  */
-void Hmac::setHashType(const std::shared_ptr<ByteArray> &hashType)
+void Hmac::setHashType(const std::shared_ptr<HashTypeBase> &hashType)
 {
     // Clean out anything that might already be configured.
     clear();
@@ -54,13 +54,14 @@ void Hmac::setHashType(const std::shared_ptr<ByteArray> &hashType)
  */
 std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data)
 {
-    unsigned char *keyIpad;
+    ByteArray keyIpad;
     size_t keyIpadLength;
-    unsigned char *keyOpad;
+    ByteArray keyOpad;
     size_t keyOpadLength;
-    unsigned char *iPadHashed;
-    unsigned char *result;
-    unsigned char *keyToUse;
+    ByteArray iPadHashed;
+    ByteArray result;
+    ByteArray keyToUse;
+    size_t keyLength;
 
     // Validate inputs.
     if ((key == nullptr) || (data == nullptr)) {
@@ -76,16 +77,20 @@ std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key
         return nullptr;
     }
 
-    keyToUse = const_cast<unsigned char *>(key);
+    // Make a copy of our key data.
+    keyToUse = (*key.get());
+
+    // Start by settng the key length to the length of the key data provided.
+    keyLength = keyToUse.size();
 
     // Calculate the HMAC over the 'data' by using the formula :
     //    Hash(key XOR opad, Hash(key XOR ipad, data))
 
     // If the key length is larger than one block, we need to hash the key to come up
     // with a key of decreased size.
-    if (keyLength > mHashType->hashBlockLength()) {
+    if (keyToUse.size() > mHashType->hashBlockLength()) {
         // Create a hash of the key to use.
-        keyToUse = mHashType->hash(keyToUse, keyLength);
+        keyToUse = mHashType->hash(keyToUse);
         keyLength = mHashType->hashResultLength();
     }
 

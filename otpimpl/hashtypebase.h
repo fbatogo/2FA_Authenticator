@@ -14,9 +14,12 @@ public:
     HashTypeBase() = default;
     virtual ~HashTypeBase() = default;
 
-    virtual std::shared_ptr<ByteArray> hash(const std::shared_ptr<ByteArray> &toHash) { return nullptr; }
+    virtual ByteArray hash(const ByteArray &toHash) = 0;
     virtual size_t hashResultLength() { return 0; }
     virtual size_t hashBlockLength() { return 0; }
+
+protected:
+    ByteArray mHashResult;
 };
 
 #endif // HASHTYPEBASE_H
