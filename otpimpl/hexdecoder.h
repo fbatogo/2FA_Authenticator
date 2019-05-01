@@ -2,13 +2,14 @@
 #define HEXDECODER_H
 
 #include <string>
+#include "container/bytearray.h"
 
 class HexDecoder
 {
 public:
     HexDecoder();
 
-    unsigned char *decode(const std::string &hexString, size_t &resultSize);
+    ByteArray decode(const ByteArray &hexData);
 
     static bool isHexEncoded(const std::string &toTest);
 

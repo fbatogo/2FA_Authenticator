@@ -15,7 +15,7 @@ public:
 
     void setHashType(const std::shared_ptr<HashTypeBase> &hashType);
 
-    std::shared_ptr<ByteArray> calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data);
+    std::shared_ptr<ByteArray> calculate(const ByteArray &key, const ByteArray &data);
 
     Hmac& operator=(const Hmac& toCopy);
 

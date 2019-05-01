@@ -55,7 +55,7 @@ bool KeyEntry::valid() const
     }
 
     // The identifier and secret can't be empty.
-    if (mIdentifier.isEmpty() || mSecret.isEmpty()) {
+    if (mIdentifier.isEmpty() || mSecret.empty()) {
         LOG_DEBUG("Either the identifier or secret is empty.");
         return false;
     }
@@ -93,12 +93,12 @@ void KeyEntry::setIdentifier(const QString &newvalue)
     emit identifierChanged();
 }
 
-QString KeyEntry::secret() const
+const ByteArray &KeyEntry::secret() const
 {
     return mSecret;
 }
 
-void KeyEntry::setSecret(const QString &newvalue)
+void KeyEntry::setSecret(const ByteArray &newvalue)
 {
     mSecret = newvalue;
     emit secretChanged();
@@ -316,7 +316,7 @@ std::string KeyEntry::toString()
     std::stringstream result;
 
     result << "[KeyEntry -- valid: ";
-    result << mValid << "  code valid: " << mCodeValid << "  identifier: " << mIdentifier.toStdString() << "  secret: " << mSecret.toStdString() << "  key type: ";
+    result << mValid << "  code valid: " << mCodeValid << "  identifier: " << mIdentifier.toStdString() << "  secret: " << mSecret.toString() << "  key type: ";
     result << mKeyType << "  otp type: " << mOtpType << "  digits: " << mOutNumberCount << "  time step: " << mTimeStep << "  time offset: " << mTimeOffset;
     result << "  algorithm: " << mAlgorithm << "  hotp counter: " << mHotpCounter << "  issuer: " << mIssuer.toStdString() << "  invalid reason: " << mInvalidReason.toStdString();
     result << "  current code: " << mCurrentCode.toStdString() << "  start time: " << mStartTime << "]";

@@ -9,12 +9,9 @@ public:
     Sha512Hash() = default;
     ~Sha512Hash() = default;
 
-    std::shared_ptr<ByteArray> hash(unsigned char *bytes, size_t bytesLength);
+    ByteArray hash(const ByteArray &toHash);
     size_t hashResultLength();
     size_t hashBlockLength();
-
-private:
-    unsigned char mHashResult[64];
 };
 
 #endif // SHA512HASH_H

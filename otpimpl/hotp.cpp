@@ -47,19 +47,24 @@ void Hotp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
  *
  * @param key - The DECODED key to use.  (20 byte string, *NOT* base32 encoded)
  * @param counter - The counter value to use.
+ * @param digits - The number of digits to calculate.
+ * @param addChecksum - true to include a checksum in the HOTP calculation.  false
+ *      otherwise.
+ * @param truncationOffset - The offset in to the HOTP that we should truncate to
+ *      come up with the HOTP value.
  *
  * @return std::string containing the HOTP value.  On error, this string will be
  *      empty.
  */
-std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t counter, size_t digits, bool addChecksum, int truncationOffset)
+std::string Hotp::calculate(const ByteArray &key, uint64_t counter, size_t digits, bool addChecksum, int truncationOffset)
 {
-    unsigned char *hashValue;
-    size_t resultSize;
     unsigned char number[8];
+    ByteArray baNumber;
     unsigned char inverse;
+    std::shared_ptr<ByteArray> calcResult;
 
     // Validate inputs.
-    if (key == nullptr) {
+    if (key.empty()) {
         // We can't work with this!
         LOG_ERROR("A null key was provided for the HOTP calculation!");
         return "";
@@ -83,14 +88,16 @@ std::string Hotp::calculate(const unsigned char *key, size_t keyLength, uint64_t
         inverse--;
     }
 
-    // Calculate the SHA1 hash of the key and counter.
-    hashValue = mHmacToUse->calculate(key, keyLength, number, 8, resultSize);
-    if (hashValue == nullptr) {
+    baNumber.fromCharArray(reinterpret_cast<char *>(number), sizeof(number));
+
+    // Calculate the SHA hash of the key and counter.
+    calcResult = mHmacToUse->calculate(key, baNumber);
+    if (calcResult->toCharArrayPtr() == nullptr) {
         LOG_ERROR("Failed to caculate HMAC-SHA1 portion of the HOTP!");
         return "";
     }
 
-    return calculateHotpFromHmac(hashValue, resultSize, digits, addChecksum, truncationOffset);
+    return calculateHotpFromHmac((*calcResult.get()), digits, addChecksum, truncationOffset);
 }
 
 Hotp &Hotp::operator=(const Hotp &toCopy)
@@ -110,10 +117,6 @@ Hotp &Hotp::operator=(const Hotp &toCopy)
  */
 void Hotp::clear()
 {
-    if ((mShouldDelete) && (mHmacToUse != nullptr)) {
-        delete mHmacToUse;
-    }
-
     mHmacToUse = nullptr;
 }
 
@@ -122,7 +125,6 @@ void Hotp::clear()
  *      key and counter that were originally passed in.
  *
  * @param hmac - The HMAC that was calculated using one of the hashing algorithms.
- * @param hmacSize - The number of bytes that the HMAC is.
  * @param digits - The number of digits that the HOTP should have. (6, 7, or 8)
  * @param addChecksum - If true, we will add checksum digits to the HOTP value.
  * @param truncationOffset - A value of 0..(hmacSize - 4) that indicates the truncation value we should use.  If this
@@ -130,7 +132,7 @@ void Hotp::clear()
  *
  * @return std::string containing the calculated HOTP value. On error, the string will be empty.
  */
-std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSize, size_t digits, bool addChecksum, int truncationOffset)
+std::string Hotp::calculateHotpFromHmac(const ByteArray &hmac, size_t digits, bool addChecksum, int truncationOffset)
 {
     int64_t DIGITS_POWER[9] = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
     unsigned char *truncValue;
@@ -140,7 +142,7 @@ std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSi
     std::string result;
 
     // Validate inputs.
-    if (hmac == nullptr) {
+    if (hmac.empty()) {
         LOG_ERROR("No HMAC value was provided to calculate the HOTP!");
         return "";
     }
@@ -154,7 +156,7 @@ std::string Hotp::calculateHotpFromHmac(const unsigned char *hmac, size_t hmacSi
     calcDigits = addChecksum ? (digits + 1) : digits;
 
     // Do the dynamic truncation on it.
-    truncValue = dynamicTruncate(hmac, hmacSize, truncationOffset);
+    truncValue = dynamicTruncate(hmac, truncationOffset);
     if (truncValue == nullptr) {
         LOG_ERROR("Unable to execute the dynamic truncation of the HMAC-SHA1 value generated!");
         return "";
@@ -230,29 +232,28 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  *      algorithm, and return that result.
  *
  * @param hmac - The HMAC generated to be used for the HOTP value.
- * @param hmacSize - The size of the HMAC provided.
  * @param truncateOffset - A value of 0..(hmacSize - 4) to be used for the truncationOffset.  If it is
  *      any other number, dynamic truncation will be used.
  *
  * @return unsigned char pointer to the dynamically truncated value.  The caller will take
  *      ownership of this pointer and *MUST* free it!  On error, nullptr will be returned.
  */
-unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize, size_t truncateOffset)
+unsigned char *Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
 {
     size_t offset;
     unsigned char *result;
 
-    if (hmac == nullptr) {
+    if (hmac.empty()) {
         LOG_ERROR("No HMAC value provided while attempting dynamic truncation!");
         return nullptr;
     }
 
-    if (truncateOffset < (hmacSize - 4)) {
+    if (truncateOffset < (hmac.size() - 4)) {
         // Use the provided truncation value.
         offset = static_cast<size_t>(truncateOffset);
     } else {
         // Get the offset bits from the last byte of the HMAC.
-        offset = (hmac[(hmacSize - 1)] & 0x0f);
+        offset = (hmac.at((hmac.size() - 1)) & 0x0f);
     }
 
     // Allocate 4 bytes for our result
@@ -264,7 +265,7 @@ unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize,
 
     // Copy the 4 bytes at the offset.
     for (size_t i = 0; i < 4; i++) {
-        result[i] = hmac[offset + i];
+        result[i] = hmac.at(offset + i);
     }
 
     return result;
@@ -278,5 +279,4 @@ unsigned char *Hotp::dynamicTruncate(const unsigned char *hmac, size_t hmacSize,
 void Hotp::copy(const Hotp &toCopy)
 {
     mHmacToUse = toCopy.mHmacToUse;
-    mShouldDelete = toCopy.mShouldDelete;
 }

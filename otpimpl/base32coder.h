@@ -2,6 +2,7 @@
 #define BASE32CODER_H
 
 #include <string>
+#include "container/bytearray.h"
 
 class Base32Coder
 {
@@ -9,7 +10,7 @@ public:
     Base32Coder();
 
     std::string encode(unsigned char *toEncode, size_t toEncodeSize);
-    unsigned char *decode(const std::string &toDecode, size_t &decodedSize);
+    ByteArray decode(const ByteArray &toDecode);
 
     static bool isBase32Encoded(const std::string &toValidate);
 

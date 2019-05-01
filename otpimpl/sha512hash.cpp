@@ -8,23 +8,20 @@ extern "C" {
 
 #include <cstring>
 
-std::shared_ptr<ByteArray> Sha512Hash::hash(unsigned char *bytes, size_t bytesLength)
+ByteArray Sha512Hash::hash(const ByteArray &toHash)
 {
     sha512_ctx ctx;
+    unsigned char hashResult[64];
 
-    if (bytes == nullptr) {
-        // Nothing we can do.
-        return nullptr;
-    }
+    memset(&hashResult, 0x00, sizeof(hashResult));
 
-    memset(&mHashResult, 0x00, sizeof(mHashResult));
-
-    // Test string is "abc".
     sha512_init(&ctx);
-    sha512_update(&ctx, bytes, bytesLength);
-    sha512_final(&ctx, (unsigned char *)&mHashResult);
+    sha512_update(&ctx, toHash.toCharArrayPtr(), toHash.toCharArraySize());
+    sha512_final(&ctx, (unsigned char *)&hashResult);
 
-    return reinterpret_cast<unsigned char *>(&mHashResult);
+    mHashResult.fromCharArray(hashResult, sizeof(hashResult));
+
+    return mHashResult;
 }
 
 size_t Sha512Hash::hashResultLength()

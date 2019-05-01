@@ -13,14 +13,11 @@ HexDecoder::HexDecoder()
  * @brief HexDecoder::decode - Decode a hex string that may contain spaces, colons, dashes, periods, or a 0x prefix
  *      between the octets.
  *
- * @param hexString - A string that contains the string representation of the hex we want to convert.
- * @param resultSize [OUT] - If this function does *NOT* return nullptr, this variable will contain the number of
- *      types that were returned.
+ * @param hexData - A string that contains the string representation of the hex we want to convert.
  *
- * @return unsigned char pointer to the converted hex data.  If the input string is empty, or an error occurrs,
- *      nullptr will be returned.
+ * @return ByteArray containing the decoded value.  On error, the ByteArray will be empty.
  */
-unsigned char *HexDecoder::decode(const std::string &hexString, size_t &resultSize)
+ByteArray HexDecoder::decode(const ByteArray &hexData)
 {
     std::string smashed;
     unsigned char *result;
@@ -29,13 +26,13 @@ unsigned char *HexDecoder::decode(const std::string &hexString, size_t &resultSi
     resultSize = 0;
 
     // If the string is empty, return nullptr.
-    if (hexString.empty()) {
+    if (hexData.empty()) {
         return nullptr;
     }
 
     // Need to replace the spaces, colons, dashes, or periods in the string to get a single, undecorated, hex
     // string.
-    smashed = cleanup(hexString);
+    smashed = cleanup(hexData);
 
     // We should now have a string that is all hex characters.  So, the length should be divisible by 2.  Make
     // sure it is.

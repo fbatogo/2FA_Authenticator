@@ -115,11 +115,10 @@ std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
  * @brief Base32Coder::decode - Decode a base 32 encoded string.
  *
  * @param toDecode - The string that we want to decode.
- * @param decodedSize - The size of the data pointed to by the returned pointer.
  *
  * @return unsigned char pointer to the decoded data.
  */
-unsigned char *Base32Coder::decode(const std::string &toDecode, size_t &decodedSize)
+ByteArray Base32Coder::decode(const ByteArray &toDecode)
 {
     unsigned char *result;
     size_t blocks;
@@ -133,7 +132,7 @@ unsigned char *Base32Coder::decode(const std::string &toDecode, size_t &decodedS
     }
 
     // It should be evenly divisible by 8, if not, it isn't a valid string.
-    if ((toDecode.length() % 8) != 0) {
+    if ((toDecode.size() % 8) != 0) {
         // Return a null pointer.
         return nullptr;
     }

@@ -48,8 +48,7 @@ void Totp::setHmac(Hmac *hmacToUse, bool takeOwnership)
 /**
  * @brief Totp::calculate - Calculate a TOTP value.
  *
- * @param key - The key to use when calculating the TOTP value.
- * @param keyLength - The length of the key to use when calculating the TOTP value.
+ * @param decodedSecret - The key to use when calculating the TOTP value.
  * @param utcTime - The current time in the UTC time zone.
  * @param timeStep - The length of time that the TOTP should be valid for.  (Should usually be
  *      left at the default of 30.)
@@ -58,7 +57,7 @@ void Totp::setHmac(Hmac *hmacToUse, bool takeOwnership)
  *
  * @return std::string containing the OTP value.  On error, an empty string is returned.
  */
-std::string Totp::calculate(const unsigned char *key, size_t keyLength, uint64_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
+std::string Totp::calculate(const ByteArray &decodedSecret, uint64_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
 {
     Hotp hotp(mHmacToUse);
     uint64_t calcTime;
@@ -72,7 +71,7 @@ std::string Totp::calculate(const unsigned char *key, size_t keyLength, uint64_t
     calcTime = (utcTime - initialCounter)/timeStep;
 
     // Then, calculate the HOTP using the key, and the calcTime.
-    return hotp.calculate(key, keyLength, calcTime, digits);
+    return hotp.calculate(decodedSecret, keyLength, calcTime, digits);
 }
 
 Totp &Totp::operator=(const Totp &toCopy)

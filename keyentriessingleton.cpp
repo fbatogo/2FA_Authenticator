@@ -83,6 +83,66 @@ void KeyEntriesSingleton::clear()
 }
 
 /**
+ * @brief KeyEntriesSingleton::entryParametersAreValid - Verify that the parameters provided for use in the add and update entry calls are valid.
+ *
+ * @param identifier
+ * @param secret
+ * @param keyType
+ * @param otpType
+ * @param numberCount
+ * @param algorithm
+ * @param period
+ * @param offset
+ *
+ * @return true if the parameters are all valid.  false if any aren't.
+ */
+bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
+{
+    // Validate inputs.
+    if (identifier.isEmpty()) {
+        LOG_ERROR("Unable to " + addUpdate + " a key with an empty identifier!");
+        return false;
+    }
+
+    if (secret.isEmpty()) {
+        LOG_ERROR("Unable to " + addUpdate + " a key with an empty secret value!");
+        return false;
+    }
+
+    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
+        LOG_ERROR("Unable to " + addUpdate + " a key with an invalid key encoding!");
+        return false;
+    }
+
+    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
+        LOG_ERROR("Unable to " + addUpdate + " a key with an invalid OTP type!");
+        return false;
+    }
+
+    if ((numberCount < 6) || (numberCount > 8)) {
+        LOG_ERROR("Unable to " + addUpdate + " a key with a number count that isn't 6 through 8!");
+        return false;
+    }
+
+    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
+        LOG_ERROR("Unable to use an algorithm with an invalid type!");
+        return false;
+    }
+
+    if (period < 0) {
+        LOG_ERROR("Unable to use a period length less than 0!");
+        return false;
+    }
+
+    if (offset < 0) {
+        LOG_ERROR("Unable to use an offset value less than 0!");
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief KeyEntriesSingleton::populateEntries - Read all of the known KeyEntry objects from
  *      key storage, and store them in memory in this object.
  *
@@ -111,12 +171,11 @@ bool KeyEntriesSingleton::populateEntries()
 
     // Calculate the codes to show.
     result = calculateEntries();
-    if (result) {
-        // Start the update timer.
-        if (!updateTimer()) {
-            LOG_ERROR("Failed to start the OTP update timer!");
-            return false;
-        }
+
+    // Start the update timer.
+    if ((result) && (!updateTimer())) {
+        LOG_ERROR("Failed to start the OTP update timer!");
+        return false;
     }
 
     return result;
@@ -155,44 +214,7 @@ bool KeyEntriesSingleton::addKeyEntry(QString identifier, QString secret, int ke
 {
     KeyEntry toAdd;
 
-    // Validate inputs.
-    if (identifier.isEmpty()) {
-        LOG_ERROR("Unable to add a key with an empty identifier!");
-        return false;
-    }
-
-    if (secret.isEmpty()) {
-        LOG_ERROR("Unable to add a key with an empty secret value!");
-        return false;
-    }
-
-    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
-        LOG_ERROR("Unable to add a key with an invalid key encoding!");
-        return false;
-    }
-
-    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
-        LOG_ERROR("Unable to add a key with an invalid OTP type!");
-        return false;
-    }
-
-    if ((numberCount < 6) || (numberCount > 8)) {
-        LOG_ERROR("Unable to add a key with a number count that isn't 6 through 8!");
-        return false;
-    }
-
-    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
-        LOG_ERROR("Unable to use an algorithm with an invalid type!");
-        return false;
-    }
-
-    if (period < 0) {
-        LOG_ERROR("Unable to use a period length less than 0!");
-        return false;
-    }
-
-    if (offset < 0) {
-        LOG_ERROR("Unable to use an offset value less than 0!");
+    if (!entryParametersAreValid("add", identifier, secret, keyType, otpType, numberCount, algorithm, period, offset)) {
         return false;
     }
 
@@ -270,44 +292,7 @@ bool KeyEntriesSingleton::updateKeyEntry(KeyEntry *currentEntry, QString identif
 {
     KeyEntry toUpdate;
 
-    // Validate inputs.
-    if (identifier.isEmpty()) {
-        LOG_ERROR("Unable to update a key with an empty identifier!");
-        return false;
-    }
-
-    if (secret.isEmpty()) {
-        LOG_ERROR("Unable to update a key with an empty secret value!");
-        return false;
-    }
-
-    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
-        LOG_ERROR("Unable to update a key with an invalid key encoding!");
-        return false;
-    }
-
-    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
-        LOG_ERROR("Unable to update a key with an invalid OTP type!");
-        return false;
-    }
-
-    if ((numberCount < 6) || (numberCount > 8)) {
-        LOG_ERROR("Unable to update a key with a number count that isn't 6 through 8!");
-        return false;
-    }
-
-    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
-        LOG_ERROR("Unable to use an algorithm with an invalid type!");
-        return false;
-    }
-
-    if (period < 0) {
-        LOG_ERROR("Unable to use a period length less than 0!");
-        return false;
-    }
-
-    if (offset < 0) {
-        LOG_ERROR("Unable to use an offset value less than 0!");
+    if (!entryParametersAreValid("update", identifier, secret, keyType, otpType, numberCount, algorithm, period, offset)) {
         return false;
     }
 

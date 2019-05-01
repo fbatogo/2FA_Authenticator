@@ -13,23 +13,25 @@ public:
     ByteArray();
     ByteArray(const char *arrayToCopy, size_t length = 0);
     explicit ByteArray(const std::string &stringToCopy);
-    ByteArray(ByteArray &toCopy);
+    ByteArray(const ByteArray &toCopy);
     ~ByteArray();
 
     void clear();
+    bool empty() const;
 
-    char at(size_t idx);
-    size_t size();
+    char at(size_t idx) const;
+    size_t size() const;
 
     void fromStdString(const std::string &stringToCopy);
     void fromCharArray(const char *arrayToCopy, size_t length = 0);
+    void fromUCharArray(const unsigned char *arrayToCopy, size_t length = 0);
 
-    std::string toString();
-    char *toCharArrayPtr() const;
-    size_t toCharArraySize() const;
+    std::string toString() const;
+    const char *toCharArrayPtr() const;
+    const unsigned char *toUCharArrayPtr() const;
 
     // Assignment operators.
-    ByteArray &operator=(ByteArray &toCopy);
+    ByteArray &operator=(const ByteArray &toCopy);
     ByteArray &operator=(const std::string &toCopy);
 
     // Comparison operators.
@@ -38,7 +40,7 @@ public:
 
 private:
 
-    char *mByteArray;
+    unsigned char *mByteArray;
     size_t mByteArrayLength;
 };
 

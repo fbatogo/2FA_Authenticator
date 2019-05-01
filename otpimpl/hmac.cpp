@@ -52,7 +52,7 @@ void Hmac::setHashType(const std::shared_ptr<HashTypeBase> &hashType)
  * @return unsigned char * containing the calculated HMAC value.  On error, nullptr will be
  *      returned.
  */
-std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key, const std::shared_ptr<ByteArray> &data)
+std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray &data)
 {
     ByteArray keyIpad;
     size_t keyIpadLength;
@@ -64,7 +64,7 @@ std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key
     size_t keyLength;
 
     // Validate inputs.
-    if ((key == nullptr) || (data == nullptr)) {
+    if (key.empty() || data.empty()) {
         // Nothing we can do.
         LOG_ERROR("Either the key or data block provided to HMAC was NULL!");
         return nullptr;
@@ -154,7 +154,7 @@ std::shared_ptr<ByteArray> Hmac::calculate(const std::shared_ptr<ByteArray> &key
     mHashResult = nullptr;
 
     // Store the hash result.
-    mHashResult->fromCharArray(static_cast<char *>(result), mHashType->hashResultLength());
+    mHashResult->fromUCharArray(result, mHashType->hashResultLength());
 
     // And, return the result.
     return mHashResult;

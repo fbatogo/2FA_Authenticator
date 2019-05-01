@@ -16,7 +16,7 @@ public:
 
     void setHmac(Hmac *hmacToUse, bool takeOwnership = false);
 
-    std::string calculate(const unsigned char *key, size_t keyLength, uint64_t utcTime, size_t timeStep = 30, size_t digits = 6, uint64_t initialCounter = 0);
+    std::string calculate(const ByteArray &decodedSecret, uint64_t utcTime, size_t timeStep = 30, size_t digits = 6, uint64_t initialCounter = 0);
 
     Totp& operator=(const Totp& toCopy);
 

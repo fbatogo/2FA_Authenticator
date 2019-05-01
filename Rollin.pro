@@ -27,9 +27,11 @@ contains(QT, testlib) {
     # Make sure we build against the QTest library.
     CONFIG += qtestlib
 
-    QMAKE_CFLAGS += -ftest-coverage -fprofile-arcs
-    QMAKE_CXXFLAGS += -ftest-coverage -fprofile-arcs
-    QMAKE_LFLAGS += -ftest-coverage -fprofile-arcs
+    linux {
+        QMAKE_CFLAGS += -ftest-coverage -fprofile-arcs
+        QMAKE_CXXFLAGS += -ftest-coverage -fprofile-arcs
+        QMAKE_LFLAGS += -ftest-coverage -fprofile-arcs
+    }
 
     # Include our test runner/helper.
     include(tests/QtTestRunner/QtTestRunner.pri)

@@ -46,6 +46,7 @@ private slots:
 private:
     explicit KeyEntriesSingleton(QObject *parent = nullptr);
 
+    bool entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
     bool populateEntries();
     int indexFromIdentifierInMemory(const QString &identifier);
     KeyEntry *fromIdentifierInMemory(const QString &identifier);

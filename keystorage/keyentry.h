@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include "container/bytearray.h"
 
 const size_t KEYENTRY_KEYTYPE_HEX=0;
 const size_t KEYENTRY_KEYTYPE_BASE32=1;
@@ -25,7 +26,7 @@ class KeyEntry : public QObject
     // Values used to store data about the key.
     Q_PROPERTY(bool mValid READ valid)
     Q_PROPERTY(QString mIdentifier READ identifier WRITE setIdentifier NOTIFY identifierChanged)
-    Q_PROPERTY(QString mSecret READ secret WRITE setSecret NOTIFY secretChanged)
+    Q_PROPERTY(ByteArray mSecret READ secret WRITE setSecret NOTIFY secretChanged)
     Q_PROPERTY(int mKeyType READ keyType WRITE setKeyType NOTIFY keyTypeChanged)
     Q_PROPERTY(int mOtpType READ otpType WRITE otpType NOTIFY otpTypeChanged)
     Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount NOTIFY outNumberCountChanged)
@@ -58,8 +59,8 @@ public:
     QString identifier() const;
     void setIdentifier(const QString &newvalue);
 
-    QString secret() const;
-    void setSecret(const QString &newvalue);
+    const ByteArray &secret() const;
+    void setSecret(const ByteArray &newvalue);
 
     int keyType() const;
     void keyType(int &value);
@@ -107,9 +108,6 @@ public:
     bool codeValid() const;
     void setCodeValid(bool newvalue);
 
-    // Copy all of the values from another KeyEntry object.
-    void copyFromObject(const KeyEntry &toCopy);
-
     // Utility calls.
     std::string toString();
 
@@ -133,11 +131,14 @@ signals:
     void invalidReasonChanged();
 
 private:
+    // Copy all of the values from another KeyEntry object.
+    void copyFromObject(const KeyEntry &toCopy);
+
     std::string boolToString(bool value);
 
     bool mValid;
     QString mIdentifier;
-    QString mSecret;
+    ByteArray mSecret;
     int mKeyType;
     int mOtpType;
     int mOutNumberCount;

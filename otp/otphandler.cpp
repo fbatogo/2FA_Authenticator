@@ -25,8 +25,7 @@ OtpHandler::OtpHandler()
  */
 void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
 {
-    unsigned char *dSecret;
-    size_t dSize;
+    ByteArray dSecret;
     QString calculatedCode;
 
     if (keydata == nullptr) {
@@ -48,7 +47,7 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
     }
 
     // Start by converting the secret to the correct format for us to use.
-    if (!decodeSecret((*keydata), &dSecret, &dSize)) {
+    if (!decodeSecret((*keydata), dSecret)) {
         LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata->identifier());
 
         // Set the invalid reason, and flag the code as invalid.
@@ -58,11 +57,9 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
     }
 
     // Calculate the OTP code.
-    calculatedCode = calculateCode((*keydata), dSecret, dSize);
+    calculatedCode = calculateCode((*keydata), dSecret);
 
-    // Free the memory from dSecret before checking the result.
-    free(dSecret);
-    dSecret = nullptr;
+    dSecret.clear();
 
     if (calculatedCode.isEmpty()) {
         LOG_ERROR("Unable to calculate the OTP value for identifier : " + keydata->identifier());
@@ -88,20 +85,20 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
  *
  * @param keydata - A KeyEntry object that contains the secret value we want to
  *      decode.
+ * @param decodedSecret[OUT] - The secret value in its cleartext format.
  *
- * @return QString containing the decoded key value.  On failure, an empty string
- *      will be returned.
+ * @return bool containing true if the secret was decoded.  false on error.
  */
-bool OtpHandler::decodeSecret(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize)
+bool OtpHandler::decodeSecret(const KeyEntry &keydata, ByteArray &decodedSecret)
 {
     // Figure out what type of encoding we have, and make the correct call to
     // handle it.
     switch (keydata.keyType()) {
     case KEYENTRY_KEYTYPE_BASE32:
-        return decodeBase32Key(keydata, decodedSecret, decodedSize);
+        return decodeBase32Key(keydata, decodedSecret);
 
     case KEYENTRY_KEYTYPE_HEX:
-        return decodeHexKey(keydata, decodedSecret, decodedSize);
+        return decodeHexKey(keydata, decodedSecret);
     }
 
     // If we get here, then we don't know how to decode the key type.
@@ -115,16 +112,15 @@ bool OtpHandler::decodeSecret(const KeyEntry &keydata, unsigned char **decodedSe
  *
  * @param keydata - A KeyEntry object that contains the information for the secret that
  *      we want to decode.
- * @param[OUT] decodedSecret - The decoded secret value.
- * @param[OUT] decodedSize - The size of the decoded secret value.
+ * @param decodedSecret[OUT] - The decoded secret value.
  *
  * @return bool indicating if the key was decoded properly.
  */
-bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize)
+bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, ByteArray &decodedSecret)
 {
     Base32Coder decode;
 
-    (*decodedSecret) = decode.decode(keydata.secret().toStdString(), (*decodedSize));
+    decodedSecret = decode.decode(keydata.secret());
 
     return true;
 }
@@ -134,16 +130,15 @@ bool OtpHandler::decodeBase32Key(const KeyEntry &keydata, unsigned char **decode
  *
  * @param keydata - A keyEntry object that contains the information for the secret that
  *      we want to decode.
- * @param decodedScret - The decoded secret value.
- * @param deciodedSize - The size of the decoded secret value.
+ * @param decodedScret[OUT] - The decoded secret value.
  *
  * @return bool indicating if the key was decoded properly.
  */
-bool OtpHandler::decodeHexKey(const KeyEntry &keydata, unsigned char **decodedSecret, size_t *decodedSize)
+bool OtpHandler::decodeHexKey(const KeyEntry &keydata, ByteArray &decodedSecret)
 {
     HexDecoder decode;
 
-    (*decodedSecret) = decode.decode(keydata.secret().toStdString(), (*decodedSize));
+    decodedSecret = decode.decode(keydata.secret());
 
     return true;
 }
@@ -153,23 +148,20 @@ bool OtpHandler::decodeHexKey(const KeyEntry &keydata, unsigned char **decodedSe
  *      in the KeyEntry provided, and the decoded secret value.
  *
  * @param keydata - The KeyEntry to use to calculate the OTP.
- * @param decodedSecret - The secret value that should be used to calculate the OTP.
- * @param decodedSize - The size of the data pointed to by decodedSecret.
+ * @param decodedSecret[OUT] - The secret value that should be used to calculate the OTP.
  *
  * @return QString containing the calculated OTP.  On failure, an empty string will
  *      be returned.
  */
-QString OtpHandler::calculateCode(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
+QString OtpHandler::calculateCode(const KeyEntry &keydata, const ByteArray &decodedSecret)
 {
-    QString temp;
-
     // Figure out which type of OTP we need to calculate.
     switch (keydata.otpType()) {
     case KEYENTRY_OTPTYPE_TOTP:
-        return calculateTotp(keydata, decodedSecret, decodedSize);
+        return calculateTotp(keydata, decodedSecret);
 
     case KEYENTRY_OTPTYPE_HOTP:
-        return calculateHotp(keydata, decodedSecret, decodedSize);
+        return calculateHotp(keydata, decodedSecret);
     }
 
     // If we get here, then we don't know the OTP type to generate.
@@ -184,12 +176,11 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, const unsigned char *
  *      to calculate a TOTP value.
  * @param decodedSecret - The decoded secret value to use to calculate the
  *      TOTP value.
- * @param decodedSize - The size of the data pointed to by decodedSecret.
  *
  * @return QString containing the calculated TOTP.  On error, an empty
  *      string will be returned.
  */
-QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
+QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &decodedSecret)
 {
     time_t now;
     std::string otp;
@@ -226,7 +217,7 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
     now = time(nullptr);
 
     // Calculate the TOTP with HMAC-SHA1
-    otp = totp.calculate(decodedSecret, decodedSize, now, keydata.timeStep(), keydata.outNumberCount());
+    otp = totp.calculate(decodedSecret, now, keydata.timeStep(), keydata.outNumberCount());
 
     // Return the calculated value.
     return QString::fromStdString(otp);
@@ -239,12 +230,11 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const unsigned char *
  *      to calculate an HOTP value.
  * @param decodedSecret - The decoded secret value to use to calculate the
  *      HOTP value.
- * @param decodedSize - The size of the data pointed to by decodedSecret.
  *
  * @return QString containing the calculated HOTP.  On error, an empty
  *      string will be returned.
  */
-QString OtpHandler::calculateHotp(const KeyEntry &keydata, const unsigned char *decodedSecret, size_t decodedSize)
+QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret)
 {
     std::string otp;
     Hotp hotp;
@@ -279,7 +269,7 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const unsigned char *
     hotp.setHmac(hmac);
 
 
-    otp = hotp.calculate(decodedSecret, decodedSize, keydata.hotpCounter(), keydata.outNumberCount());
+    otp = hotp.calculate(decodedSecret, keydata.hotpCounter(), keydata.outNumberCount());
 
     return QString::fromStdString(otp);
 }

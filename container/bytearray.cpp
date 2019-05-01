@@ -37,7 +37,7 @@ ByteArray::ByteArray(const std::string &stringToCopy)
     fromStdString(stringToCopy);
 }
 
-ByteArray::ByteArray(ByteArray &toCopy)
+ByteArray::ByteArray(const ByteArray &toCopy)
 {
     (*this) = toCopy;
 }
@@ -63,6 +63,16 @@ void ByteArray::clear()
 }
 
 /**
+ * @brief ByteArray::empty - Return true if the data contained in this object is "empty".
+ *
+ * @return true if this object is empty.  false if not.
+ */
+bool ByteArray::empty() const
+{
+    return (nullptr == mByteArray);
+}
+
+/**
  * @brief ByteArray::at - Return the character at the specified index.
  *
  * @param idx - The index to get the character from.
@@ -71,7 +81,7 @@ void ByteArray::clear()
  *      the length of the array, or if the array isn't defined, a null character (0x00)
  *      is returned.
  */
-char ByteArray::at(size_t idx)
+char ByteArray::at(size_t idx) const
 {
     if ((nullptr == mByteArray) || (idx > mByteArrayLength)) {
         // Return the null byte.
@@ -89,7 +99,7 @@ char ByteArray::at(size_t idx)
  * @return size_t containing the length of the byte array currently stored in this
  *      object.
  */
-size_t ByteArray::size()
+size_t ByteArray::size() const
 {
     return mByteArrayLength;
 }
@@ -105,8 +115,7 @@ void ByteArray::fromStdString(const std::string &stringToCopy)
     clear();
 
     // Copy the data, and length from the string.
-    mByteArray = strdup(stringToCopy.c_str());
-    mByteArrayLength = stringToCopy.length();
+    fromCharArray(stringToCopy.c_str(), stringToCopy.length());
 }
 
 /**
@@ -133,7 +142,7 @@ void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 
     // Allocate the memory we need to store the array, plus one extra character to be
     // sure we pick up a null character.
-    mByteArray = new char[mByteArrayLength + 1];
+    mByteArray = new unsigned char[mByteArrayLength + 1];
     if (nullptr == mByteArray) {
         // Couldn't allocate memory, set everything to 0 and null.
         mByteArray = nullptr;
@@ -153,14 +162,14 @@ void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
  *
  * @return std::string containing the data from the byte array stored in this object.
  */
-std::string ByteArray::toString()
+std::string ByteArray::toString() const
 {
     if (nullptr == mByteArray) {
         // Return an empty string.
         return "";
     }
 
-    return std::string(mByteArray, mByteArrayLength);
+    return std::string(toCharArrayPtr(), size());
 }
 
 /**
@@ -169,20 +178,20 @@ std::string ByteArray::toString()
  *
  * @return char pointer to the data stored in this object.
  */
-char *ByteArray::toCharArrayPtr() const
+const char *ByteArray::toCharArrayPtr() const
 {
-    return mByteArray;
+    return reinterpret_cast<char *>(mByteArray);
 }
 
 /**
- * @brief ByteArray::toCharSize - Return the length of the byte array buffer this
- *      object contains.
+ * @brief ByteArray::toUCharArrayPtr - Return a pointer to an unsigned char byte array using the
+ *      data stored in this object.
  *
- * @return size_t containing the length of the byte array stored in this object.
+ * @return unsigned char pointer to the data stored in this object.
  */
-size_t ByteArray::toCharArraySize() const
+const unsigned char *ByteArray::toUCharArrayPtr() const
 {
-    return mByteArrayLength;
+    return mByteArray;
 }
 
 /**
@@ -193,13 +202,13 @@ size_t ByteArray::toCharArraySize() const
  *
  * @return ByteArray with the contents copied.
  */
-ByteArray &ByteArray::operator=(ByteArray &toCopy)
+ByteArray &ByteArray::operator=(const ByteArray &toCopy)
 {
     if (this == &toCopy) {
         return (*this);
     }
 
-    fromCharArray(toCopy.mByteArray, toCopy.mByteArrayLength);
+    fromUCharArray(toCopy.mByteArray, toCopy.mByteArrayLength);
 
     return (*this);
 }
