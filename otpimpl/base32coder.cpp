@@ -120,7 +120,7 @@ std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
  */
 ByteArray Base32Coder::decode(const ByteArray &toDecode)
 {
-    unsigned char *result;
+    ByteArray result;
     size_t blocks;
     size_t decodedSize;
 
@@ -128,6 +128,8 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
         // Return an empty ByteArray.
         return ByteArray();
     }
+
+    result.clear();
 
     // It should be evenly divisible by 8, if not, it isn't a valid string.
     if ((toDecode.size() % 8) != 0) {
@@ -153,11 +155,7 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
         }
     }
 
-    // Free the memory we used.
-    free(bytesToDecode);
-    bytesToDecode = nullptr;
-
-    return result;
+   return result;
 }
 
 /**
@@ -201,7 +199,16 @@ bool Base32Coder::isBase32Encoded(const std::string &toValidate)
     return true;
 }
 
-bool Base32Coder::decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize)
+/**
+ * @brief Base32Coder::decode8Chars - Base32 decode a black of 8 characters.
+ *
+ * @param data - The ByteArray object that contains the data that we want to decode.
+ * @param dataOffset - The offset in to the ByteArray that we want to decode.
+ * @param target[OUT] - The ByteArray object that will have the decoded bytes added to it.
+ *
+ * @return true if the 8 bytes starting at dataOffset were decoded.  false on error.
+ */
+bool Base32Coder::decode8Chars(ByteArray &data, size_t dataOffset, ByteArray &target)
 {
     if ((data == nullptr) || (target == nullptr)) {
         LOG_ERROR("Invalid inputs to decode8Chars!");
