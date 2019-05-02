@@ -55,13 +55,9 @@ void Hmac::setHashType(const std::shared_ptr<HashTypeBase> &hashType)
 std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray &data)
 {
     ByteArray keyIpad;
-    size_t keyIpadLength;
     ByteArray keyOpad;
-    size_t keyOpadLength;
     ByteArray iPadHashed;
-    ByteArray result;
     ByteArray keyToUse;
-    size_t keyLength;
 
     // Validate inputs.
     if (key.empty() || data.empty()) {
@@ -78,10 +74,7 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     }
 
     // Make a copy of our key data.
-    keyToUse = (*key.get());
-
-    // Start by settng the key length to the length of the key data provided.
-    keyLength = keyToUse.size();
+    keyToUse = key;
 
     // Calculate the HMAC over the 'data' by using the formula :
     //    Hash(key XOR opad, Hash(key XOR ipad, data))
@@ -91,70 +84,30 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     if (keyToUse.size() > mHashType->hashBlockLength()) {
         // Create a hash of the key to use.
         keyToUse = mHashType->hash(keyToUse);
-        keyLength = mHashType->hashResultLength();
     }
 
-    // Figure out how much memory each pad will ultimately need.
-    keyIpadLength = mHashType->hashBlockLength() + dataLength;
-    keyOpadLength = mHashType->hashBlockLength() + mHashType->hashResultLength();
-
-    // Allocate the memory for the key XOR i/opad values and the data concatenated together.
-    keyIpad = static_cast<unsigned char *>(calloc(1, keyIpadLength));
-    if (keyIpad == nullptr) {
-        // Failed to allocate memory.
-        LOG_ERROR("Failed to allocate memory to store the key ipad value!");
-        return nullptr;
-    }
-
-    keyOpad = static_cast<unsigned char *>(calloc(1, keyOpadLength));
-    if (keyOpad == nullptr) {
-        // Failed to allocate memory.
-        LOG_ERROR("Failed to allocate memory to store the key opad value!");
-        return nullptr;
-    }
-
-    // Then, copy the key in to the Ipad and Opad buffers.
-    memcpy(keyIpad, keyToUse, keyLength);
-    memcpy(keyOpad, keyToUse, keyLength);
+    // Copy the data from our keyToUse to the Ipad and Opad.
+    keyIpad = keyToUse;
+    keyOpad = keyToUse;
 
     // Iterate the two values, XORing them with 0x36 for the ipad, and
     // 0x5c for the opad.
     for (size_t i = 0; i < mHashType->hashBlockLength(); i++) {
-        keyIpad[i] ^= 0x36;
-        keyOpad[i] ^= 0x5c;
+        keyIpad.setAt(i, (keyIpad.at(i) ^ 0x36));
+        keyOpad.setAt(i, (keyOpad.at(i) ^ 0x5c));
     }
 
     // Then, concatenate the data on to the inner hash value.
-    memcpy(&keyIpad[mHashType->hashBlockLength()], data, dataLength);
+    keyIpad.append(data.toUCharArrayPtr(), data.size());
 
     // Then, perform the inner hash on the data provided.
-    iPadHashed = mHashType->hash(keyIpad, keyIpadLength);
+    iPadHashed = mHashType->hash(keyIpad);
 
     // Then, concatenate the iPadHashed value to the keyOpad value.
-    memcpy(&keyOpad[mHashType->hashBlockLength()], iPadHashed, mHashType->hashResultLength());
+    keyOpad.append(iPadHashed.toUCharArrayPtr(), iPadHashed.size());
 
     // And hash that.
-    result = mHashType->hash(keyOpad, keyOpadLength);
-
-    // Set the result size.
-    resultSize = mHashType->hashResultLength();
-
-    // Free the memory we used.
-    if (keyIpad != nullptr) {
-        free(keyIpad);
-        keyIpad = nullptr;
-    }
-
-    if (keyOpad != nullptr) {
-        free(keyOpad);
-        keyOpad = nullptr;
-    }
-
-    // Clear the hash result.
-    mHashResult = nullptr;
-
-    // Store the hash result.
-    mHashResult->fromUCharArray(result, mHashType->hashResultLength());
+    mHashResult.reset(new ByteArray(mHashType->hash(keyOpad)));
 
     // And, return the result.
     return mHashResult;

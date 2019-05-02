@@ -19,12 +19,18 @@ public:
     void clear();
     bool empty() const;
 
-    char at(size_t idx) const;
+    unsigned char at(size_t idx) const;
+    bool setAt(size_t idx, unsigned char newValue);
+
     size_t size() const;
 
     void fromStdString(const std::string &stringToCopy);
     void fromCharArray(const char *arrayToCopy, size_t length = 0);
     void fromUCharArray(const unsigned char *arrayToCopy, size_t length = 0);
+
+    void append(const std::string &stringToAppend);
+    void append(const char *arrayToAppend, size_t length = 0);
+    void append(const unsigned char *arrayToAppend, size_t length = 0);
 
     std::string toString() const;
     const char *toCharArrayPtr() const;

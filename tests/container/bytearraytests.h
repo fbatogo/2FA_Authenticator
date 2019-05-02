@@ -11,8 +11,10 @@ private slots:
     void toStringTests();
     void emptyStringTests();
     void atTests();
-    void operatorTests();
-    void fromStringTests();
+    void equalityTests();
+    void fromOthersTests();
+    void assignmentTests();
+    void appendTests();
 };
 
 #endif // BYTEARRAYTESTS_H

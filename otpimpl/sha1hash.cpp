@@ -23,7 +23,7 @@ ByteArray Sha1Hash::hash(const ByteArray &toHash)
 
     memset(&mHashResult, 0x00, 20);
 
-    SHA1(reinterpret_cast<char *>(&mHashResult), toHash.toCharArrayPtr(), static_cast<int>(toHash.toCharArraySize()));
+    SHA1(reinterpret_cast<char *>(&mHashResult), toHash.toCharArrayPtr(), static_cast<int>(toHash.size()));
 
     result.fromCharArray(reinterpret_cast<char *>(&mHashResult), 20);
 

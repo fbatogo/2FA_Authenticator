@@ -81,7 +81,7 @@ bool ByteArray::empty() const
  *      the length of the array, or if the array isn't defined, a null character (0x00)
  *      is returned.
  */
-char ByteArray::at(size_t idx) const
+unsigned char ByteArray::at(size_t idx) const
 {
     if ((nullptr == mByteArray) || (idx > mByteArrayLength)) {
         // Return the null byte.
@@ -90,6 +90,26 @@ char ByteArray::at(size_t idx) const
 
     // Otherwise, return the byte at the specified index.
     return mByteArray[idx];
+}
+
+/**
+ * @brief ByteArray::setAt - Set the byte at the specified index to the new value
+ *      provided.
+ *
+ * @param idx - The index in to the data that we want to update the byte value for.
+ * @param newValue - The new value to set the byte at the specified index to.
+ *
+ * @return true if the byte was updated.  false on error.
+ */
+bool ByteArray::setAt(size_t idx, unsigned char newValue)
+{
+    if ((idx >= mByteArrayLength) || (nullptr == mByteArray)) {
+        // Can't add.  Only update.
+        return false;
+    }
+
+    // Update the value.
+    mByteArray[idx] = newValue;
 }
 
 /**
@@ -155,6 +175,100 @@ void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 
     // Then, copy the data from arrayToCopy in to our target array.
     memcpy(mByteArray, arrayToCopy, mByteArrayLength);
+}
+
+/**
+ * @brief ByteArray::fromUCharArray - Take the unsigned char pointer to data and set
+ *      it as the data stored in this object.
+ *
+ * @param arrayToCopy - An unsigned char pointer to the data that we want to store in
+ *      this object.
+ * @param length - (Optional) If arrayToCopy is a null terminated string, then
+ *      this value can be 0.  Otherwise, it should be the length of the data that
+ *      we want to copy from arrayToCopy.
+ */
+void ByteArray::fromUCharArray(const unsigned char *arrayToCopy, size_t length)
+{
+    fromCharArray(reinterpret_cast<const char *>(arrayToCopy), length);
+}
+
+/**
+ * @brief ByteArray::append - Append the data from a standard string to the existing
+ *      data in this object.
+ *
+ * @param stringToAppend - The string that we want to append to the data already in
+ *      this object.
+ */
+void ByteArray::append(const std::string &stringToAppend)
+{
+    append(stringToAppend.c_str());
+}
+
+/**
+ * @brief ByteArray::append - Append the data from a character array (C string) to
+ *      the existing data in this object.
+ *
+ * @param arrayToAppend - The char * data that we want to append to the data already in
+ *      this object.
+ * @param length - (Optional) If this is set to 0, it is assumed that the data provided
+ *      to append is a null terminated string.  If it is set to something else, that
+ *      number of bytes will be appended to the existing data.
+ */
+void ByteArray::append(const char *arrayToAppend, size_t length)
+{
+    unsigned char *oldData;
+    size_t oldDataLength;
+
+    // Store our old data and old data length for later use.
+    oldData = mByteArray;
+    oldDataLength = mByteArrayLength;
+
+    // If the length is 0, then we are dealing with a null terminated string.  So, figure
+    // out how long the string is.
+    if (0 == length) {
+        length = strlen(arrayToAppend);
+    }
+
+    // Calculate the new length.
+    mByteArrayLength = length + oldDataLength;
+
+    // Allocate the memory we need to store the array, plus one extra character to be
+    // sure we pick up a null character.
+    mByteArray = new unsigned char[mByteArrayLength + 1];
+    if (nullptr == mByteArray) {
+        // Couldn't allocate memory, set everything to 0 and null.
+        mByteArray = nullptr;
+        mByteArrayLength = 0;
+        return;
+    }
+
+    // Zero out the array.
+    memset(mByteArray, 0x00, (mByteArrayLength + 1));
+
+    // Then, copy the old data in to the beginning of the array.
+    memcpy(mByteArray, oldData, oldDataLength);
+
+    // And add the new data right after that.
+    memcpy(&mByteArray[oldDataLength], arrayToAppend, length);
+
+    // Then, clean up the memory from the old data.
+    delete oldData;
+    oldData = nullptr;
+}
+
+/**
+ * @brief ByteArray::append - Append the data from the unsigned character array to
+ *      the existing data in this object.
+ *
+ * @param arrayToAppend - The unsigned char * data that we want to append to the data
+ *      already in this object.
+ * @param length - (Optional) If this is set to 0, it is assumed that the data provided
+ *      to append is a null terminated string.  If it is set to something else, that
+ *      number of bytes will be appended to the existing data.
+ */
+void ByteArray::append(const unsigned char *arrayToAppend, size_t length)
+{
+    append(reinterpret_cast<const char *>(arrayToAppend), length);
 }
 
 /**

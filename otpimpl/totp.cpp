@@ -71,7 +71,7 @@ std::string Totp::calculate(const ByteArray &decodedSecret, uint64_t utcTime, si
     calcTime = (utcTime - initialCounter)/timeStep;
 
     // Then, calculate the HOTP using the key, and the calcTime.
-    return hotp.calculate(decodedSecret, keyLength, calcTime, digits);
+    return hotp.calculate(decodedSecret, calcTime, digits);
 }
 
 Totp &Totp::operator=(const Totp &toCopy)
