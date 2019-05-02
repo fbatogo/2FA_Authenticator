@@ -10,14 +10,17 @@
 class ByteArray
 {
 public:
-    ByteArray();
-    ByteArray(const char *arrayToCopy, size_t length = 0);
-    explicit ByteArray(const std::string &stringToCopy);
+    ByteArray(bool zeroOnFree = false);
+    ByteArray(size_t extraAllocationSize, bool zeroOnFree = false);
+    ByteArray(const char *arrayToCopy, size_t length = 0, bool zeroOnFree = false);
+    ByteArray(const std::string &stringToCopy, bool zeroOnFree = false);
     ByteArray(const ByteArray &toCopy);
     ~ByteArray();
 
     void clear();
     bool empty() const;
+
+    void setZeroOnFree(bool newValue);
 
     unsigned char at(size_t idx) const;
     bool setAt(size_t idx, unsigned char newValue);
@@ -31,6 +34,7 @@ public:
     void append(const std::string &stringToAppend);
     void append(const char *arrayToAppend, size_t length = 0);
     void append(const unsigned char *arrayToAppend, size_t length = 0);
+    void append(const char charToAppend);
 
     std::string toString() const;
     const char *toCharArrayPtr() const;
@@ -45,9 +49,16 @@ public:
     bool operator!=(ByteArray &toCompare);
 
 private:
+    bool reallocateBuffer(size_t newSize);
+    bool copyData(unsigned char *toCopyIn, size_t length);
+    bool appendData(unsigned char *toAppend, size_t length);
+    bool appendByte(unsigned char toAppend);
 
     unsigned char *mByteArray;
+    size_t mBufferAllocated;
     size_t mByteArrayLength;
+    size_t mExtraAllocationSize;
+    bool mZeroOnFree;
 };
 
 #endif // BYTEARRAY_H

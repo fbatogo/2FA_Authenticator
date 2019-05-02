@@ -5,7 +5,6 @@
 #include "../otpimpl/hexdecoder.h"
 #include "../otpimpl/totp.h"
 #include "../otpimpl/hotp.h"
-#include "../otpimpl/hmac.h"
 #include "../otpimpl/sha1hash.h"
 #include "../otpimpl/sha256hash.h"
 #include "../otpimpl/sha512hash.h"
@@ -15,7 +14,7 @@
 
 OtpHandler::OtpHandler()
 {
-
+    mHmac.reset(new Hmac());
 }
 
 /**
@@ -185,7 +184,6 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
     time_t now;
     std::string otp;
     Totp totp;
-    Hmac hmac;
     std::shared_ptr<HashTypeBase> hashToUse;
 
     // Figure out what type of hash we should be using.
@@ -208,10 +206,10 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
     }
 
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac.setHashType(hashToUse);
+    mHmac->setHashType(hashToUse);
 
-    // Then, set the HMAC object to use with the calculation, but keep ownership here.
-    totp.setHmac(&hmac, false);
+    // Then, set the HMAC object to use with the calculation.
+    totp.setHmac(mHmac);
 
     // Get the current time, so we can calculate the OTP.
     now = time(nullptr);
@@ -238,7 +236,6 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
 {
     std::string otp;
     Hotp hotp;
-    std::shared_ptr<Hmac> hmac;
     std::shared_ptr<HashTypeBase> hashToUse;
 
     // Figure out what type of hash we should be using.
@@ -260,15 +257,13 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
         return "";
     }
 
-    hmac = std::shared_ptr<Hmac>(new Hmac());
-
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac->setHashType(hashToUse);
+    mHmac->setHashType(hashToUse);
 
-    // Then, set the HMAC object to use with the calculation, but keep ownership here.
-    hotp.setHmac(hmac);
+    // Then, set the HMAC object to use with the calculation.
+    hotp.setHmac(mHmac);
 
-
+    // Calculate the HOTP value.
     otp = hotp.calculate(decodedSecret, keydata.hotpCounter(), keydata.outNumberCount());
 
     return QString::fromStdString(otp);

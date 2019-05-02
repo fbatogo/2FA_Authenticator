@@ -6,7 +6,6 @@
 Totp::Totp()
 {
     mHmacToUse = nullptr;
-    mShouldDelete = false;
 }
 
 Totp::Totp(Totp &toCopy)
@@ -14,10 +13,9 @@ Totp::Totp(Totp &toCopy)
     copy(toCopy);
 }
 
-Totp::Totp(Hmac *hmacToUse, bool shouldDelete)
+Totp::Totp(std::shared_ptr<Hmac> hmacToUse)
 {
     mHmacToUse = hmacToUse;
-    mShouldDelete = shouldDelete;
 }
 
 Totp::~Totp()
@@ -30,11 +28,8 @@ Totp::~Totp()
  *
  * @param hmacToUse - A pointer to the HMAC object that should be used when calculating a
  *      TOTP value.
- * @param takeOwnership - If true, then the object pointed to by hmacToUse will be deleted
- *      when this object is destroyed, and the caller MUST NOT delete it!   If false, the caller
- *      is responsible for deleting the object when it is sure it is no longer in use.
  */
-void Totp::setHmac(Hmac *hmacToUse, bool takeOwnership)
+void Totp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
 {
     // If we are currently set to delete the HMAC object, and we have an HMAC object set,
     // clean it up.
@@ -42,7 +37,6 @@ void Totp::setHmac(Hmac *hmacToUse, bool takeOwnership)
 
     // Set the new values to use.
     mHmacToUse = hmacToUse;
-    mShouldDelete = takeOwnership;
 }
 
 /**
@@ -91,10 +85,6 @@ Totp &Totp::operator=(const Totp &toCopy)
  */
 void Totp::clear()
 {
-    if (mShouldDelete) {
-        delete mHmacToUse;
-    }
-
     mHmacToUse = nullptr;
 }
 
@@ -106,5 +96,4 @@ void Totp::clear()
 void Totp::copy(const Totp &toCopy)
 {
     mHmacToUse = toCopy.mHmacToUse;
-    mShouldDelete = toCopy.mShouldDelete;
 }

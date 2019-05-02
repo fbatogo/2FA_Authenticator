@@ -15,7 +15,7 @@ public:
     static bool isBase32Encoded(const std::string &toValidate);
 
 private:
-    bool decode8Chars(unsigned char *data, size_t dataOffset, unsigned char *target, size_t &decodedSize);
+    bool decode8Chars(ByteArray &data, size_t dataOffset, ByteArray &target);
     unsigned char decodeChar(unsigned char toDecode);
 };
 

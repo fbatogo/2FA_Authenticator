@@ -3,6 +3,7 @@
 
 #include "keystorage/keyentry.h"
 #include "container/bytearray.h"
+#include "../otpimpl/hmac.h"
 
 class OtpHandler
 {
@@ -21,6 +22,9 @@ protected:
     static QString calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
 
     static int getStartTime(int timeStep);
+
+private:
+    static std::shared_ptr<Hmac> mHmac;
 };
 
 #endif // OTPHANDLER_H

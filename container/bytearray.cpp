@@ -6,10 +6,22 @@
 #define strdup  _strdup
 #endif // _WIN32
 
-ByteArray::ByteArray()
+ByteArray::ByteArray(bool zeroOnFree)
 {
     mByteArray = nullptr;
     mByteArrayLength = 0;
+    mBufferAllocated = 0;
+    mExtraAllocationSize = 0;
+    mZeroOnFree = zeroOnFree;
+}
+
+ByteArray::ByteArray(size_t extraAllocationSize, bool zeroOnFree)
+{
+    mByteArray = nullptr;
+    mByteArrayLength = 0;
+    mBufferAllocated = 0;
+    mExtraAllocationSize = extraAllocationSize;
+    mZeroOnFree = zeroOnFree;
 }
 
 /**
@@ -19,19 +31,27 @@ ByteArray::ByteArray()
  * @param arrayToCopy - A pointer to a character array to copy in to this object.
  * @param length - (Optional) The length of the character array pointed to by the
  *      \c arrayToCopy variable.
+ * @param zeroOnFree - If set to true, then memory to be freed will be zeroed
+ *      before being freed.
  */
-ByteArray::ByteArray(const char *arrayToCopy, size_t length)
+ByteArray::ByteArray(const char *arrayToCopy, size_t length, bool zeroOnFree)
 {
     mByteArray = nullptr;
     mByteArrayLength = 0;
+    mBufferAllocated = 0;
+    mZeroOnFree = zeroOnFree;
+    mExtraAllocationSize = 0;
 
     fromCharArray(arrayToCopy, length);
 }
 
-ByteArray::ByteArray(const std::string &stringToCopy)
+ByteArray::ByteArray(const std::string &stringToCopy, bool zeroOnFree)
 {
     mByteArray = nullptr;
     mByteArrayLength = 0;
+    mZeroOnFree = zeroOnFree;
+    mExtraAllocationSize = 0;
+    mBufferAllocated = 0;
 
     // Copy the data, and length from the string.
     fromStdString(stringToCopy);
@@ -60,6 +80,7 @@ void ByteArray::clear()
     }
 
     mByteArrayLength = 0;
+    mBufferAllocated = 0;
 }
 
 /**
@@ -70,6 +91,17 @@ void ByteArray::clear()
 bool ByteArray::empty() const
 {
     return (nullptr == mByteArray);
+}
+
+/**
+ * @brief ByteArray::setZeroOnFree - Change the behavior of freeing memory to either
+ *      just free it, or zero out the current memory and then freeing it.
+ *
+ * @param newValue - The new value for the setting.
+ */
+void ByteArray::setZeroOnFree(bool newValue)
+{
+    mZeroOnFree = newValue;
 }
 
 /**
@@ -149,6 +181,7 @@ void ByteArray::fromStdString(const std::string &stringToCopy)
  */
 void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 {
+    // XXX Change to use copyData().
     // Clean out anything that might be hanging around.
     clear();
 
@@ -216,6 +249,7 @@ void ByteArray::append(const std::string &stringToAppend)
  */
 void ByteArray::append(const char *arrayToAppend, size_t length)
 {
+    // XXX Change to using appendData().
     unsigned char *oldData;
     size_t oldDataLength;
 
@@ -272,6 +306,16 @@ void ByteArray::append(const unsigned char *arrayToAppend, size_t length)
 }
 
 /**
+ * @brief ByteArray::append - Append a single character to the end of our byte array.
+ *
+ * @param charToAppend - The character to append to the data in this object.
+ */
+void ByteArray::append(const char charToAppend)
+{
+    // XXX FINISH!
+}
+
+/**
  * @brief ByteArray::toString - Return the byte array as a standard string.
  *
  * @return std::string containing the data from the byte array stored in this object.
@@ -321,6 +365,9 @@ ByteArray &ByteArray::operator=(const ByteArray &toCopy)
     if (this == &toCopy) {
         return (*this);
     }
+
+    mExtraAllocationSize = toCopy.mExtraAllocationSize;
+    mZeroOnFree = toCopy.mZeroOnFree;
 
     fromUCharArray(toCopy.mByteArray, toCopy.mByteArrayLength);
 
@@ -379,5 +426,38 @@ bool ByteArray::operator==(ByteArray &toCompare)
 bool ByteArray::operator!=(ByteArray &toCompare)
 {
     return !((*this) == toCompare);
+}
+
+/**
+ * @brief ByteArray::reallocateBuffer - Allocate, or reallocate the mByteArray pointer in
+ *      this object that contains the data we are operating on.
+ *
+ * @param newSize - The new size that is NEEDED in the buffer.  If mExtraAllocationSize is
+ *      greater than 0, then the total amount of memory allocated will be this value plus
+ *      mExtraAllocationSize.
+ * @param zero - If true, and a buffer is currently allocated, the currently allocated
+ *      memory will be zeroed out before the memory is freed.  If false, the memory will
+ *      simply be freed.
+ *
+ * @return true if the buffer was allocated.  false on error.
+ */
+bool ByteArray::reallocateBuffer(size_t newSize)
+{
+
+}
+
+bool ByteArray::copyData(unsigned char *toCopyIn, size_t length)
+{
+
+}
+
+bool ByteArray::appendData(unsigned char *toAppend, size_t length)
+{
+
+}
+
+bool ByteArray::appendByte(unsigned char toAppend)
+{
+
 }
 

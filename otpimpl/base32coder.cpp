@@ -122,13 +122,11 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
 {
     unsigned char *result;
     size_t blocks;
-    unsigned char *bytesToDecode;
-
-    decodedSize = 0;
+    size_t decodedSize;
 
     if (toDecode.empty()) {
-        // Return an empty string.
-        return reinterpret_cast<unsigned char *>(strdup(""));
+        // Return an empty ByteArray.
+        return ByteArray();
     }
 
     // It should be evenly divisible by 8, if not, it isn't a valid string.
@@ -137,18 +135,9 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
         return nullptr;
     }
 
-    // Allocate plenty of space. (More than we should need.)
-    result = reinterpret_cast<unsigned char *>(calloc(1, toDecode.length()));
-    if (result == nullptr) {
-        LOG_ERROR("Failed to allocate memory for base32 decoded value!");
-        return nullptr;
-    }
-
     // Figure out how many blocks we have.
-    blocks = toDecode.length() / 8;
+    blocks = toDecode.size() / 8;
 
-    // Get the text in to a bytes to decode buffer.
-    bytesToDecode = reinterpret_cast<unsigned char *>(strdup(toDecode.c_str()));
     decodedSize = 0;
 
     // Iterate each block, converting it.
