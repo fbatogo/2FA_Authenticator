@@ -15,64 +15,44 @@
 void Base32CoderTests::encoderTest1()
 {
     Base32Coder encoder;
-    std::string test;
-    unsigned char *testPtr;
-    std::vector<std::string> clearText;
-    std::vector<std::string> encodedText;
-    std::string encoded;
+    std::vector<ByteArray> clearText;
+    std::vector<ByteArray> encodedText;
+    ByteArray encoded;
 
     clearText = getClearTextTests();
     encodedText = getEncodedTextTests();
 
     for (size_t i = 0; i < clearText.size(); i++) {
-        testPtr = reinterpret_cast<unsigned char *>(strdup(clearText.at(i).c_str()));
-        encoded = encoder.encode(testPtr, clearText.at(i).length());
-        qDebug("Expected : %s    Calculated : %s", encodedText.at(i).c_str(), encoded.c_str());
+        encoded = encoder.encode(clearText.at(i));
+        qDebug("Expected : %s    Calculated : %s", encodedText.at(i).toCharArrayPtr(), encoded.toCharArrayPtr());
         QCOMPARE(encodedText.at(i), encoded);
-        free(testPtr);
     }
 }
 
 void Base32CoderTests::decoderTest1()
 {
     Base32Coder decoder;
-    std::string test;
-    unsigned char *testPtr;
-    size_t testPtrSize;
-    std::vector<std::string> clearText;
-    std::vector<std::string> encodedText;
-    std::string encoded;
-    unsigned char *toCompare;
+    std::vector<ByteArray> clearText;
+    std::vector<ByteArray> encodedText;
+    ByteArray decoded;
 
     clearText = getClearTextTests();
     encodedText = getEncodedTextTests();
 
     for (size_t i = 0; i < clearText.size(); i++) {
-        testPtr = decoder.decode(encodedText.at(i), testPtrSize);
-        toCompare = reinterpret_cast<unsigned char *>(strdup(clearText.at(i).c_str()));
+        decoded = decoder.decode(encodedText.at(i));
 
-        qDebug("%s  Expected : %s", clearText.at(i).c_str(), TestUtils::binaryToString(toCompare, clearText.at(i).length()).c_str());
-        qDebug("%s  Decoded  : %s", clearText.at(i).c_str(), TestUtils::binaryToString(testPtr, testPtrSize).c_str());
+        qDebug("%s  Expected : %s", clearText.at(i).toCharArrayPtr(), TestUtils::binaryToString(clearText.at(i)).c_str());
+        qDebug("%s  Decoded  : %s", clearText.at(i).toCharArrayPtr(), TestUtils::binaryToString(decoded).c_str());
 
-        // The first one we compare is an empty string, so if both have a 0 length, everything is good.
-        if (i != 0) {
-            QVERIFY(memcmp(testPtr, toCompare, testPtrSize) == 0);
-        } else {
-            // Otherwise, the lengths should be 0.
-            if (testPtrSize != 0) {
-                QFAIL("Index 0 wasn't 0 length!\n");
-            }
-        }
-
-        // Clean up.
-        free(testPtr);
-        free(toCompare);
+        // Compare the results.
+        QCOMPARE(clearText, decoded);
     }
 }
 
 void Base32CoderTests::isBase32EncodedTests()
 {
-    std::vector<std::string> toTest;
+    std::vector<ByteArray> toTest;
 
     // Start with valid tests.
     toTest = getEncodedTextTests();
@@ -90,36 +70,36 @@ void Base32CoderTests::isBase32EncodedTests()
     }
 }
 
-std::vector<std::string> Base32CoderTests::getClearTextTests()
+std::vector<ByteArray> Base32CoderTests::getClearTextTests()
 {
-    std::vector<std::string> result;
+    std::vector<ByteArray> result;
 
     result.clear();
-    result.push_back("");
-    result.push_back("f");
-    result.push_back("fo");
-    result.push_back("foo");
-    result.push_back("foob");
-    result.push_back("fooba");
-    result.push_back("foobar");
-    result.push_back("this is a long test for base32 encoding..");
+    result.push_back(ByteArray(""));
+    result.push_back(ByteArray("f"));
+    result.push_back(ByteArray("fo"));
+    result.push_back(ByteArray("foo"));
+    result.push_back(ByteArray("foob"));
+    result.push_back(ByteArray("fooba"));
+    result.push_back(ByteArray("foobar"));
+    result.push_back(ByteArray("this is a long test for base32 encoding.."));
 
     return result;
 }
 
-std::vector<std::string> Base32CoderTests::getEncodedTextTests()
+std::vector<ByteArray> Base32CoderTests::getEncodedTextTests()
 {
-    std::vector<std::string> result;
+    std::vector<ByteArray> result;
 
     result.clear();
-    result.push_back("");
-    result.push_back("MY======");
-    result.push_back("MZXQ====");
-    result.push_back("MZXW6===");
-    result.push_back("MZXW6YQ=");
-    result.push_back("MZXW6YTB");
-    result.push_back("MZXW6YTBOI======");
-    result.push_back("ORUGS4ZANFZSAYJANRXW4ZZAORSXG5BAMZXXEIDCMFZWKMZSEBSW4Y3PMRUW4ZZOFY======");
+    result.push_back(ByteArray(""));
+    result.push_back(ByteArray("MY======"));
+    result.push_back(ByteArray("MZXQ===="));
+    result.push_back(ByteArray("MZXW6==="));
+    result.push_back(ByteArray("MZXW6YQ="));
+    result.push_back(ByteArray("MZXW6YTB"));
+    result.push_back(ByteArray("MZXW6YTBOI======"));
+    result.push_back(ByteArray("ORUGS4ZANFZSAYJANRXW4ZZAORSXG5BAMZXXEIDCMFZWKMZSEBSW4Y3PMRUW4ZZOFY======"));
 
     return result;
 }

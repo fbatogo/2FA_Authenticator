@@ -14,7 +14,7 @@ ByteArray Sha256Hash::hash(const ByteArray &toHash)
     memset(&hashResult, 0x00, sizeof(hashResult));
 
     sha256_init(&ctx);
-    sha256_update(&ctx, reinterpret_cast<unsigned char*>(toHash.toCharArrayPtr()), static_cast<int>(toHash.toCharArraySize()));
+    sha256_update(&ctx, reinterpret_cast<const unsigned char*>(toHash.toCharArrayPtr()), static_cast<int>(toHash.size()));
     sha256_final(&ctx, reinterpret_cast<unsigned char *>(&hashResult));
 
     // Store it in our member variable.

@@ -51,19 +51,17 @@
 void hotpTests::invalidHotpTest()
 {
     Hotp invalidHotp;
-    unsigned char *key;
-
-    // Set the HOTP object to delete the HMAC when the dtor is called, but set
-    // the HMAC object to null to be sure we don't crash.
-    invalidHotp.setHmac(nullptr, true);
+    ByteArray key;
 
     QCOMPARE(invalidHotp.calculate(key, 20, 0, 6), std::string(""));
 }
 
 void hotpTests::hotpTest1()
 {
-    Hotp hotp(new Hmac(new Sha1Hash(), true), true);
-    char *secret;
+    std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
+    std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
+    Hotp hotp(hmacToUse);
+    ByteArray secret("12345678901234567890");
     std::string hotpCalc;
     std::vector<std::string> expectedResults;
 
@@ -81,10 +79,8 @@ void hotpTests::hotpTest1()
     expectedResults.push_back("399871");
     expectedResults.push_back("520489");
 
-    secret = strdup("12345678901234567890");
-
     for (size_t i = 0; i < expectedResults.size(); i++) {
-        hotpCalc = hotp.calculate(reinterpret_cast<unsigned char *>(secret), strlen(secret), i, 6);
+        hotpCalc = hotp.calculate(secret, i, 6);
         if (hotpCalc.empty()) {
             QFAIL("Failed to generate an HOTP value!");
         }
@@ -92,6 +88,4 @@ void hotpTests::hotpTest1()
         qDebug("HOTP calculated value %d : %s ==? %s", i, hotpCalc.c_str(), expectedResults.at(i).c_str());
         QCOMPARE(hotpCalc, expectedResults.at(i));
     }
-
-    free(secret);
 }

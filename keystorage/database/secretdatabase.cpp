@@ -359,7 +359,7 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
 
     // Bind the values provided.
     sqlQuery.bindValue(":identifier", toBind.identifier());
-    sqlQuery.bindValue(":secret", toBind.secret());
+    sqlQuery.bindValue(":secret", QString::fromStdString(toBind.secret().toString()));
     sqlQuery.bindValue(":keyType", toBind.keyType());
     sqlQuery.bindValue(":otpType", toBind.otpType());
     sqlQuery.bindValue(":outNumberCount", toBind.outNumberCount());
@@ -405,7 +405,7 @@ bool SecretDatabase::queryToKeyEntry(const QSqlQuery &query, KeyEntry &result)
         LOG_ERROR("Failed to get the secret from the database query row!");
         success = false;
     } else {
-        result.setSecret(tempStr);
+        result.setSecret(ByteArray(tempStr.toStdString()));
     }
 
     if (!queryEntryToInt(query, "keyType", tempInt)) {

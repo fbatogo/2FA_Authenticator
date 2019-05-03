@@ -158,6 +158,9 @@ void ByteArrayTests::appendTests()
     ByteArray testByteArray("This is some initial text.");
     char *cString;
 
+    // Tell the object to zero the array when freeing memory.
+    testByteArray.setZeroOnFree(true);
+
     // Append an std::string to the end.
     testByteArray.append(std::string(" So is this!"));
 
@@ -178,6 +181,48 @@ void ByteArrayTests::appendTests()
     // Append it as an unsigned char array.
     testByteArray.append(reinterpret_cast<unsigned char *>(cString));
     QCOMPARE("So is this!C style string!C style string!", testByteArray.toString());
+
+    // Append a single character.
+    testByteArray.append('A');
+    QCOMPARE("So is this!C style string!C style string!A", testByteArray.toString());
+
+    // Clean up.
+    free(cString);
+}
+
+void ByteArrayTests::expandedBufferAppendTests()
+{
+    ByteArray testByteArray("This is some initial text.");
+    char *cString;
+
+    // Tell the object to allocate a bunch of extra space. (On the next allocation.)
+    testByteArray.setExtraAllocation(512);
+
+    // Append an std::string to the end.  (This should cause a new allocation, with the extra space.)
+    testByteArray.append(std::string(" So is this!"));
+
+    // Make sure we got the appended data back.
+    QCOMPARE("This is some initial text. So is this!", testByteArray.toString());
+
+    // Clear the string, and append to an empty object.  (This should also cause a new allocation, because we do a clear().)
+    testByteArray.clear();
+    testByteArray.append(std::string("So is this!"));
+    QCOMPARE("So is this!", testByteArray.toString());
+
+    // Allocate a C style string to append.
+    cString = strdup("C style string!");
+
+    // Append data to the existing byte array.  (This should only cause a copy, since the buffer should be large enough to hold it all.)
+    testByteArray.append(cString);
+    QCOMPARE("So is this!C style string!", testByteArray.toString());
+
+    // Append it as an unsigned char array.  (This should also only cause a copy.)
+    testByteArray.append(reinterpret_cast<unsigned char *>(cString));
+    QCOMPARE("So is this!C style string!C style string!", testByteArray.toString());
+
+    // Append a single character.  (This should also only cause a copy.)
+    testByteArray.append('A');
+    QCOMPARE("So is this!C style string!C style string!A", testByteArray.toString());
 
     // Clean up.
     free(cString);

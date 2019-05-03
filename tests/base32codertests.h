@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include "container/bytearray.h"
+
 class Base32CoderTests : public QObject
 {
     Q_OBJECT
@@ -15,8 +17,8 @@ private slots:
     void isBase32EncodedTests();
 
 private:
-    std::vector<std::string> getClearTextTests();
-    std::vector<std::string> getEncodedTextTests();
+    std::vector<ByteArray> getClearTextTests();
+    std::vector<ByteArray> getEncodedTextTests();
 };
 
 //DECLARE_TEST(Base32CoderTests)

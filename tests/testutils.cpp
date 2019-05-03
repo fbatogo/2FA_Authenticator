@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 
-std::string TestUtils::binaryToString(unsigned char *bytes, size_t bytesLength)
+std::string TestUtils::binaryToString(const unsigned char *bytes, size_t bytesLength)
 {
     std::stringstream result;
 
@@ -14,4 +14,14 @@ std::string TestUtils::binaryToString(unsigned char *bytes, size_t bytesLength)
     }
 
     return result.str();
+}
+
+std::string TestUtils::binaryToString(const ByteArray &bytes)
+{
+    return binaryToString(bytes.toUCharArrayPtr(), bytes.size());
+}
+
+std::string TestUtils::binaryToString(const std::shared_ptr<ByteArray> &bytes)
+{
+    return binaryToString((*bytes.get()));
 }

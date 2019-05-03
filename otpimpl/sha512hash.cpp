@@ -16,10 +16,10 @@ ByteArray Sha512Hash::hash(const ByteArray &toHash)
     memset(&hashResult, 0x00, sizeof(hashResult));
 
     sha512_init(&ctx);
-    sha512_update(&ctx, toHash.toCharArrayPtr(), toHash.toCharArraySize());
-    sha512_final(&ctx, (unsigned char *)&hashResult);
+    sha512_update(&ctx, toHash.toUCharArrayPtr(), toHash.size());
+    sha512_final(&ctx, reinterpret_cast<unsigned char *>(&hashResult));
 
-    mHashResult.fromCharArray(hashResult, sizeof(hashResult));
+    mHashResult.fromUCharArray(hashResult, sizeof(hashResult));
 
     return mHashResult;
 }

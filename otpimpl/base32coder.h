@@ -9,13 +9,13 @@ class Base32Coder
 public:
     Base32Coder();
 
-    std::string encode(unsigned char *toEncode, size_t toEncodeSize);
+    ByteArray encode(const ByteArray &toEncode);
     ByteArray decode(const ByteArray &toDecode);
 
-    static bool isBase32Encoded(const std::string &toValidate);
+    static bool isBase32Encoded(const ByteArray &toValidate);
 
 private:
-    bool decode8Chars(ByteArray &data, size_t dataOffset, ByteArray &target);
+    bool decode8Chars(const ByteArray &data, size_t dataOffset, ByteArray &target);
     unsigned char decodeChar(unsigned char toDecode);
 };
 

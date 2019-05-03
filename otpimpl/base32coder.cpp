@@ -16,34 +16,36 @@ Base32Coder::Base32Coder()
  * @brief Base32Coder::encode - Given a binary array of bytes, encode them using base32
  *      encoding.
  *
- * @param toEncode - The byte array to encode.
- * @param toEncodeSize - The length of the byte array.
+ * @param toEncode - The ByteArray to encode.
  *
- * @return std::string containing the base32 encoded string.
+ * @return ByteArray containing the base32 encoded string.
  */
-std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
+ByteArray Base32Coder::encode(const ByteArray &toEncode)
 {
-    std::string result;
+    ByteArray result;
     size_t blocks;
     size_t offset;
     unsigned char b;
 
     // If we have nothing to encode, return an empty string.
-    if (toEncodeSize == 0) {
+    if (toEncode.empty()) {
         return "";
     }
 
     result.clear();
 
-    blocks = (toEncodeSize / 5);
+    blocks = (toEncode.size() / 5);
 
     if (blocks == 0) {
         blocks = 1;
     } else {
-        if ((toEncodeSize % 5) != 0) {
+        if ((toEncode.size() % 5) != 0) {
             blocks++;
         }
     }
+
+    // Set the result to pre-allocate enough space for our data.
+    result.setExtraAllocation((blocks * 10));
 
     for (size_t i = 0; i < blocks; i++) {
         // Calculate the 32bit offset in to the byte string.
@@ -52,56 +54,56 @@ std::string Base32Coder::encode(unsigned char *toEncode, size_t toEncodeSize)
         // Pull out the values that we need to look up.
 
         // Take the first 5 bits.
-        result += base32chars[(toEncode[offset] >> 3)];
+        result.append(base32chars[(toEncode.at(offset) >> 3)]);
 
         // Take the last 3 bits in the first byte, and the first 2 of the 2nd byte.
-        b = ((toEncode[offset] & 0x07)  << 2);
-        if ((offset + 1) < toEncodeSize) {
-            b |= (toEncode[offset+1] >> 6);
+        b = ((toEncode.at(offset) & 0x07)  << 2);
+        if ((offset + 1) < toEncode.size()) {
+            b |= (toEncode.at(offset+1) >> 6);
         }
-        result += base32chars[b];
+        result.append(base32chars[b]);
 
-        if ((offset + 1) >= toEncodeSize) {
-            result += "======";
+        if ((offset + 1) >= toEncode.size()) {
+            result.append("======");
         } else {
             // Then, the 5 bits in the middle of the 2nd byte.
-            result += base32chars[(((toEncode[offset+1] & 0x3f) >> 1))];
+            result.append(base32chars[(((toEncode.at(offset+1) & 0x3f) >> 1))]);
 
             // Then, the last bit of the 2nd byte, and the high nibble of the 3rd.
-            b = ((toEncode[offset+1] & 0x01) << 4);
-            if ((offset + 2) < toEncodeSize) {
-                b |= (toEncode[offset+2] >> 4);
+            b = ((toEncode.at(offset+1) & 0x01) << 4);
+            if ((offset + 2) < toEncode.size()) {
+                b |= (toEncode.at(offset+2) >> 4);
             }
-            result += base32chars[b];
+            result.append(base32chars[b]);
 
-            if ((offset + 2) >= toEncodeSize) {
-                result += "====";
+            if ((offset + 2) >= toEncode.size()) {
+                result.append("====");
             } else {
                 // Then, the low nibble of the 3rd byte, and 1 bit from the 4th.
-                b = ((toEncode[offset+2] & 0x0f) << 1);
-                if ((offset + 3) < toEncodeSize) {
-                    b |= (toEncode[offset+3] >> 7);
+                b = ((toEncode.at(offset+2) & 0x0f) << 1);
+                if ((offset + 3) < toEncode.size()) {
+                    b |= (toEncode.at(offset+3) >> 7);
                 }
-                result += base32chars[b];
+                result.append(base32chars[b]);
 
-                if ((offset + 3) >= toEncodeSize) {
-                    result += "===";
+                if ((offset + 3) >= toEncode.size()) {
+                    result.append("===");
                 } else {
                     // Then the 5 middle-ish bits from the 4th byte.
-                    result += base32chars[(((toEncode[offset+3] & 0x7f) >> 2))];
+                    result.append(base32chars[(((toEncode.at(offset+3) & 0x7f) >> 2))]);
 
                     // Then the low 2 bits of the 4th byte and the high 3 of the 5th.
-                    b = ((toEncode[offset+3] & 0x03) << 3);
-                    if ((offset + 4) < toEncodeSize) {
-                        b |= (toEncode[offset+4] >> 5);
+                    b = ((toEncode.at(offset+3) & 0x03) << 3);
+                    if ((offset + 4) < toEncode.size()) {
+                        b |= (toEncode.at(offset+4) >> 5);
                     }
-                    result += base32chars[b];
+                    result.append(base32chars[b]);
 
-                    if ((offset + 4) >= toEncodeSize) {
-                        result += "=";
+                    if ((offset + 4) >= toEncode.size()) {
+                        result.append('=');
                     } else {
                         // Then, the last 5 bits of the 5th byte.
-                        result += base32chars[(toEncode[offset+4] & 0x1f)];
+                        result.append(base32chars[(toEncode.at(offset+4) & 0x1f)]);
                     }
                 }
             }
@@ -122,7 +124,6 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
 {
     ByteArray result;
     size_t blocks;
-    size_t decodedSize;
 
     if (toDecode.empty()) {
         // Return an empty ByteArray.
@@ -134,24 +135,20 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
     // It should be evenly divisible by 8, if not, it isn't a valid string.
     if ((toDecode.size() % 8) != 0) {
         // Return a null pointer.
-        return nullptr;
+        return ByteArray();
     }
+
+    // Set our result to pre-allocate enough memory to store everything decoded, and then some.
+    result.setExtraAllocation(toDecode.size());
 
     // Figure out how many blocks we have.
     blocks = toDecode.size() / 8;
 
-    decodedSize = 0;
-
     // Iterate each block, converting it.
     for (size_t i = 0; i < blocks; i++) {
-        if (decode8Chars(bytesToDecode, (i * 8), result, decodedSize) == false) {
+        if (decode8Chars(toDecode, (i * 8), result) == false) {
             LOG_ERROR("Failed to decode 8 bytes!");
-
-            // Free the memory we used.
-            free(bytesToDecode);
-            bytesToDecode = nullptr;
-
-            return nullptr;
+            return ByteArray();     // Return an empty object.
         }
     }
 
@@ -162,11 +159,11 @@ ByteArray Base32Coder::decode(const ByteArray &toDecode)
  * @brief Base32Coder::isBase32Encoded - Check to see if the provided string is base32
  *      encoded.
  *
- * @param toValidate - The string to validate the base32 encoding on.
+ * @param toValidate - The ByteArray to validate the base32 encoding on.
  *
  * @return true if the string appears to be base32 encoded.  false otherwise.
  */
-bool Base32Coder::isBase32Encoded(const std::string &toValidate)
+bool Base32Coder::isBase32Encoded(const ByteArray &toValidate)
 {
     QString temp;
 
@@ -176,14 +173,14 @@ bool Base32Coder::isBase32Encoded(const std::string &toValidate)
     }
 
     // The string length needs to be evenly divisible by 8.
-    if ((toValidate.length() % 8) != 0) {
+    if ((toValidate.size() % 8) != 0) {
         LOG_ERROR("The string provided isn't base32 encoded.  The length is incorrect!");
         return false;
     }
 
     // And, each character needs to be one of the characters allowed in the
     // array above.
-    for (size_t i = 0; i < toValidate.length(); i++) {
+    for (size_t i = 0; i < toValidate.size(); i++) {
         if (((toValidate.at(i) < 'A') || (toValidate.at(i) > 'Z')) &&
                 ((toValidate.at(i) < '2') || (toValidate.at(i) > '7')) &&
                 (toValidate.at(i) != '=')) {
@@ -208,31 +205,42 @@ bool Base32Coder::isBase32Encoded(const std::string &toValidate)
  *
  * @return true if the 8 bytes starting at dataOffset were decoded.  false on error.
  */
-bool Base32Coder::decode8Chars(ByteArray &data, size_t dataOffset, ByteArray &target)
+bool Base32Coder::decode8Chars(const ByteArray &data, size_t dataOffset, ByteArray &target)
 {
-    if ((data == nullptr) || (target == nullptr)) {
-        LOG_ERROR("Invalid inputs to decode8Chars!");
+    // If the data is empty, or we don't have 8 bytes to decode, it is a failure.
+    if ((data.empty()) || ((dataOffset + 8) > data.size())) {
+        LOG_ERROR("Attempted to decode data beyond the end of the input data!");
         return false;
     }
 
     // Decode the first byte.
-    target[decodedSize++] = static_cast<unsigned char>((decodeChar(data[dataOffset]) << 3) | ((decodeChar(data[dataOffset + 1]) >> 2)));
+    if (!target.append((decodeChar(data.at(dataOffset)) << 3) | ((decodeChar(data.at(dataOffset + 1)) >> 2)))) {
+        return false;
+    }
 
-    if (data[dataOffset + 2] != '=') {
+    if (data.at(dataOffset + 2) != '=') {
         // Then the next.
-        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 1]) << 6) | ((decodeChar(data[dataOffset + 2]) << 1) | ((decodeChar(data[dataOffset + 3]) >> 4)))));
+        if (!target.append(((decodeChar(data.at(dataOffset + 1)) << 6) | ((decodeChar(data.at(dataOffset + 2)) << 1) | ((decodeChar(data.at(dataOffset + 3)) >> 4)))))) {
+            return false;
+        }
     }
 
-    if (data[dataOffset + 4] != '=') {
-        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 3]) << 4) | ((decodeChar(data[dataOffset + 4]) >> 1))));
+    if (data.at(dataOffset + 4) != '=') {
+        if (!target.append(((decodeChar(data.at(dataOffset + 3)) << 4) | ((decodeChar(data.at(dataOffset + 4)) >> 1))))) {
+            return false;
+        }
     }
 
-    if (data[dataOffset + 5] != '=') {
-        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 4]) << 7) | ((decodeChar(data[dataOffset + 5]) << 2) | ((decodeChar(data[dataOffset + 6]) >> 3)))));
+    if (data.at(dataOffset + 5) != '=') {
+        if (!target.append(((decodeChar(data.at(dataOffset + 4)) << 7) | ((decodeChar(data.at(dataOffset + 5)) << 2) | ((decodeChar(data.at(dataOffset + 6)) >> 3)))))) {
+            return false;
+        }
     }
 
-    if (data[dataOffset + 7] != '=') {
-        target[decodedSize++] = static_cast<unsigned char>(((decodeChar(data[dataOffset + 6]) << 5) | ((decodeChar(data[dataOffset + 7])))));
+    if (data.at(dataOffset + 7) != '=') {
+        if (!target.append(((decodeChar(data.at(dataOffset + 6)) << 5) | (decodeChar(data.at(dataOffset + 7)))))) {
+            return false;
+        }
     }
 
     return true;

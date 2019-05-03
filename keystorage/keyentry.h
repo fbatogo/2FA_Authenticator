@@ -113,6 +113,9 @@ public:
 
     KeyEntry& operator=(const KeyEntry& toCopy);
 
+    // Copy all of the values from another KeyEntry object.
+    void copyFromObject(const KeyEntry &toCopy);
+
 signals:
     void identifierChanged();
     void secretChanged();
@@ -131,9 +134,6 @@ signals:
     void invalidReasonChanged();
 
 private:
-    // Copy all of the values from another KeyEntry object.
-    void copyFromObject(const KeyEntry &toCopy);
-
     std::string boolToString(bool value);
 
     bool mValid;

@@ -20,40 +20,38 @@ HexDecoder::HexDecoder()
 ByteArray HexDecoder::decode(const ByteArray &hexData)
 {
     std::string smashed;
-    unsigned char *result;
-
-    // Start out assuming our result size will be 0.
-    resultSize = 0;
+    ByteArray result;
+    size_t resultSize;
 
     // If the string is empty, return nullptr.
     if (hexData.empty()) {
-        return nullptr;
+        return ByteArray();
     }
+
+    // Start clean.
+    result.clear();
 
     // Need to replace the spaces, colons, dashes, or periods in the string to get a single, undecorated, hex
     // string.
-    smashed = cleanup(hexData);
+    smashed = cleanup(hexData.toString());
 
     // We should now have a string that is all hex characters.  So, the length should be divisible by 2.  Make
     // sure it is.
     if ((smashed.length() % 2) != 0) {
         LOG_ERROR("HEX string to decode wasn't an even number of characters!");
-        return nullptr;
+        return ByteArray();
     }
 
-    // We have an even number of characters, so allocate our return buffer, and set the return buffer length.
+    // Calculate our result length.
     resultSize = (smashed.length() / 2);
 
-    result = static_cast<unsigned char *>(calloc(1, resultSize));
-    if (result == nullptr) {
-        LOG_ERROR("Unable to allocate a buffer for the result of the HEX string conversion!");
-        return nullptr;
-    }
+    // Have our result buffer allocate extra space to speed things up.
+    result.setExtraAllocation((resultSize + 2));
 
-    // Then, iterate the string passing 2 characters at a time in to decodeOneByte, and stashing the
+    // Iterate the string passing 2 characters at a time in to decodeOneByte, and stashing the
     // result in our return buffer.
     for (size_t i = 0; i < resultSize; i++) {
-        result[i] = decodeOneByte(smashed.substr((i * 2), 2));
+        result.append(decodeOneByte(smashed.substr((i * 2), 2)));
     }
 
     return result;

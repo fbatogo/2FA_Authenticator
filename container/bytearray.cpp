@@ -74,6 +74,11 @@ ByteArray::~ByteArray()
 void ByteArray::clear()
 {
     if (nullptr != mByteArray) {
+        // If we are told to zero the memory on free, zero it.
+        if (mZeroOnFree) {
+            memset(mByteArray, 0x00, mByteArrayLength);
+        }
+
         // Free the memory.
         delete mByteArray;
         mByteArray = nullptr;
@@ -102,6 +107,17 @@ bool ByteArray::empty() const
 void ByteArray::setZeroOnFree(bool newValue)
 {
     mZeroOnFree = newValue;
+}
+
+/**
+ * @brief ByteArray::setExtraAllocation - Set the amount of extra data that we want to
+ *      allocate, to make appends more efficient.
+ *
+ * @param extraBytes - The number of extra bytes to allocate when memory is allocated.
+ */
+void ByteArray::setExtraAllocation(size_t extraBytes)
+{
+    mExtraAllocationSize = extraBytes;
 }
 
 /**
@@ -142,6 +158,8 @@ bool ByteArray::setAt(size_t idx, unsigned char newValue)
 
     // Update the value.
     mByteArray[idx] = newValue;
+
+    return true;
 }
 
 /**
@@ -160,14 +178,13 @@ size_t ByteArray::size() const
  * @brief ByteArray::fromStdString - Convert a standard string to a byte array.
  *
  * @param stringToCopy - The string that we want to copy to our byte array.
+ *
+ * @return true if the data was copied.  false on error.
  */
-void ByteArray::fromStdString(const std::string &stringToCopy)
+bool ByteArray::fromStdString(const std::string &stringToCopy)
 {
-    // Clean out anything already in memory.
-    clear();
-
     // Copy the data, and length from the string.
-    fromCharArray(stringToCopy.c_str(), stringToCopy.length());
+    return fromCharArray(stringToCopy.c_str(), stringToCopy.length());
 }
 
 /**
@@ -178,36 +195,32 @@ void ByteArray::fromStdString(const std::string &stringToCopy)
  * @param length - (Optional) If arrayToCopy is a null terminated string, then
  *      this value can be 0.  Otherwise, it should be the length of the data that
  *      we want to copy from arrayToCopy.
+ *
+ * @return true if the data was copied from the character array.  false on error.
  */
-void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
+bool ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 {
-    // XXX Change to use copyData().
-    // Clean out anything that might be hanging around.
-    clear();
+    // If the length specified is 0, we need to figure it out.
+    if (0 == length) {
+        length = strlen(arrayToCopy);
+        if (0 == length) {
+            // Clear any existing buffer and return.
+            clear();
+            return false;
+        }
+    }
 
+    // Allocate the new buffer.
+    if (!allocateBuffer(length)) {
+        //  Nothing more we can do.
+        return false;
+    }
+
+    // Copy in our data.
+    memcpy(mByteArray, arrayToCopy, length);
     mByteArrayLength = length;
 
-    // If the length is 0, then we are dealing with a null terminated string.  So, figure
-    // out how long the string is.
-    if (0 == mByteArrayLength) {
-        mByteArrayLength = strlen(arrayToCopy);
-    }
-
-    // Allocate the memory we need to store the array, plus one extra character to be
-    // sure we pick up a null character.
-    mByteArray = new unsigned char[mByteArrayLength + 1];
-    if (nullptr == mByteArray) {
-        // Couldn't allocate memory, set everything to 0 and null.
-        mByteArray = nullptr;
-        mByteArrayLength = 0;
-        return;
-    }
-
-    // Zero out the array.
-    memset(mByteArray, 0x00, (mByteArrayLength + 1));
-
-    // Then, copy the data from arrayToCopy in to our target array.
-    memcpy(mByteArray, arrayToCopy, mByteArrayLength);
+    return true;
 }
 
 /**
@@ -219,10 +232,12 @@ void ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
  * @param length - (Optional) If arrayToCopy is a null terminated string, then
  *      this value can be 0.  Otherwise, it should be the length of the data that
  *      we want to copy from arrayToCopy.
+ *
+ * @return true if the data was copied.  false on error.
  */
-void ByteArray::fromUCharArray(const unsigned char *arrayToCopy, size_t length)
+bool ByteArray::fromUCharArray(const unsigned char *arrayToCopy, size_t length)
 {
-    fromCharArray(reinterpret_cast<const char *>(arrayToCopy), length);
+    return fromCharArray(reinterpret_cast<const char *>(arrayToCopy), length);
 }
 
 /**
@@ -231,10 +246,12 @@ void ByteArray::fromUCharArray(const unsigned char *arrayToCopy, size_t length)
  *
  * @param stringToAppend - The string that we want to append to the data already in
  *      this object.
+ *
+ * @return true if the data was appended.  false on error.
  */
-void ByteArray::append(const std::string &stringToAppend)
+bool ByteArray::append(const std::string &stringToAppend)
 {
-    append(stringToAppend.c_str());
+    return append(stringToAppend.c_str());
 }
 
 /**
@@ -246,48 +263,25 @@ void ByteArray::append(const std::string &stringToAppend)
  * @param length - (Optional) If this is set to 0, it is assumed that the data provided
  *      to append is a null terminated string.  If it is set to something else, that
  *      number of bytes will be appended to the existing data.
+ *
+ * @return true if the data was appended.  false on error.
  */
-void ByteArray::append(const char *arrayToAppend, size_t length)
+bool ByteArray::append(const char *arrayToAppend, size_t length)
 {
-    // XXX Change to using appendData().
-    unsigned char *oldData;
-    size_t oldDataLength;
-
-    // Store our old data and old data length for later use.
-    oldData = mByteArray;
-    oldDataLength = mByteArrayLength;
-
-    // If the length is 0, then we are dealing with a null terminated string.  So, figure
-    // out how long the string is.
-    if (0 == length) {
-        length = strlen(arrayToAppend);
+    // See if we need to expand the buffer..
+    if ((mByteArrayLength + length) >= (mBufferAllocated - 1)) {
+        // Expand the buffer.
+        if (!expandBuffer((mByteArrayLength + length))) {
+            // Can't do it.
+            return false;
+        }
     }
 
-    // Calculate the new length.
-    mByteArrayLength = length + oldDataLength;
+    // Copy the data to the buffer.
+    memcpy(&mByteArray[mByteArrayLength], arrayToAppend, length);
+    mByteArrayLength += length;
 
-    // Allocate the memory we need to store the array, plus one extra character to be
-    // sure we pick up a null character.
-    mByteArray = new unsigned char[mByteArrayLength + 1];
-    if (nullptr == mByteArray) {
-        // Couldn't allocate memory, set everything to 0 and null.
-        mByteArray = nullptr;
-        mByteArrayLength = 0;
-        return;
-    }
-
-    // Zero out the array.
-    memset(mByteArray, 0x00, (mByteArrayLength + 1));
-
-    // Then, copy the old data in to the beginning of the array.
-    memcpy(mByteArray, oldData, oldDataLength);
-
-    // And add the new data right after that.
-    memcpy(&mByteArray[oldDataLength], arrayToAppend, length);
-
-    // Then, clean up the memory from the old data.
-    delete oldData;
-    oldData = nullptr;
+    return true;
 }
 
 /**
@@ -299,20 +293,24 @@ void ByteArray::append(const char *arrayToAppend, size_t length)
  * @param length - (Optional) If this is set to 0, it is assumed that the data provided
  *      to append is a null terminated string.  If it is set to something else, that
  *      number of bytes will be appended to the existing data.
+ *
+ * @return true if the data was appended.  false on error.
  */
-void ByteArray::append(const unsigned char *arrayToAppend, size_t length)
+bool ByteArray::append(const unsigned char *arrayToAppend, size_t length)
 {
-    append(reinterpret_cast<const char *>(arrayToAppend), length);
+    return append(reinterpret_cast<const char *>(arrayToAppend), length);
 }
 
 /**
  * @brief ByteArray::append - Append a single character to the end of our byte array.
  *
  * @param charToAppend - The character to append to the data in this object.
+ *
+ * @return true if the character was appended.  false on error.
  */
-void ByteArray::append(const char charToAppend)
+bool ByteArray::append(const char charToAppend)
 {
-    // XXX FINISH!
+    return append(&charToAppend, 1);
 }
 
 /**
@@ -397,7 +395,7 @@ ByteArray &ByteArray::operator=(const std::string &toCopy)
  *
  * @return true if the contents match.  false otherwise.
  */
-bool ByteArray::operator==(ByteArray &toCompare)
+bool ByteArray::operator==(const ByteArray &toCompare)
 {
     // Are the lengths the same?
     if (mByteArrayLength != toCompare.mByteArrayLength) {
@@ -423,25 +421,49 @@ bool ByteArray::operator==(ByteArray &toCompare)
  *
  * @return true if they don't match.  false if they do.
  */
-bool ByteArray::operator!=(ByteArray &toCompare)
+bool ByteArray::operator!=(const ByteArray &toCompare)
 {
     return !((*this) == toCompare);
 }
 
 /**
- * @brief ByteArray::reallocateBuffer - Allocate, or reallocate the mByteArray pointer in
- *      this object that contains the data we are operating on.
+ * @brief ByteArray::allocateBuffer - Free any existing buffer, and allocate a new one
+ *      with the specified size, plus any extra allocation size.
  *
- * @param newSize - The new size that is NEEDED in the buffer.  If mExtraAllocationSize is
- *      greater than 0, then the total amount of memory allocated will be this value plus
- *      mExtraAllocationSize.
- * @param zero - If true, and a buffer is currently allocated, the currently allocated
- *      memory will be zeroed out before the memory is freed.  If false, the memory will
- *      simply be freed.
+ * @param newSize - The new base size for the buffer.
  *
- * @return true if the buffer was allocated.  false on error.
+ * @return true if the buffer was cleared and a new buffer allocated.  false on error.
  */
-bool ByteArray::reallocateBuffer(size_t newSize)
+bool ByteArray::allocateBuffer(size_t newSize)
+{
+    // Clear out the old buffer.
+    clear();
+
+    // Allocate the new buffer.
+    mBufferAllocated = newSize + mExtraAllocationSize;
+    mByteArray = new unsigned char[mBufferAllocated + 1];
+    if (nullptr == mByteArray) {
+        // Failed to allocate the memory.
+        return false;
+    }
+
+    // Zero out the (whole) array.
+    memset(mByteArray, 0x00, (mBufferAllocated + 1));
+
+    // We are good.
+    return true;
+}
+
+/**
+ * @brief ByteArray::expandBuffer - Expand the existing buffer to a larger size by
+ *      allocating a new buffer, and copying the existing data to it.
+ *
+ * @param newSize - The size of the new buffer.  (The extra allocation size will be
+ *      added to this value.
+ *
+ * @return true if the buffer was expanded, and data copied.  false on error.
+ */
+bool ByteArray::expandBuffer(size_t newSize)
 {
     unsigned char *oldBuffer = nullptr;
     size_t oldBufferSize = 0;
@@ -466,6 +488,11 @@ bool ByteArray::reallocateBuffer(size_t newSize)
         memcpy(mByteArray, oldBuffer, oldBufferSize);
         mByteArrayLength = oldBufferSize;
 
+        // If we are told to zero on free, do it.
+        if (mZeroOnFree) {
+            memset(oldBuffer, 0x00, oldBufferSize);
+        }
+
         // Free the old memory.
         delete oldBuffer;
         oldBuffer = nullptr;
@@ -473,19 +500,3 @@ bool ByteArray::reallocateBuffer(size_t newSize)
 
     return true;
 }
-
-bool ByteArray::copyData(unsigned char *toCopyIn, size_t length)
-{
-
-}
-
-bool ByteArray::appendData(unsigned char *toAppend, size_t length)
-{
-
-}
-
-bool ByteArray::appendByte(unsigned char toAppend)
-{
-
-}
-

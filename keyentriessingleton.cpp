@@ -96,7 +96,7 @@ void KeyEntriesSingleton::clear()
  *
  * @return true if the parameters are all valid.  false if any aren't.
  */
-bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
+bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, size_t keyType, size_t otpType, int numberCount, size_t algorithm, int period, int offset)
 {
     // Validate inputs.
     if (identifier.isEmpty()) {
@@ -109,12 +109,12 @@ bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QStr
         return false;
     }
 
-    if ((keyType < 0) || (keyType > KEYENTRY_KEYTYPE_MAX)) {
+    if (keyType > KEYENTRY_KEYTYPE_MAX) {
         LOG_ERROR("Unable to " + addUpdate + " a key with an invalid key encoding!");
         return false;
     }
 
-    if ((otpType < 0) || (otpType > KEYENTRY_OTPTYPE_MAX)) {
+    if (otpType > KEYENTRY_OTPTYPE_MAX) {
         LOG_ERROR("Unable to " + addUpdate + " a key with an invalid OTP type!");
         return false;
     }
@@ -124,7 +124,7 @@ bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QStr
         return false;
     }
 
-    if ((algorithm < 0) || (algorithm > KEYENTRY_ALG_MAX)) {
+    if (algorithm > KEYENTRY_ALG_MAX) {
         LOG_ERROR("Unable to use an algorithm with an invalid type!");
         return false;
     }
@@ -221,7 +221,7 @@ bool KeyEntriesSingleton::addKeyEntry(QString identifier, QString secret, int ke
     // Populate the KeyEntry object that we want to write to the key storage method.
     toAdd.clear();
     toAdd.setIdentifier(identifier);
-    toAdd.setSecret(secret);
+    toAdd.setSecret(ByteArray(secret.toStdString()));
     toAdd.setKeyType(keyType);
     toAdd.setOtpType(otpType);
     toAdd.setOutNumberCount(numberCount);
@@ -299,7 +299,7 @@ bool KeyEntriesSingleton::updateKeyEntry(KeyEntry *currentEntry, QString identif
     // Populate the KeyEntry object that we want to write to the key storage method.
     toUpdate.clear();
     toUpdate.setIdentifier(identifier);
-    toUpdate.setSecret(secret);
+    toUpdate.setSecret(ByteArray(secret.toStdString()));
     toUpdate.setKeyType(keyType);
     toUpdate.setOtpType(otpType);
     toUpdate.setOutNumberCount(numberCount);
