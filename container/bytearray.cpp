@@ -443,7 +443,35 @@ bool ByteArray::operator!=(ByteArray &toCompare)
  */
 bool ByteArray::reallocateBuffer(size_t newSize)
 {
+    unsigned char *oldBuffer = nullptr;
+    size_t oldBufferSize = 0;
 
+    if (nullptr != mByteArray) {
+        // Store the pointer for later use.
+        oldBuffer = mByteArray;
+        oldBufferSize = mByteArrayLength;
+    }
+
+    // Allocate the new buffer.
+    mBufferAllocated = newSize + mExtraAllocationSize;
+    mByteArray = new unsigned char[mBufferAllocated + 1];
+    if (nullptr == mByteArray) {
+        // Failed to allocate the memory.
+        return false;
+    }
+
+    // If we have an old buffer, copy the data to our new buffer, and update our
+    // data buffer size.
+    if (nullptr != oldBuffer) {
+        memcpy(mByteArray, oldBuffer, oldBufferSize);
+        mByteArrayLength = oldBufferSize;
+
+        // Free the old memory.
+        delete oldBuffer;
+        oldBuffer = nullptr;
+    }
+
+    return true;
 }
 
 bool ByteArray::copyData(unsigned char *toCopyIn, size_t length)
