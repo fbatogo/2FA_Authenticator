@@ -8,20 +8,14 @@
 
 ByteArray::ByteArray(bool zeroOnFree)
 {
-    mByteArray = nullptr;
-    mByteArrayLength = 0;
-    mBufferAllocated = 0;
-    mExtraAllocationSize = 0;
-    mZeroOnFree = zeroOnFree;
+    init();
 }
 
 ByteArray::ByteArray(size_t extraAllocationSize, bool zeroOnFree)
 {
-    mByteArray = nullptr;
-    mByteArrayLength = 0;
-    mBufferAllocated = 0;
-    mExtraAllocationSize = extraAllocationSize;
+    init();
     mZeroOnFree = zeroOnFree;
+    mExtraAllocationSize = extraAllocationSize;
 }
 
 /**
@@ -36,22 +30,16 @@ ByteArray::ByteArray(size_t extraAllocationSize, bool zeroOnFree)
  */
 ByteArray::ByteArray(const char *arrayToCopy, size_t length, bool zeroOnFree)
 {
-    mByteArray = nullptr;
-    mByteArrayLength = 0;
-    mBufferAllocated = 0;
+    init();
     mZeroOnFree = zeroOnFree;
-    mExtraAllocationSize = 0;
 
     fromCharArray(arrayToCopy, length);
 }
 
 ByteArray::ByteArray(const std::string &stringToCopy, bool zeroOnFree)
 {
-    mByteArray = nullptr;
-    mByteArrayLength = 0;
+    init();
     mZeroOnFree = zeroOnFree;
-    mExtraAllocationSize = 0;
-    mBufferAllocated = 0;
 
     // Copy the data, and length from the string.
     fromStdString(stringToCopy);
@@ -59,6 +47,8 @@ ByteArray::ByteArray(const std::string &stringToCopy, bool zeroOnFree)
 
 ByteArray::ByteArray(const ByteArray &toCopy)
 {
+    init();
+
     (*this) = toCopy;
 }
 
@@ -183,6 +173,12 @@ size_t ByteArray::size() const
  */
 bool ByteArray::fromStdString(const std::string &stringToCopy)
 {
+    if (stringToCopy.empty()) {
+        // Make sure we are clear.
+        clear();
+        return true;
+    }
+
     // Copy the data, and length from the string.
     return fromCharArray(stringToCopy.c_str(), stringToCopy.length());
 }
@@ -200,6 +196,12 @@ bool ByteArray::fromStdString(const std::string &stringToCopy)
  */
 bool ByteArray::fromCharArray(const char *arrayToCopy, size_t length)
 {
+    if (nullptr == arrayToCopy) {
+        // Clear out the data
+        clear();
+        return true;
+    }
+
     // If the length specified is 0, we need to figure it out.
     if (0 == length) {
         length = strlen(arrayToCopy);
@@ -269,7 +271,7 @@ bool ByteArray::append(const std::string &stringToAppend)
 bool ByteArray::append(const char *arrayToAppend, size_t length)
 {
     // See if we need to expand the buffer..
-    if ((mByteArrayLength + length) >= (mBufferAllocated - 1)) {
+    if ((0 == mBufferAllocated) || ((mByteArrayLength + length) >= (mBufferAllocated - 1))) {
         // Expand the buffer.
         if (!expandBuffer((mByteArrayLength + length))) {
             // Can't do it.
@@ -424,6 +426,19 @@ bool ByteArray::operator==(const ByteArray &toCompare)
 bool ByteArray::operator!=(const ByteArray &toCompare)
 {
     return !((*this) == toCompare);
+}
+
+/**
+ * @brief ByteArray::init - Initialize our member variables to their
+ *      defaults.
+ */
+void ByteArray::init()
+{
+    mByteArray = nullptr;
+    mByteArrayLength = 0;
+    mBufferAllocated = 0;
+    mZeroOnFree = false;
+    mExtraAllocationSize = 0;
 }
 
 /**

@@ -22,10 +22,7 @@ protected:
     static QString calculateTotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
     static QString calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
 
-    static int getStartTime(int timeStep);
-
-private:
-    static std::shared_ptr<Hmac> mHmac;
+    static size_t getStartTime(size_t timeStep);
 };
 
 #endif // OTPHANDLER_H

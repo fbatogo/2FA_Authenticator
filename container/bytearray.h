@@ -50,6 +50,7 @@ public:
     bool operator!=(const ByteArray &toCompare);
 
 private:
+    void init();
     bool allocateBuffer(size_t newSize);
     bool expandBuffer(size_t newSize);
 

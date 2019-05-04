@@ -35,9 +35,6 @@ void HmacSha1Tests::hmacTestCase1()
     Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha1Hash()));
     std::shared_ptr<ByteArray> result;
 
-    // Pre-allocate enough memory to store all of our data.
-    key.setExtraAllocation(keyLength);
-
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
         key.append(0x0b);

@@ -51,7 +51,7 @@ void Totp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
  *
  * @return std::string containing the OTP value.  On error, an empty string is returned.
  */
-std::string Totp::calculate(const ByteArray &decodedSecret, uint64_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
+std::string Totp::calculate(const ByteArray &decodedSecret, time_t utcTime, size_t timeStep, size_t digits, uint64_t initialCounter)
 {
     Hotp hotp(mHmacToUse);
     uint64_t calcTime;
@@ -62,7 +62,7 @@ std::string Totp::calculate(const ByteArray &decodedSecret, uint64_t utcTime, si
         return "";
     }
 
-    calcTime = (utcTime - initialCounter)/timeStep;
+    calcTime = (static_cast<uint64_t>(utcTime) - initialCounter)/timeStep;
 
     // Then, calculate the HOTP using the key, and the calcTime.
     return hotp.calculate(decodedSecret, calcTime, digits);

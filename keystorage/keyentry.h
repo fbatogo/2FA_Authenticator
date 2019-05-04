@@ -27,19 +27,19 @@ class KeyEntry : public QObject
     Q_PROPERTY(bool mValid READ valid)
     Q_PROPERTY(QString mIdentifier READ identifier WRITE setIdentifier NOTIFY identifierChanged)
     Q_PROPERTY(ByteArray mSecret READ secret WRITE setSecret NOTIFY secretChanged)
-    Q_PROPERTY(int mKeyType READ keyType WRITE setKeyType NOTIFY keyTypeChanged)
-    Q_PROPERTY(int mOtpType READ otpType WRITE otpType NOTIFY otpTypeChanged)
-    Q_PROPERTY(int mOutNumberCount READ outNumberCount WRITE setOutNumberCount NOTIFY outNumberCountChanged)
-    Q_PROPERTY(int mTimeStep READ timeStep WRITE setTimeStep NOTIFY timeStepChanged)
-    Q_PROPERTY(int mTimeOffset READ timeOffset WRITE setTimeOffset NOTIFY timeOffsetChanged)
-    Q_PROPERTY(int mAlgorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged)
-    Q_PROPERTY(int mHotpCounter READ hotpCounter WRITE setHotpCounter NOTIFY hotpCounterChanged)
+    Q_PROPERTY(size_t mKeyType READ keyType WRITE setKeyType NOTIFY keyTypeChanged)
+    Q_PROPERTY(size_t mOtpType READ otpType WRITE otpType NOTIFY otpTypeChanged)
+    Q_PROPERTY(size_t mOutNumberCount READ outNumberCount WRITE setOutNumberCount NOTIFY outNumberCountChanged)
+    Q_PROPERTY(size_t mTimeStep READ timeStep WRITE setTimeStep NOTIFY timeStepChanged)
+    Q_PROPERTY(size_t mTimeOffset READ timeOffset WRITE setTimeOffset NOTIFY timeOffsetChanged)
+    Q_PROPERTY(size_t mAlgorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged)
+    Q_PROPERTY(size_t mHotpCounter READ hotpCounter WRITE setHotpCounter NOTIFY hotpCounterChanged)
     Q_PROPERTY(QString mIssuer READ issuer WRITE setIssuer NOTIFY issuerChanged)
 
     // Values used to store the current calculation for the OTP.
     Q_PROPERTY(QString mCurrentCode READ currentCode NOTIFY currentCodeChanged)
     Q_PROPERTY(QString mPrintableCurrentCode READ printableCurrentCode NOTIFY printableCurrentCodeChanged)
-    Q_PROPERTY(int mStartTime READ startTime NOTIFY startTimeChanged)
+    Q_PROPERTY(size_t mStartTime READ startTime NOTIFY startTimeChanged)
     Q_PROPERTY(bool mCodeValid READ codeValid NOTIFY codeValidChanged)
 
     // Get the reason this object appears to be invalid.
@@ -62,31 +62,31 @@ public:
     const ByteArray &secret() const;
     void setSecret(const ByteArray &newvalue);
 
-    int keyType() const;
-    void keyType(int &value);
-    void setKeyType(int newvalue);
+    size_t keyType() const;
+    void keyType(size_t &value);
+    void setKeyType(size_t newvalue);
 
-    int otpType() const;
-    void otpType(int &value);
-    void setOtpType(int newvalue);
+    size_t otpType() const;
+    void otpType(size_t &value);
+    void setOtpType(size_t newvalue);
 
-    int outNumberCount() const;
-    void outNumberCount(int &value);
-    void setOutNumberCount(int newvalue);
+    size_t outNumberCount() const;
+    void outNumberCount(size_t &value);
+    void setOutNumberCount(size_t newvalue);
 
-    int timeStep() const;
-    void timeStep(int &value);
-    void setTimeStep(int newvalue);
+    size_t timeStep() const;
+    void timeStep(size_t &value);
+    void setTimeStep(size_t newvalue);
 
-    int timeOffset() const;
-    void timeOffset(int &value);
-    void setTimeOffset(int newvalue);
+    size_t timeOffset() const;
+    void timeOffset(size_t &value);
+    void setTimeOffset(size_t newvalue);
 
-    int algorithm() const;
-    void setAlgorithm(int newvalue);
+    size_t algorithm() const;
+    void setAlgorithm(size_t newvalue);
 
-    int hotpCounter() const;
-    void setHotpCounter(int newvalue);
+    size_t hotpCounter() const;
+    void setHotpCounter(size_t newvalue);
 
     QString issuer() const;
     void setIssuer(const QString &newvalue);
@@ -102,8 +102,8 @@ public:
     QString printableCurrentCode() const;
     void setPrintableCurrentCode(const QString &newvalue);
 
-    int startTime() const;
-    void setStartTime(int newvalue);
+    size_t startTime() const;
+    void setStartTime(size_t newvalue);
 
     bool codeValid() const;
     void setCodeValid(bool newvalue);
@@ -139,18 +139,18 @@ private:
     bool mValid;
     QString mIdentifier;
     ByteArray mSecret;
-    int mKeyType;
-    int mOtpType;
-    int mOutNumberCount;
-    int mTimeStep;
-    int mTimeOffset;
-    int mAlgorithm;
-    int mHotpCounter;
+    size_t mKeyType;
+    size_t mOtpType;
+    size_t mOutNumberCount;
+    size_t mTimeStep;
+    size_t mTimeOffset;
+    size_t mAlgorithm;
+    size_t mHotpCounter;
     QString mIssuer;
     QString mInvalidReason;
     QString mCurrentCode;
     QString mPrintableCurrentCode;
-    int mStartTime;
+    size_t mStartTime;
     bool mCodeValid;
 };
 

@@ -14,7 +14,6 @@
 
 OtpHandler::OtpHandler()
 {
-    mHmac.reset(new Hmac());
 }
 
 /**
@@ -185,6 +184,7 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
     std::string otp;
     Totp totp;
     std::shared_ptr<HashTypeBase> hashToUse;
+    std::shared_ptr<Hmac> hmac;
 
     // Figure out what type of hash we should be using.
     switch (keydata.algorithm()) {
@@ -205,11 +205,13 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
         return "";
     }
 
+    hmac = std::shared_ptr<Hmac>(new Hmac());
+
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    mHmac->setHashType(hashToUse);
+    hmac->setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation.
-    totp.setHmac(mHmac);
+    totp.setHmac(hmac);
 
     // Get the current time, so we can calculate the OTP.
     now = time(nullptr);
@@ -237,6 +239,7 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
     std::string otp;
     Hotp hotp;
     std::shared_ptr<HashTypeBase> hashToUse;
+    std::shared_ptr<Hmac> hmac;
 
     // Figure out what type of hash we should be using.
     switch (keydata.algorithm()) {
@@ -257,11 +260,13 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
         return "";
     }
 
+    hmac = std::shared_ptr<Hmac>(new Hmac());
+
     // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    mHmac->setHashType(hashToUse);
+    hmac->setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation.
-    hotp.setHmac(mHmac);
+    hotp.setHmac(hmac);
 
     // Calculate the HOTP value.
     otp = hotp.calculate(decodedSecret, keydata.hotpCounter(), keydata.outNumberCount());
@@ -275,18 +280,18 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
  *
  * @param timeStep - The 'time step' for the OTP.
  *
- * @return int containing the number of seconds in to the lifetime of the current OTP.
+ * @return size_t containing the number of seconds in to the lifetime of the current OTP.
  */
-int OtpHandler::getStartTime(int timeStep)
+size_t OtpHandler::getStartTime(size_t timeStep)
 {
     time_t t;
     tm *now;
-    int seconds;
+    size_t seconds;
 
     t = time(nullptr);
     now = localtime(&t);
 
-    seconds = now->tm_sec;
+    seconds = static_cast<size_t>(now->tm_sec);
 
     // Return the number of seconds beyond the time step that have elapsed.
     return (seconds & timeStep);

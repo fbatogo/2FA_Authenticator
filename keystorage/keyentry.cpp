@@ -104,103 +104,103 @@ void KeyEntry::setSecret(const ByteArray &newvalue)
     emit secretChanged();
 }
 
-int KeyEntry::keyType() const
+size_t KeyEntry::keyType() const
 {
     return mKeyType;
 }
 
-void KeyEntry::keyType(int &value)
+void KeyEntry::keyType(size_t &value)
 {
     value = mKeyType;
 }
 
-void KeyEntry::setKeyType(int newvalue)
+void KeyEntry::setKeyType(size_t newvalue)
 {
     mKeyType = newvalue;
     emit keyTypeChanged();
 }
 
-int KeyEntry::otpType() const
+size_t KeyEntry::otpType() const
 {
     return mOtpType;
 }
 
-void KeyEntry::otpType(int &value)
+void KeyEntry::otpType(size_t &value)
 {
     value = mOtpType;
 }
 
-void KeyEntry::setOtpType(int newvalue)
+void KeyEntry::setOtpType(size_t newvalue)
 {
     mOtpType = newvalue;
     emit otpTypeChanged();
 }
 
-int KeyEntry::outNumberCount() const
+size_t KeyEntry::outNumberCount() const
 {
     return mOutNumberCount;
 }
 
-void KeyEntry::outNumberCount(int &value)
+void KeyEntry::outNumberCount(size_t &value)
 {
     value = mOutNumberCount;
 }
 
-void KeyEntry::setOutNumberCount(int newvalue)
+void KeyEntry::setOutNumberCount(size_t newvalue)
 {
     mOutNumberCount = newvalue;
     emit outNumberCountChanged();
 }
 
-int KeyEntry::timeStep() const
+size_t KeyEntry::timeStep() const
 {
     return mTimeStep;
 }
 
-void KeyEntry::timeStep(int &value)
+void KeyEntry::timeStep(size_t &value)
 {
     value = mTimeStep;
 }
 
-void KeyEntry::setTimeStep(int newvalue)
+void KeyEntry::setTimeStep(size_t newvalue)
 {
     mTimeStep = newvalue;
     emit timeStepChanged();
 }
 
-int KeyEntry::timeOffset() const
+size_t KeyEntry::timeOffset() const
 {
     return mTimeOffset;
 }
 
-void KeyEntry::timeOffset(int &value)
+void KeyEntry::timeOffset(size_t &value)
 {
     value = mTimeOffset;
 }
 
-void KeyEntry::setTimeOffset(int newvalue)
+void KeyEntry::setTimeOffset(size_t newvalue)
 {
     mTimeOffset = newvalue;
     emit timeOffsetChanged();
 }
 
-int KeyEntry::algorithm() const
+size_t KeyEntry::algorithm() const
 {
     return mAlgorithm;
 }
 
-void KeyEntry::setAlgorithm(int newvalue)
+void KeyEntry::setAlgorithm(size_t newvalue)
 {
     mAlgorithm = newvalue;
     emit algorithmChanged();
 }
 
-int KeyEntry::hotpCounter() const
+size_t KeyEntry::hotpCounter() const
 {
     return mHotpCounter;
 }
 
-void KeyEntry::setHotpCounter(int newvalue)
+void KeyEntry::setHotpCounter(size_t newvalue)
 {
     mHotpCounter = newvalue;
     emit hotpCounterChanged();
@@ -289,12 +289,12 @@ void KeyEntry::setPrintableCurrentCode(const QString &newvalue)
     emit printableCurrentCodeChanged();
 }
 
-int KeyEntry::startTime() const
+size_t KeyEntry::startTime() const
 {
     return mStartTime;
 }
 
-void KeyEntry::setStartTime(int newvalue)
+void KeyEntry::setStartTime(size_t newvalue)
 {
     mStartTime = newvalue;
     emit startTimeChanged();
