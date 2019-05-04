@@ -9,6 +9,7 @@
 ByteArray::ByteArray(bool zeroOnFree)
 {
     init();
+    mZeroOnFree = zeroOnFree;
 }
 
 ByteArray::ByteArray(size_t extraAllocationSize, bool zeroOnFree)
