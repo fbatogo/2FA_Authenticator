@@ -53,7 +53,7 @@ void hotpTests::invalidHotpTest()
     Hotp invalidHotp;
     ByteArray key;
 
-    QCOMPARE(invalidHotp.calculate(key, 20, 0, 6), std::string(""));
+    QVERIFY(invalidHotp.calculate(key, 20, 0, 6).empty());
 }
 
 void hotpTests::hotpTest1()

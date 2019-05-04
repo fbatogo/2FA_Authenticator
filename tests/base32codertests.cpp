@@ -25,7 +25,8 @@ void Base32CoderTests::encoderTest1()
     for (size_t i = 0; i < clearText.size(); i++) {
         encoded = encoder.encode(clearText.at(i));
         qDebug("Expected : %s    Calculated : %s", encodedText.at(i).toCharArrayPtr(), encoded.toCharArrayPtr());
-        QCOMPARE(encodedText.at(i), encoded);
+        //QCOMPARE(encodedText.at(i), encoded);
+        QVERIFY(encodedText.at(i) == encoded);
     }
 }
 
@@ -46,7 +47,7 @@ void Base32CoderTests::decoderTest1()
         qDebug("%s  Decoded  : %s", clearText.at(i).toCharArrayPtr(), TestUtils::binaryToString(decoded).c_str());
 
         // Compare the results.
-        QCOMPARE(clearText, decoded);
+        QVERIFY(clearText.at(i) == decoded);
     }
 }
 

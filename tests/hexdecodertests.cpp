@@ -16,8 +16,8 @@ void HexDecoderTests::hexDecoderTest1()
     std::vector<std::string> hexToDecode;
     std::vector<unsigned char *> decodedHex;
     HexDecoder decoder;
-    unsigned char *result;
-    size_t resultSize;
+    ByteArray result;
+    ByteArray baToDecode;
 
     // Set up our hex tests.
     hexToDecode.push_back("");
@@ -56,25 +56,21 @@ void HexDecoderTests::hexDecoderTest1()
 
     for (size_t i = 0; i < hexToDecode.size(); i++) {
         // Decode the text.
-        result = decoder.decode(hexToDecode.at(i), resultSize);
+        baToDecode.fromStdString(hexToDecode.at(i));
+        result = decoder.decode(baToDecode);
 
         if (i != 0) {
             // Make sure the size is 0x0f octets.
-            QCOMPARE(resultSize, (unsigned long)0x0f);
+            QCOMPARE(result.size(), (unsigned long)0x0f);
         }
 
         qDebug("(Test %d) Original String : %s", (int)i, hexToDecode.at(i).c_str());
-        qDebug("(Test %d) Decoded String  : %s", (int)i, TestUtils::binaryToString(result, resultSize).c_str());
+        qDebug("(Test %d) Decoded String  : %s", (int)i, TestUtils::binaryToString(result).c_str());
 
-        if (memcmp(result, decodedHex.at(i), resultSize) != 0) {
+        if (memcmp(result.toUCharArrayPtr(), decodedHex.at(i), result.size()) != 0) {
             qFatal("Test %d failed!", (int)i);
             QFAIL("");
         }
-
-        // Free the memory for the next round.
-        free(result);
-        result = nullptr;
-        resultSize = 0;
     }
 }
 

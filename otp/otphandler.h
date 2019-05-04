@@ -4,6 +4,7 @@
 #include "keystorage/keyentry.h"
 #include "container/bytearray.h"
 #include "../otpimpl/hmac.h"
+#include <memory>
 
 class OtpHandler
 {

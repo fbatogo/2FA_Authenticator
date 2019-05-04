@@ -60,7 +60,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 
     // And, make sure all the expected values are set.
     QCOMPARE(readBack.identifier(), QString("id2"));
-    QCOMPARE(readBack.secret(), QString("mysecret2"));
+    QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -86,7 +86,7 @@ void SecretDatabaseTests::getAllEntriesTest()
         QVERIFY(currentEntry.valid());
 
         if (currentEntry.identifier() == "id2") {
-            QCOMPARE(currentEntry.secret(), QString("mysecret2"));
+            QCOMPARE(currentEntry.secret().toString(), std::string("mysecret2"));
             QCOMPARE(currentEntry.keyType(), KEYENTRY_KEYTYPE_BASE32);
             QCOMPARE(currentEntry.otpType(), KEYENTRY_OTPTYPE_HOTP);
             QCOMPARE(currentEntry.outNumberCount(), 7);
@@ -108,7 +108,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
 
     // Make sure the data is what we expect.
     QCOMPARE(readBack.identifier(), QString("id2"));
-    QCOMPARE(readBack.secret(), QString("mysecret2"));
+    QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -125,7 +125,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
 
     // Make sure the data is what we expect.
     QCOMPARE(readBack.identifier(), QString("id3"));
-    QCOMPARE(readBack.secret(), QString("mysecret2"));
+    QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     QCOMPARE(readBack.outNumberCount(), 7);
@@ -146,7 +146,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
 
     // Make sure the data is what we expect.
     QCOMPARE(readBack.identifier(), QString("id4"));
-    QCOMPARE(readBack.secret(), QString("mysecret4"));
+    QCOMPARE(readBack.secret().toString(), std::string("mysecret4"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
     QCOMPARE(readBack.outNumberCount(), 6);
