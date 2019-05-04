@@ -360,13 +360,13 @@ bool SecretDatabase::createBoundQuery(const QString &query, const KeyEntry &toBi
     // Bind the values provided.
     sqlQuery.bindValue(":identifier", toBind.identifier());
     sqlQuery.bindValue(":secret", QString::fromStdString(toBind.secret().toString()));
-    sqlQuery.bindValue(":keyType", QVariant(toBind.keyType()));
-    sqlQuery.bindValue(":otpType", QVariant(toBind.otpType()));
-    sqlQuery.bindValue(":outNumberCount", QVariant(toBind.outNumberCount()));
-    sqlQuery.bindValue(":timeStep", QVariant(toBind.timeStep()));
-    sqlQuery.bindValue(":timeOffset", QVariant(toBind.timeOffset()));
-    sqlQuery.bindValue(":algorithm", QVariant(toBind.algorithm()));
-    sqlQuery.bindValue(":hotpCounter", QVariant(toBind.hotpCounter()));
+    sqlQuery.bindValue(":keyType", static_cast<qulonglong>(toBind.keyType()));
+    sqlQuery.bindValue(":otpType", static_cast<qulonglong>(toBind.otpType()));
+    sqlQuery.bindValue(":outNumberCount", static_cast<qulonglong>(toBind.outNumberCount()));
+    sqlQuery.bindValue(":timeStep", static_cast<qulonglong>(toBind.timeStep()));
+    sqlQuery.bindValue(":timeOffset", static_cast<qulonglong>(toBind.timeOffset()));
+    sqlQuery.bindValue(":algorithm", static_cast<qulonglong>(toBind.algorithm()));
+    sqlQuery.bindValue(":hotpCounter", static_cast<qulonglong>(toBind.hotpCounter()));
     sqlQuery.bindValue(":issuer", toBind.issuer());
 
     return true;
