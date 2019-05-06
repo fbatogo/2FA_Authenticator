@@ -61,13 +61,13 @@ bool KeyEntry::valid() const
     }
 
     // The key type needs to be 0 or 1.
-    if ((mKeyType < 0) || (mKeyType > 1)) {
+    if (mKeyType > 1) {
         LOG_DEBUG("Invalid key type! (" + QString::number(mKeyType) + ")");
         return false;
     }
 
     // The OTP type needs to be 0 or 1.
-    if ((mOtpType < 0) || (mOtpType > 1)) {
+    if (mOtpType > 1) {
         LOG_DEBUG("Invalid OTP type! (" + QString::number(mOtpType) + ")");
         return false;
     }

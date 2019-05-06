@@ -662,13 +662,11 @@ bool KeyEntriesSingleton::updateTimer()
     if (nextUpdate == 0) {
         // Set the timer for half a second, and try again.
         mUpdateTimer.start(500);
-        // slotUpdateOtpValues will call back in to this function.
-//        slotUpdateOtpValues();
         return true;
     }
 
     // Then, set our timer to call our slot when the next update period expires.
-    mUpdateTimer.start((nextUpdate * 1000));
+    mUpdateTimer.start(nextUpdate * 1000);
 
     return true;
 }

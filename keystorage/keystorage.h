@@ -5,7 +5,7 @@
 #include "keystoragebase.h"
 #include "keyentry.h"
 
-#define KEYSTORAGE_METHOD_DEFAULT       0       // Use whatever storage method is available.
+const size_t KEYSTORAGE_METHOD_DEFAULT = 0;       // Use whatever storage method is available.
 
 class KeyStorage
 {

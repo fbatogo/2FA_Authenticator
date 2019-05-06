@@ -23,7 +23,7 @@ void HmacSha1Tests::hmacNoHashTest()
     invalidHmac.setHashType(nullptr);
 
     // Attempt to do an HMAC without a hash algorithm set.
-    QCOMPARE(invalidHmac.calculate(randomJunk, data), nullptr);
+    QVERIFY(invalidHmac.calculate(randomJunk, data) == nullptr);
 }
 
 void HmacSha1Tests::hmacTestCase1()

@@ -17,9 +17,6 @@ public:
     virtual ByteArray hash(const ByteArray &toHash) = 0;
     virtual size_t hashResultLength() { return 0; }
     virtual size_t hashBlockLength() { return 0; }
-
-protected:
-    ByteArray mHashResult;
 };
 
 #endif // HASHTYPEBASE_H

@@ -63,7 +63,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), 7);
+    QCOMPARE(readBack.outNumberCount(), (size_t)7);
 }
 
 void SecretDatabaseTests::getAllEntriesTest()
@@ -89,7 +89,7 @@ void SecretDatabaseTests::getAllEntriesTest()
             QCOMPARE(currentEntry.secret().toString(), std::string("mysecret2"));
             QCOMPARE(currentEntry.keyType(), KEYENTRY_KEYTYPE_BASE32);
             QCOMPARE(currentEntry.otpType(), KEYENTRY_OTPTYPE_HOTP);
-            QCOMPARE(currentEntry.outNumberCount(), 7);
+            QCOMPARE(currentEntry.outNumberCount(), (size_t)7);
         } else {
             // Unexpected entry!
             QFAIL("Unexpected entry in the database!");
@@ -111,7 +111,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), 7);
+    QCOMPARE(readBack.outNumberCount(), (size_t)7);
 
     // Copy the data, and update the identifier name.
     newEntry = readBack;
@@ -128,7 +128,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), 7);
+    QCOMPARE(readBack.outNumberCount(), (size_t)7);
 
     // Then copy the data and update all of the values.
     newEntry = readBack;
@@ -149,5 +149,5 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret4"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
-    QCOMPARE(readBack.outNumberCount(), 6);
+    QCOMPARE(readBack.outNumberCount(), (size_t)6);
 }

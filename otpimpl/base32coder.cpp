@@ -29,7 +29,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
 
     // If we have nothing to encode, return an empty string.
     if (toEncode.empty()) {
-        return "";
+        return ByteArray();
     }
 
     result.clear();
@@ -45,7 +45,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
     }
 
     // Set the result to pre-allocate enough space for our data.
-    result.setExtraAllocation((blocks * 10));
+    result.setExtraAllocation(blocks * 10);
 
     for (size_t i = 0; i < blocks; i++) {
         // Calculate the 32bit offset in to the byte string.
@@ -54,7 +54,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
         // Pull out the values that we need to look up.
 
         // Take the first 5 bits.
-        result.append(base32chars[(toEncode.at(offset) >> 3)]);
+        result.append(base32chars[toEncode.at(offset) >> 3]);
 
         // Take the last 3 bits in the first byte, and the first 2 of the 2nd byte.
         b = ((toEncode.at(offset) & 0x07)  << 2);
@@ -67,7 +67,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
             result.append("======");
         } else {
             // Then, the 5 bits in the middle of the 2nd byte.
-            result.append(base32chars[(((toEncode.at(offset+1) & 0x3f) >> 1))]);
+            result.append(base32chars[(toEncode.at(offset+1) & 0x3f) >> 1]);
 
             // Then, the last bit of the 2nd byte, and the high nibble of the 3rd.
             b = ((toEncode.at(offset+1) & 0x01) << 4);
@@ -90,7 +90,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
                     result.append("===");
                 } else {
                     // Then the 5 middle-ish bits from the 4th byte.
-                    result.append(base32chars[(((toEncode.at(offset+3) & 0x7f) >> 2))]);
+                    result.append(base32chars[(toEncode.at(offset+3) & 0x7f) >> 2]);
 
                     // Then the low 2 bits of the 4th byte and the high 3 of the 5th.
                     b = ((toEncode.at(offset+3) & 0x03) << 3);
@@ -103,7 +103,7 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
                         result.append('=');
                     } else {
                         // Then, the last 5 bits of the 5th byte.
-                        result.append(base32chars[(toEncode.at(offset+4) & 0x1f)]);
+                        result.append(base32chars[toEncode.at(offset+4) & 0x1f]);
                     }
                 }
             }
@@ -214,33 +214,28 @@ bool Base32Coder::decode8Chars(const ByteArray &data, size_t dataOffset, ByteArr
     }
 
     // Decode the first byte.
-    if (!target.append((decodeChar(data.at(dataOffset)) << 3) | ((decodeChar(data.at(dataOffset + 1)) >> 2)))) {
+    if (!target.append((decodeChar(data.at(dataOffset)) << 3) | (decodeChar(data.at(dataOffset + 1)) >> 2))) {
         return false;
     }
 
-    if (data.at(dataOffset + 2) != '=') {
-        // Then the next.
-        if (!target.append(((decodeChar(data.at(dataOffset + 1)) << 6) | ((decodeChar(data.at(dataOffset + 2)) << 1) | ((decodeChar(data.at(dataOffset + 3)) >> 4)))))) {
-            return false;
-        }
+    if ((data.at(dataOffset + 2) != '=') &&
+            (!target.append(((decodeChar(data.at(dataOffset + 1)) << 6) | ((decodeChar(data.at(dataOffset + 2)) << 1) | ((decodeChar(data.at(dataOffset + 3)) >> 4))))))) {
+        return false;
     }
 
-    if (data.at(dataOffset + 4) != '=') {
-        if (!target.append(((decodeChar(data.at(dataOffset + 3)) << 4) | ((decodeChar(data.at(dataOffset + 4)) >> 1))))) {
-            return false;
-        }
+    if ((data.at(dataOffset + 4) != '=') &&
+        (!target.append(((decodeChar(data.at(dataOffset + 3)) << 4) | ((decodeChar(data.at(dataOffset + 4)) >> 1)))))) {
+        return false;
     }
 
-    if (data.at(dataOffset + 5) != '=') {
-        if (!target.append(((decodeChar(data.at(dataOffset + 4)) << 7) | ((decodeChar(data.at(dataOffset + 5)) << 2) | ((decodeChar(data.at(dataOffset + 6)) >> 3)))))) {
-            return false;
-        }
+    if ((data.at(dataOffset + 5) != '=') &&
+        (!target.append(((decodeChar(data.at(dataOffset + 4)) << 7) | ((decodeChar(data.at(dataOffset + 5)) << 2) | ((decodeChar(data.at(dataOffset + 6)) >> 3))))))) {
+        return false;
     }
 
-    if (data.at(dataOffset + 7) != '=') {
-        if (!target.append(((decodeChar(data.at(dataOffset + 6)) << 5) | (decodeChar(data.at(dataOffset + 7)))))) {
-            return false;
-        }
+    if ((data.at(dataOffset + 7) != '=') &&
+        (!target.append(((decodeChar(data.at(dataOffset + 6)) << 5) | (decodeChar(data.at(dataOffset + 7))))))) {
+        return false;
     }
 
     return true;

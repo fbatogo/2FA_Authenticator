@@ -98,8 +98,8 @@ bool KeyStorage::getAllKeys(QList<KeyEntry> &result)
         }
 
         // Iterate the latest results, and add them to the result variable.
-        for (size_t i = 0; i < readKeys.size(); i++) {
-            result.push_back(readKeys.at(i));
+        for (size_t x = 0; x < readKeys.size(); x++) {
+            result.push_back(readKeys.at(x));
         }
     }
 

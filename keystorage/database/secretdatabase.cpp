@@ -9,7 +9,7 @@
 #include <QVariant>
 
 // The schema version expected/used by this implementation of the app.
-#define SECRETDATABASE_SCHEMA_VERSION       1
+const size_t SECRETDATABASE_SCHEMA_VERSION = 1;
 
 SecretDatabase::SecretDatabase()
 {
@@ -108,14 +108,10 @@ bool SecretDatabase::add(const KeyEntry &entry)
     }
 
     // Make sure it doesn't already exist.
-    if (getByIdentifier(entry.identifier(), foundEntry)) {
-        // Double check it is what we expect.
-        if (foundEntry.valid()) {
-            if (foundEntry.identifier() == entry.identifier()) {
-                LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please use update()!");
-                return false;
-            }
-        }
+    if ((getByIdentifier(entry.identifier(), foundEntry)) && (foundEntry.valid()) &&
+            (foundEntry.identifier() == entry.identifier())) {
+        LOG_ERROR("The entry for identifier '" + entry.identifier() + "' already exists!  Please use update()!");
+        return false;
     }
 
     if (!createBoundQuery("INSERT into secretData (identifier, secret, keyType, otpType, outNumberCount, timeStep, timeOffset, algorithm, hotpCounter, issuer) VALUES (:identifier, :secret, :keyType, :otpType, :outNumberCount, :timeStep, :timeOffset, :algorithm, :hotpCounter, :issuer)", entry, query)) {
@@ -279,14 +275,19 @@ int SecretDatabase::schemaVersion(bool logError)
 {
     QSqlQuery query("SELECT * from schemaVersion");
     int verIdx;
-    int result;
+    size_t result;
     bool ok;
 
     // Execute the query.
     if (!query.exec()) {
         LOG_CONDITIONAL_ERROR(logError, "Failed to get the schema version!  Error (" + QString::number(query.lastError().type()) + ") : " + query.lastError().text());
         LOG_CONDITIONAL_ERROR(logError, "     Detailed Error : " + query.lastError().text());
-        return -1;
+
+        if (logError) {
+            return -1;
+        } else {
+            return 0;       // Not set up yet, claim version 0.
+        }
     }
 
     // We got a result.  Check it.
@@ -538,7 +539,7 @@ bool SecretDatabase::queryEntryToInt(const QSqlQuery &query, const QString &colu
  *
  * @return true if the database schema was upgraded to the most current version.  false on error.
  */
-bool SecretDatabase::upgradeSchema(int from)
+bool SecretDatabase::upgradeSchema(size_t from)
 {
     // See if we need to upgrade to version 1.
     if (from < 1) {

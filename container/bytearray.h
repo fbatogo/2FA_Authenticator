@@ -10,7 +10,7 @@
 class ByteArray
 {
 public:
-    ByteArray(bool zeroOnFree = false);
+    explicit ByteArray(bool zeroOnFree = false);
     ByteArray(size_t extraAllocationSize, bool zeroOnFree = false);
     ByteArray(const char *arrayToCopy, size_t length = 0, bool zeroOnFree = false);
     ByteArray(const std::string &stringToCopy, bool zeroOnFree = false);
@@ -36,6 +36,7 @@ public:
     bool append(const char *arrayToAppend, size_t length = 0);
     bool append(const unsigned char *arrayToAppend, size_t length = 0);
     bool append(const char charToAppend);
+    bool append(const ByteArray &toAppend);
 
     std::string toString() const;
     const char *toCharArrayPtr() const;

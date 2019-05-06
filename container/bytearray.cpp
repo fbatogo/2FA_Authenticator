@@ -72,9 +72,9 @@ void ByteArray::clear()
 
         // Free the memory.
         delete mByteArray;
-        mByteArray = nullptr;
     }
 
+    mByteArray = nullptr;
     mByteArrayLength = 0;
     mBufferAllocated = 0;
 }
@@ -271,13 +271,21 @@ bool ByteArray::append(const std::string &stringToAppend)
  */
 bool ByteArray::append(const char *arrayToAppend, size_t length)
 {
+    if (nullptr == arrayToAppend) {
+        // We appended nothing.
+        return true;
+    }
+
     // See if we need to expand the buffer..
-    if ((0 == mBufferAllocated) || ((mByteArrayLength + length) >= (mBufferAllocated - 1))) {
-        // Expand the buffer.
-        if (!expandBuffer((mByteArrayLength + length))) {
-            // Can't do it.
-            return false;
-        }
+    if (((0 == mBufferAllocated) || ((mByteArrayLength + length) >= (mBufferAllocated - 1))) &&
+        (!expandBuffer((mByteArrayLength + length)))) {
+        // Couldn't expand the buffer.
+        return false;
+    }
+
+    // If a 0 length was passed in, assume a null terminated C string was provided.
+    if (0 == length) {
+        length = strlen(arrayToAppend);
     }
 
     // Copy the data to the buffer.
@@ -314,6 +322,18 @@ bool ByteArray::append(const unsigned char *arrayToAppend, size_t length)
 bool ByteArray::append(const char charToAppend)
 {
     return append(&charToAppend, 1);
+}
+
+/**
+ * @brief ByteArray::append - Append another ByteArray object to this one.
+ *
+ * @param toAppend - The ByteArray object to append to this one.
+ *
+ * @return true if the data was appended.  false on error.
+ */
+bool ByteArray::append(const ByteArray &toAppend)
+{
+    return append(toAppend.toUCharArrayPtr(), toAppend.size());
 }
 
 /**

@@ -39,7 +39,7 @@ private:
     bool queryEntryToString(const QSqlQuery &query, const QString &column, QString &result);
     bool queryEntryToInt(const QSqlQuery &query, const QString &column, int &result);
 
-    bool upgradeSchema(int from);
+    bool upgradeSchema(size_t from);
 
     void copy(const SecretDatabase &toCopy);
 

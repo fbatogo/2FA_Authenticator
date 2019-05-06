@@ -25,8 +25,9 @@ void Base32CoderTests::encoderTest1()
     for (size_t i = 0; i < clearText.size(); i++) {
         encoded = encoder.encode(clearText.at(i));
         qDebug("Expected : %s    Calculated : %s", encodedText.at(i).toCharArrayPtr(), encoded.toCharArrayPtr());
-        //QCOMPARE(encodedText.at(i), encoded);
-        QVERIFY(encodedText.at(i) == encoded);
+        if (encodedText.at(i) != encoded) {
+            QFAIL(QString("Encoded text at index " + QString::number(i) + " didn't match!").toStdString().c_str());
+        }
     }
 }
 

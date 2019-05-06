@@ -85,7 +85,7 @@ void hotpTests::hotpTest1()
             QFAIL("Failed to generate an HOTP value!");
         }
 
-        qDebug("HOTP calculated value %d : %s ==? %s", i, hotpCalc.c_str(), expectedResults.at(i).c_str());
+        qDebug("HOTP calculated value %zu : %s ==? %s", i, hotpCalc.c_str(), expectedResults.at(i).c_str());
         QCOMPARE(hotpCalc, expectedResults.at(i));
     }
 }

@@ -67,7 +67,7 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     }
 
     // Make sure we are properly configured to do the hashing.
-    if (mHashType == nullptr) {
+    if (nullptr == mHashType) {
         // Need to have the object set before we can calculate the HMAC.
         LOG_ERROR("No hash object was configured when attempting to create an HMAC value!");
         return nullptr;
@@ -98,13 +98,13 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     }
 
     // Then, concatenate the data on to the inner hash value.
-    keyIpad.append(data.toUCharArrayPtr(), data.size());
+    keyIpad.append(data);
 
     // Then, perform the inner hash on the data provided.
     iPadHashed = mHashType->hash(keyIpad);
 
     // Then, concatenate the iPadHashed value to the keyOpad value.
-    keyOpad.append(iPadHashed.toUCharArrayPtr(), iPadHashed.size());
+    keyOpad.append(iPadHashed);
 
     // And hash that.
     mHashResult.reset(new ByteArray(mHashType->hash(keyOpad)));

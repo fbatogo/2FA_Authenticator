@@ -91,11 +91,9 @@ bool OtpHandler::decodeSecret(const KeyEntry &keydata, ByteArray &decodedSecret)
 {
     // Figure out what type of encoding we have, and make the correct call to
     // handle it.
-    switch (keydata.keyType()) {
-    case KEYENTRY_KEYTYPE_BASE32:
+    if (KEYENTRY_KEYTYPE_BASE32 == keydata.keyType()) {
         return decodeBase32Key(keydata, decodedSecret);
-
-    case KEYENTRY_KEYTYPE_HEX:
+    } else if (KEYENTRY_KEYTYPE_HEX == keydata.keyType()) {
         return decodeHexKey(keydata, decodedSecret);
     }
 
@@ -154,11 +152,9 @@ bool OtpHandler::decodeHexKey(const KeyEntry &keydata, ByteArray &decodedSecret)
 QString OtpHandler::calculateCode(const KeyEntry &keydata, const ByteArray &decodedSecret)
 {
     // Figure out which type of OTP we need to calculate.
-    switch (keydata.otpType()) {
-    case KEYENTRY_OTPTYPE_TOTP:
+    if (KEYENTRY_OTPTYPE_TOTP == keydata.otpType()) {
         return calculateTotp(keydata, decodedSecret);
-
-    case KEYENTRY_OTPTYPE_HOTP:
+    } else if (KEYENTRY_OTPTYPE_HOTP == keydata.otpType()) {
         return calculateHotp(keydata, decodedSecret);
     }
 
@@ -183,32 +179,13 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
     time_t now;
     std::string otp;
     Totp totp;
-    std::shared_ptr<HashTypeBase> hashToUse;
     std::shared_ptr<Hmac> hmac;
 
-    // Figure out what type of hash we should be using.
-    switch (keydata.algorithm()) {
-    case KEYENTRY_ALG_SHA1:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
-        break;
-
-    case KEYENTRY_ALG_SHA256:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha256Hash());
-        break;
-
-    case KEYENTRY_ALG_SHA512:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha512Hash());
-        break;
-
-    default:
-        LOG_ERROR("Unknown hash algorithm identifier of : " + QString::number(keydata.algorithm()));
+    hmac = getHmacForKeyData(keydata);
+    if (nullptr == hmac) {
+        // Couldn't get a valid HMAC object.
         return "";
     }
-
-    hmac = std::shared_ptr<Hmac>(new Hmac());
-
-    // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac->setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation.
     totp.setHmac(hmac);
@@ -238,32 +215,13 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
 {
     std::string otp;
     Hotp hotp;
-    std::shared_ptr<HashTypeBase> hashToUse;
     std::shared_ptr<Hmac> hmac;
 
-    // Figure out what type of hash we should be using.
-    switch (keydata.algorithm()) {
-    case KEYENTRY_ALG_SHA1:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
-        break;
-
-    case KEYENTRY_ALG_SHA256:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha256Hash());
-        break;
-
-    case KEYENTRY_ALG_SHA512:
-        hashToUse = std::shared_ptr<HashTypeBase>(new Sha512Hash());
-        break;
-
-    default:
-        LOG_ERROR("Unknown hash algorithm identifier of : " + QString::number(keydata.algorithm()));
+    hmac = getHmacForKeyData(keydata);
+    if (nullptr == hmac) {
+        // Got an error getting the HMAC method.
         return "";
     }
-
-    hmac = std::shared_ptr<Hmac>(new Hmac());
-
-    // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
-    hmac->setHashType(hashToUse);
 
     // Then, set the HMAC object to use with the calculation.
     hotp.setHmac(hmac);
@@ -295,4 +253,40 @@ size_t OtpHandler::getStartTime(size_t timeStep)
 
     // Return the number of seconds beyond the time step that have elapsed.
     return (seconds & timeStep);
+}
+
+/**
+ * @brief OtpHandler::getHmacForKeyData - Get an HMAC object for the algorithm specified in
+ *      the KeyData object.
+ *
+ * @param keydata - The KeyData object to get the HMAC object for.
+ *
+ * @return std::shared_ptr<Hmac> for the hash algorithm specified in the KeyData object.
+ */
+std::shared_ptr<Hmac> OtpHandler::getHmacForKeyData(const KeyEntry &keydata)
+{
+    std::shared_ptr<HashTypeBase> hashToUse;
+    std::shared_ptr<Hmac> hmac;
+
+    // Figure out what type of hash we should be using.
+    switch (keydata.algorithm()) {
+    case KEYENTRY_ALG_SHA1:
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
+        break;
+    case KEYENTRY_ALG_SHA256:
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha256Hash());
+        break;
+    case KEYENTRY_ALG_SHA512:
+        hashToUse = std::shared_ptr<HashTypeBase>(new Sha512Hash());
+        break;
+    default:
+        LOG_ERROR("Unknown hash algorithm identifier of : " + QString::number(keydata.algorithm()));
+        return nullptr;
+    }
+
+    hmac = std::shared_ptr<Hmac>(new Hmac());
+    // Set the hash in to our HMAC object, and transfer ownership to the HMAC object.
+    hmac->setHashType(hashToUse);
+
+    return hmac;
 }

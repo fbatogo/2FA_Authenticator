@@ -23,6 +23,9 @@ protected:
     static QString calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
 
     static size_t getStartTime(size_t timeStep);
+
+private:
+    static std::shared_ptr<Hmac> getHmacForKeyData(const KeyEntry &keydata);
 };
 
 #endif // OTPHANDLER_H

@@ -20,12 +20,13 @@ extern "C" {
 ByteArray Sha1Hash::hash(const ByteArray &toHash)
 {
     ByteArray result;
+    char hashResult[20];
 
-    memset(&mHashResult, 0x00, 20);
+    result.clear();;
 
-    SHA1(reinterpret_cast<char *>(&mHashResult), toHash.toCharArrayPtr(), static_cast<int>(toHash.size()));
+    SHA1(reinterpret_cast<char *>(&hashResult), toHash.toCharArrayPtr(), static_cast<int>(toHash.size()));
 
-    result.fromCharArray(reinterpret_cast<char *>(&mHashResult), 20);
+    result.fromCharArray(hashResult, 20);
 
     return result;
 }
