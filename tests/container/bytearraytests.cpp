@@ -185,6 +185,7 @@ void ByteArrayTests::appendTests()
 
     // Clean up.
     free(cString);
+    cString = nullptr;
 
     // Append a single character.
     testByteArray.append('A');
@@ -231,5 +232,39 @@ void ByteArrayTests::expandedBufferAppendTests()
 
     // Clean up.
     free(cString);
+}
+
+void ByteArrayTests::truncateTests()
+{
+    ByteArray testByteArray("This is some initial text.");
+
+    // Try to truncate beyond the length of the data.
+    QVERIFY(!testByteArray.truncate(1000));
+
+    // Try to truncate the exact length of the data.
+    QVERIFY(testByteArray.truncate(testByteArray.size()));
+
+    // Make sure the data is still what we expect.
+    QCOMPARE(std::string("This is some initial text."), testByteArray.toString());
+
+    // Chop the period off.
+    QVERIFY(testByteArray.truncate(testByteArray.size()-1));
+
+    // Make sure the data is what we expect.
+    QCOMPARE(std::string("This is some initial text"), testByteArray.toString());
+
+    // Chop it down to 4 characters.
+    QVERIFY(testByteArray.truncate(4));
+
+    // Verify it.
+    QCOMPARE((size_t)4, testByteArray.size());
+    QCOMPARE(std::string("This"), testByteArray.toString());
+
+    // Chop it down to nothing, which should be the same as calling clear().
+    QVERIFY(testByteArray.truncate(0));
+
+    // Verify it.
+    QCOMPARE((size_t)0, testByteArray.size());
+    QCOMPARE(std::string(""), testByteArray.toString());
 }
 

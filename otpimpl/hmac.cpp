@@ -90,11 +90,37 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     keyIpad = keyToUse;
     keyOpad = keyToUse;
 
+    // Pre-allocate a full block on the next reallocation.
+    keyIpad.setExtraAllocation(mHashType->hashBlockLength());
+    keyOpad.setExtraAllocation(mHashType->hashBlockLength());
+
+    // Padd the ipad and opad to the proper block size.
+    for (size_t i = keyIpad.size(); i < mHashType->hashBlockLength(); i++) {
+        if (!keyIpad.append(static_cast<char>(0x00))) {
+            LOG_ERROR("Failed to append a zero byte to the key ipad!");
+            return nullptr;
+        }
+    }
+
+    for (size_t i = keyOpad.size(); i < mHashType->hashBlockLength(); i++) {
+        if (!keyOpad.append(static_cast<char>(0x00))) {
+            LOG_ERROR("Failed to append a zero byte to the key opad!");
+            return nullptr;
+        }
+    }
+
     // Iterate the two values, XORing them with 0x36 for the ipad, and
     // 0x5c for the opad.
     for (size_t i = 0; i < mHashType->hashBlockLength(); i++) {
-        keyIpad.setAt(i, (keyIpad.at(i) ^ 0x36));
-        keyOpad.setAt(i, (keyOpad.at(i) ^ 0x5c));
+        if (!keyIpad.setAt(i, (keyIpad.at(i) ^ 0x36))) {
+            LOG_ERROR("Unable to set the ipad value at index " + QString::number(i) + "!");
+            return nullptr;
+        }
+
+        if (!keyOpad.setAt(i, (keyOpad.at(i) ^ 0x5c))) {
+            LOG_ERROR("Unable to set the opad value at index " + QString::number(i) + "!");
+            return nullptr;
+        }
     }
 
     // Then, concatenate the data on to the inner hash value.

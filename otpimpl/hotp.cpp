@@ -135,7 +135,7 @@ void Hotp::clear()
 std::string Hotp::calculateHotpFromHmac(const ByteArray &hmac, size_t digits, bool addChecksum, int truncationOffset)
 {
     int64_t DIGITS_POWER[9] = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
-    unsigned char *truncValue;
+    ByteArray truncValue;
     size_t calcDigits;
     int32_t truncData;
     int64_t otp;
@@ -157,19 +157,13 @@ std::string Hotp::calculateHotpFromHmac(const ByteArray &hmac, size_t digits, bo
 
     // Do the dynamic truncation on it.
     truncValue = dynamicTruncate(hmac, truncationOffset);
-    if (truncValue == nullptr) {
+    if (truncValue.empty()) {
         LOG_ERROR("Unable to execute the dynamic truncation of the HMAC-SHA1 value generated!");
         return "";
     }
 
     // Convert the truncated value to a 32 bit number.
-    truncData = (((truncValue[0] & 0x7f) << 24) | ((truncValue[1] & 0xff) << 16) | ((truncValue[2] & 0xff) << 8) | (truncValue[3] & 0xff));
-
-    // Free the memory from the truncation.
-    if (truncValue != nullptr) {
-        free(truncValue);
-        truncValue = nullptr;
-    }
+    truncData = (((truncValue.at(0) & 0x7f) << 24) | ((truncValue.at(1) & 0xff) << 16) | ((truncValue.at(2) & 0xff) << 8) | (truncValue.at(3) & 0xff));
 
     // Then, calculate the otp.
     otp = truncData % DIGITS_POWER[calcDigits];
@@ -235,37 +229,32 @@ int64_t Hotp::calcChecksum(int64_t otp, size_t digits)
  * @param truncateOffset - A value of 0..(hmacSize - 4) to be used for the truncationOffset.  If it is
  *      any other number, dynamic truncation will be used.
  *
- * @return unsigned char pointer to the dynamically truncated value.  The caller will take
- *      ownership of this pointer and *MUST* free it!  On error, nullptr will be returned.
+ * @return ByteArray containing the dynamically truncated value.
  */
-unsigned char *Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
+ByteArray Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
 {
     size_t offset;
-    unsigned char *result;
+    ByteArray result;
 
     if (hmac.empty()) {
         LOG_ERROR("No HMAC value provided while attempting dynamic truncation!");
-        return nullptr;
+        return ByteArray();
     }
 
     if (truncateOffset < (hmac.size() - 4)) {
         // Use the provided truncation value.
-        offset = static_cast<size_t>(truncateOffset);
+        offset = truncateOffset;
     } else {
         // Get the offset bits from the last byte of the HMAC.
         offset = (hmac.at((hmac.size() - 1)) & 0x0f);
     }
 
-    // Allocate 4 bytes for our result
-    result = static_cast<unsigned char *>(calloc(1, 4));
-    if (result == nullptr) {
-        LOG_ERROR("Unable to allocate memory for the dynamically truncated value!");
-        return nullptr;
-    }
+    // Allocate 3 extra bytes on our first allocation (resulting in a total allocation of 4 bytes)
+    result.setExtraAllocation(3);
 
     // Copy the 4 bytes at the offset.
     for (size_t i = 0; i < 4; i++) {
-        result[i] = hmac.at(offset + i);
+        result.append(hmac.at(offset + i));
     }
 
     return result;

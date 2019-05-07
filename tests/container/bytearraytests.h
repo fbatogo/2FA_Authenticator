@@ -16,6 +16,7 @@ private slots:
     void assignmentTests();
     void appendTests();
     void expandedBufferAppendTests();
+    void truncateTests();
 };
 
 #endif // BYTEARRAYTESTS_H

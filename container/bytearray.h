@@ -38,6 +38,8 @@ public:
     bool append(const char charToAppend);
     bool append(const ByteArray &toAppend);
 
+    bool truncate(size_t newLength);
+
     std::string toString() const;
     const char *toCharArrayPtr() const;
     const unsigned char *toUCharArrayPtr() const;

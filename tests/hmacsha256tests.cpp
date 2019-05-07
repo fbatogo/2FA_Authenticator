@@ -40,19 +40,10 @@ void HmacSha256Tests::hmacTestCase1()
 void HmacSha256Tests::hmacTestCase2()
 {
     unsigned char expectedDigest[32] = { 0x5b, 0xdc, 0xc1, 0x46, 0xbf, 0x60, 0x75, 0x4e, 0x6a, 0x04, 0x24, 0x26, 0x08, 0x95, 0x75, 0xc7, 0x5a, 0x00, 0x3f, 0x08, 0x9d, 0x27, 0x39, 0x83, 0x9d, 0xec, 0x58, 0xb9, 0x64, 0xec, 0x38, 0x43 };
-    ByteArray data("Hi There");
+    ByteArray data("what do ya want for nothing?");
     ByteArray key("Jefe");
-    size_t keyLength = key.size();
     Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha256Hash()));
     std::shared_ptr<ByteArray> result;
-
-    // Pre-allocate enough memory to store all of our data.
-    key.setExtraAllocation(keyLength);
-
-    // Build the key.
-    for (size_t i = 0; i < keyLength; i++) {
-        key.append(0x0b);
-    }
 
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
@@ -91,7 +82,7 @@ void HmacSha256Tests::hmacTestCase3()
     result = dohmac.calculate(key, data);
 
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(20));
+    QCOMPARE(result->size(), static_cast<size_t>(32));
     qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 32).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
     QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 32) == 0);
@@ -108,6 +99,7 @@ void HmacSha256Tests::hmacTestCase4()
 
     // Build the data.
     data.setExtraAllocation(50);
+
     for (size_t i = 0; i < 50; i++) {
         data.append(0xcd);
     }
@@ -142,11 +134,14 @@ void HmacSha256Tests::hmacTestCase5()
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
 
+    // We only want 128 bits worth of result.
+    QVERIFY(result->truncate(16));
+
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(32));
-    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 32).c_str());
+    QCOMPARE(result->size(), static_cast<size_t>(16));
+    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 16).c_str()); // We only expect 16 bytes, since it was truncated.
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
-    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 32) == 0);
+    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 16) == 0);
 }
 
 void HmacSha256Tests::hmacTestCase6()
@@ -179,7 +174,7 @@ void HmacSha256Tests::hmacTestCase6()
 void HmacSha256Tests::hmacTestCase7()
 {
     unsigned char expectedDigest1[32] = { 0x9b, 0x09, 0xff, 0xa7, 0x1b, 0x94, 0x2f, 0xcb, 0x27, 0x63, 0x5f, 0xbc, 0xd5, 0xb0, 0xe9, 0x44, 0xbf, 0xdc, 0x63, 0x64, 0x4f, 0x07, 0x13, 0x93, 0x8a, 0x7f, 0x51, 0x53, 0x5c, 0x3a, 0x35, 0xe2 };
-    ByteArray data("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data");
+    ByteArray data("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.");
     ByteArray key;
     size_t keyLength = 131;
     Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha256Hash()));
@@ -197,8 +192,8 @@ void HmacSha256Tests::hmacTestCase7()
     result = dohmac.calculate(key, data);
 
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(20));
-    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest1, 20).c_str());
+    QCOMPARE(result->size(), static_cast<size_t>(32));
+    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest1, 32).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
-    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest1, 20) == 0);
+    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest1, 32) == 0);
 }

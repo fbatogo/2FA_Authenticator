@@ -49,11 +49,6 @@ void HmacSha512Tests::hmacTestCase2()
     // Pre-allocate enough memory to store all of our data.
     key.setExtraAllocation(keyLength);
 
-    // Build the key.
-    for (size_t i = 0; i < keyLength; i++) {
-        key.append(0x0b);
-    }
-
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
 
@@ -142,11 +137,14 @@ void HmacSha512Tests::hmacTestCase5()
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
 
+    // We only want 128 bits worth of result.
+    QVERIFY(result->truncate(16));
+
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(64));
-    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 64).c_str());
+    QCOMPARE(result->size(), static_cast<size_t>(16));
+    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 16).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
-    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 64) == 0);
+    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 16) == 0);
 }
 
 void HmacSha512Tests::hmacTestCase6()
@@ -163,17 +161,20 @@ void HmacSha512Tests::hmacTestCase6()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0x0c);
+        key.append(0xaa);
     }
 
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
+    if ((nullptr == result) || (result->empty())) {
+        QFAIL("HMAC calculation was invalid!");
+    }
 
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(20));
-    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 20).c_str());
+    QCOMPARE(result->size(), static_cast<size_t>(64));
+    qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 64).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
-    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 20) == 0);
+    QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 64) == 0);
 }
 
 void HmacSha512Tests::hmacTestCase7()

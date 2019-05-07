@@ -337,6 +337,35 @@ bool ByteArray::append(const ByteArray &toAppend)
 }
 
 /**
+ * @brief ByteArray::truncate - Truncate the data in our byte array.
+ *
+ * @param newLength - The new length for the data stored in our internal
+ *      buffer.
+ *
+ * @return true if the data was truncated.  false on error.
+ */
+bool ByteArray::truncate(size_t newLength)
+{
+    if (newLength > mByteArrayLength) {
+        // Can't 'truncate' longer!
+        return false;
+    }
+
+    // If we are truncating down to 0, then just call clear().
+    if (newLength == 0) {
+        clear();
+        return true;
+    }
+
+    // Otherwise, truncate the data by adjusting the value that stores
+    // the length of the data, and writing a null byte at the end.
+    mByteArrayLength = newLength;
+    mByteArray[mByteArrayLength] = 0x00;
+
+    return true;
+}
+
+/**
  * @brief ByteArray::toString - Return the byte array as a standard string.
  *
  * @return std::string containing the data from the byte array stored in this object.

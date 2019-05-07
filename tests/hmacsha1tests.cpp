@@ -53,19 +53,10 @@ void HmacSha1Tests::hmacTestCase1()
 void HmacSha1Tests::hmacTestCase2()
 {
     unsigned char expectedDigest[20] = { 0xef, 0xfc, 0xdf, 0x6a, 0xe5, 0xeb, 0x2f, 0xa2, 0xd2, 0x74, 0x16, 0xd5, 0xf1, 0x84, 0xdf, 0x9c, 0x25, 0x9a, 0x7c, 0x79 };
-    ByteArray data("Hi There");
+    ByteArray data("what do ya want for nothing?");
     ByteArray key("Jefe");
-    size_t keyLength = key.size();
     Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha1Hash()));
     std::shared_ptr<ByteArray> result;
-
-    // Pre-allocate enough memory to store all of our data.
-    key.setExtraAllocation(keyLength);
-
-    // Build the key.
-    for (size_t i = 0; i < keyLength; i++) {
-        key.append(0x0b);
-    }
 
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
@@ -176,7 +167,7 @@ void HmacSha1Tests::hmacTestCase6()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0x0c);
+        key.append(0xaa);
     }
 
     // Calculate the HMAC.
