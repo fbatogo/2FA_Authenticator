@@ -8,19 +8,9 @@ Totp::Totp()
     mHmacToUse = nullptr;
 }
 
-Totp::Totp(Totp &toCopy)
-{
-    copy(toCopy);
-}
-
 Totp::Totp(std::shared_ptr<Hmac> hmacToUse) :
     mHmacToUse(hmacToUse)
 {
-}
-
-Totp::~Totp()
-{
-    clear();
 }
 
 /**
@@ -68,17 +58,6 @@ std::string Totp::calculate(const ByteArray &decodedSecret, time_t utcTime, size
     return hotp.calculate(decodedSecret, calcTime, digits);
 }
 
-Totp &Totp::operator=(const Totp &toCopy)
-{
-    if (this == &toCopy) {
-        return (*this);
-    }
-
-    copy(toCopy);
-
-    return (*this);
-}
-
 /**
  * @brief Totp::clear - Clear out the values stored in this object, deleting any objects
  *      that we are configured to delete.
@@ -86,14 +65,4 @@ Totp &Totp::operator=(const Totp &toCopy)
 void Totp::clear()
 {
     mHmacToUse = nullptr;
-}
-
-/**
- * @brief Totp::copy - Copy the members of the \c toCopy object in to this object.
- *
- * @param toCopy - The object to copy members from.
- */
-void Totp::copy(const Totp &toCopy)
-{
-    mHmacToUse = toCopy.mHmacToUse;
 }

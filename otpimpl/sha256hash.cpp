@@ -3,7 +3,7 @@
 #include <cstring>
 
 extern "C" {
-#include "otpimpl/sha2.h"
+#include "otpimpl/sha2.h"                   //NOSONAR
 }
 
 ByteArray Sha256Hash::hash(const ByteArray &toHash)

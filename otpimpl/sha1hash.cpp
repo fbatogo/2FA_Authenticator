@@ -3,7 +3,7 @@
 #include <cstring>
 
 extern "C" {
-#include "sha1impl.h"
+#include "sha1impl.h"                   //NOSONAR
 }
 
 /**

@@ -4,7 +4,7 @@
 #include <cstring>
 
 extern "C" {
-#include "sha2.h"
+#include "sha2.h"                   //NOSONAR
 }
 
 ByteArray Sha512Hash::hash(const ByteArray &toHash)
