@@ -1,10 +1,10 @@
 #include "sha256hash.h"
 
+#include <cstring>
+
 extern "C" {
 #include "otpimpl/sha2.h"
 }
-
-#include <cstring>
 
 ByteArray Sha256Hash::hash(const ByteArray &toHash)
 {

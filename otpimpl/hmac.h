@@ -10,7 +10,7 @@ class Hmac
 public:
     Hmac();
     Hmac(Hmac &toCopy);
-    Hmac(std::shared_ptr<HashTypeBase> hashType);
+    explicit Hmac(std::shared_ptr<HashTypeBase> hashType);
     ~Hmac();
 
     void setHashType(const std::shared_ptr<HashTypeBase> &hashType);

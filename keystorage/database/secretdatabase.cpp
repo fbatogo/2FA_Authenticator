@@ -542,11 +542,9 @@ bool SecretDatabase::queryEntryToInt(const QSqlQuery &query, const QString &colu
 bool SecretDatabase::upgradeSchema(size_t from)
 {
     // See if we need to upgrade to version 1.
-    if (from < 1) {
-        if (!upgradeToVersion1()) {
-            LOG_ERROR("Failed to upgrade the schema to version 1!");
-            return false;
-        }
+    if ((from < 1) && (!upgradeToVersion1())) {
+        LOG_ERROR("Failed to upgrade the schema to version 1!");
+        return false;
     }
 
     if (from > SECRETDATABASE_SCHEMA_VERSION) {

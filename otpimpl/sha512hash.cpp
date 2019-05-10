@@ -1,12 +1,11 @@
 #include "sha512hash.h"
 
 #include <stdint.h>
+#include <cstring>
 
 extern "C" {
 #include "sha2.h"
 }
-
-#include <cstring>
 
 ByteArray Sha512Hash::hash(const ByteArray &toHash)
 {

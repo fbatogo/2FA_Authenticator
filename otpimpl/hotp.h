@@ -12,7 +12,7 @@ class Hotp
 public:
     Hotp();
     Hotp(Hotp &toCopy);
-    Hotp(std::shared_ptr<Hmac> &hmacToUse);
+    explicit Hotp(std::shared_ptr<Hmac> &hmacToUse);
     ~Hotp();
 
     void setHmac(std::shared_ptr<Hmac> &hmacToUse);

@@ -11,7 +11,7 @@ class Totp
 public:
     Totp();
     Totp(Totp &toCopy);
-    Totp(std::shared_ptr<Hmac> hmacToUse);
+    explicit Totp(std::shared_ptr<Hmac> hmacToUse);
     ~Totp();
 
     void setHmac(std::shared_ptr<Hmac> &hmacToUse);

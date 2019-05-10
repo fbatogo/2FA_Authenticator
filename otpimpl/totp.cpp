@@ -13,9 +13,9 @@ Totp::Totp(Totp &toCopy)
     copy(toCopy);
 }
 
-Totp::Totp(std::shared_ptr<Hmac> hmacToUse)
+Totp::Totp(std::shared_ptr<Hmac> hmacToUse) :
+    mHmacToUse(hmacToUse)
 {
-    mHmacToUse = hmacToUse;
 }
 
 Totp::~Totp()

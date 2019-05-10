@@ -1,10 +1,10 @@
 #include "sha1hash.h"
 
-extern "C" {
-    #include "sha1impl.h"
-}
-
 #include <cstring>
+
+extern "C" {
+#include "sha1impl.h"
+}
 
 /**
  * @brief Sha1Hash::hash - Given a byte string (and length), calculate the SHA1 hash
@@ -22,7 +22,7 @@ ByteArray Sha1Hash::hash(const ByteArray &toHash)
     ByteArray result;
     char hashResult[20];
 
-    result.clear();;
+    result.clear();
 
     SHA1(reinterpret_cast<char *>(&hashResult), toHash.toCharArrayPtr(), static_cast<int>(toHash.size()));
 

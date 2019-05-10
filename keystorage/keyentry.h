@@ -116,7 +116,7 @@ public:
     // Copy all of the values from another KeyEntry object.
     void copyFromObject(const KeyEntry &toCopy);
 
-signals:
+signals:                    //NOSONAR
     void identifierChanged();
     void secretChanged();
     void keyTypeChanged();

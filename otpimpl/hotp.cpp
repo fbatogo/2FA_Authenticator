@@ -246,7 +246,7 @@ ByteArray Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
         offset = truncateOffset;
     } else {
         // Get the offset bits from the last byte of the HMAC.
-        offset = (hmac.at((hmac.size() - 1)) & 0x0f);
+        offset = (hmac.at(hmac.size() - 1) & 0x0f);
     }
 
     // Allocate 3 extra bytes on our first allocation (resulting in a total allocation of 4 bytes)

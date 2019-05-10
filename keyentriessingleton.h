@@ -43,7 +43,7 @@ signals:                                //NOSONAR
 private slots:
     void slotUpdateOtpValues();
 
-private:
+private:                                //NOSONAR
     explicit KeyEntriesSingleton(QObject *parent = nullptr);
 
     bool entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, size_t keyType, size_t otpType, int numberCount, size_t algorithm, int period, int offset);
