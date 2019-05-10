@@ -37,7 +37,7 @@ public:
     Q_INVOKABLE KeyEntry *at(int i);
     Q_INVOKABLE KeyEntry *fromIdentifier(const QString &identifier);
 
-signals:
+signals:                                //NOSONAR
     void fullRefresh();
 
 private slots:
