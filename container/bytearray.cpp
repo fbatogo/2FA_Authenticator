@@ -276,6 +276,11 @@ bool ByteArray::append(const char *arrayToAppend, size_t length)
         return true;
     }
 
+    if (0 == length) {
+        // Assume it is a null terminated string.
+        length = strlen(arrayToAppend);
+    }
+
     // See if we need to expand the buffer..
     if (((0 == mBufferAllocated) || ((mByteArrayLength + length) >= (mBufferAllocated - 1))) &&
         (!expandBuffer((mByteArrayLength + length)))) {

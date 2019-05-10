@@ -267,4 +267,3 @@ void ByteArrayTests::truncateTests()
     QCOMPARE((size_t)0, testByteArray.size());
     QCOMPARE(std::string(""), testByteArray.toString());
 }
-
