@@ -187,25 +187,18 @@ std::string HexDecoder::cleanup(const std::string &toClean)
  * @param sourceString - The string to search for 'toReplace' in.
  * @param toReplace - The string that we want to replace.
  * @param replaceWith - The string to replace 'toReplace' with.
- * @param global - If true, then replace all instances of 'toReplace'.  Otherwise, only replace the
- *      first instance.
  *
  * @return
  */
-std::string HexDecoder::replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, bool global)
+std::string HexDecoder::replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith)
 {
     std::string result;
 
-    if (!global) {
-        // Replace a single instance.
-        replaceSingleInstance(sourceString, toReplace, replaceWith, result);
-    } else {
-        // Replace all instances.
-        result = sourceString;
+    // Replace all instances.
+    result = sourceString;
 
-        // Replace all of the instances.
-        while (replaceSingleInstance(result, toReplace, replaceWith, result)) {};
-    }
+    // Replace all of the instances.
+    while (replaceSingleInstance(result, toReplace, replaceWith, result));
 
     // Return the updated string.
     return result;

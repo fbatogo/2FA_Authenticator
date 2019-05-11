@@ -16,7 +16,8 @@ void HmacSha512Tests::hmacTestCase1()
     ByteArray data("Hi There");
     ByteArray key;
     size_t keyLength = 20;
-    Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha512Hash()));
+    std::shared_ptr<HashTypeBase> hashType(new Sha512Hash());
+    Hmac dohmac(hashType);
     std::shared_ptr<ByteArray> result;
 
     // Pre-allocate enough memory to store all of our data.
@@ -31,7 +32,7 @@ void HmacSha512Tests::hmacTestCase1()
     result = dohmac.calculate(key, data);
 
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(64));
+    QCOMPARE(result->size(), static_cast<size_t>(hashType->hashResultLength()));
     qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest, 64).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
     QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest, 64) == 0);

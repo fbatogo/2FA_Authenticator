@@ -207,6 +207,10 @@ bool Base32Coder::isBase32Encoded(const ByteArray &toValidate)
  */
 bool Base32Coder::decode8Chars(const ByteArray &data, size_t dataOffset, ByteArray &target)
 {
+    unsigned char decoded1;
+    unsigned char decoded2;
+    unsigned char decoded3;
+
     // If the data is empty, or we don't have 8 bytes to decode, it is a failure.
     if ((data.empty()) || ((dataOffset + 8) > data.size())) {
         LOG_ERROR("Attempted to decode data beyond the end of the input data!");
@@ -214,28 +218,69 @@ bool Base32Coder::decode8Chars(const ByteArray &data, size_t dataOffset, ByteArr
     }
 
     // Decode the first byte.
-    if (!target.append((decodeChar(data.at(dataOffset)) << 3) | (decodeChar(data.at(dataOffset + 1)) >> 2))) {
+    decoded1 = decodeChar(data.at(dataOffset));
+    decoded2 = decodeChar(data.at(dataOffset + 1));
+    if ((decoded1 == 0xff) || (decoded2 == 0xff)) {
+        LOG_ERROR("Unable to decode the 1st set of bytes!");
         return false;
     }
 
-    if ((data.at(dataOffset + 2) != '=') &&
-            (!target.append(((decodeChar(data.at(dataOffset + 1)) << 6) | ((decodeChar(data.at(dataOffset + 2)) << 1) | ((decodeChar(data.at(dataOffset + 3)) >> 4))))))) {
+    if (!target.append(static_cast<char>((decoded1 << 3) | (decoded2 >> 2)))) {
         return false;
     }
 
-    if ((data.at(dataOffset + 4) != '=') &&
-        (!target.append(((decodeChar(data.at(dataOffset + 3)) << 4) | ((decodeChar(data.at(dataOffset + 4)) >> 1)))))) {
-        return false;
+    if (data.at(dataOffset + 2) != '=') {
+            decoded1 = decodeChar(data.at(dataOffset + 1));
+            decoded2 = decodeChar(data.at(dataOffset + 2));
+            decoded3 = decodeChar(data.at(dataOffset + 3));
+            if ((decoded1 == 0xff) || (decoded2 == 0xff) || (decoded3 == 0xff)) {
+                LOG_ERROR("Unable to decode the 2nd set of bytes!");
+                return false;
+            }
+
+            if (!target.append(static_cast<char>((decoded1 << 6) | (decoded2 << 1) | (decoded3 >> 4)))) {
+                return false;
+            }
     }
 
-    if ((data.at(dataOffset + 5) != '=') &&
-        (!target.append(((decodeChar(data.at(dataOffset + 4)) << 7) | ((decodeChar(data.at(dataOffset + 5)) << 2) | ((decodeChar(data.at(dataOffset + 6)) >> 3))))))) {
-        return false;
+    if (data.at(dataOffset + 4) != '=') {
+        decoded1 = decodeChar(data.at(dataOffset + 3));
+        decoded2 = decodeChar(data.at(dataOffset + 4));
+        if ((decoded1 == 0xff) || (decoded2 == 0xff)) {
+            LOG_ERROR("Unable to decode the 3rd set of bytes!");
+            return false;
+        }
+
+        if (!target.append(static_cast<char>((decoded1 << 4) | (decoded2 >> 1)))) {
+            return false;
+        }
     }
 
-    if ((data.at(dataOffset + 7) != '=') &&
-        (!target.append(((decodeChar(data.at(dataOffset + 6)) << 5) | (decodeChar(data.at(dataOffset + 7))))))) {
-        return false;
+    if (data.at(dataOffset + 5) != '=') {
+        decoded1 = decodeChar(data.at(dataOffset + 4));
+        decoded2 = decodeChar(data.at(dataOffset + 5));
+        decoded3 = decodeChar(data.at(dataOffset + 6));
+        if ((decoded1 == 0xff) || (decoded2 == 0xff) || (decoded3 == 0xff)) {
+            LOG_ERROR("Unable to decode the 4th set of bytes!");
+            return false;
+        }
+
+        if (!target.append(static_cast<char>((decoded1 << 7) | (decoded2 << 2) | (decoded3 >> 3)))) {
+            return false;
+        }
+    }
+
+    if (data.at(dataOffset + 7) != '=') {
+        decoded1 = decodeChar(data.at(dataOffset + 6));
+        decoded2 = decodeChar(data.at(dataOffset + 7));
+        if ((decoded1 == 0xff) || (decoded2 == 0xff)) {
+            LOG_ERROR("Unable to decode the 5th set of bytes!");
+            return false;
+        }
+
+        if (!target.append(static_cast<char>((decoded1 << 5) | (decoded2)))) {
+            return false;
+        }
     }
 
     return true;

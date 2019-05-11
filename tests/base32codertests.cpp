@@ -38,6 +38,13 @@ void Base32CoderTests::decoderTest1()
     std::vector<ByteArray> encodedText;
     ByteArray decoded;
 
+    // Try to decode some invalid blocks.
+    decoded = decoder.decode("1234");
+    QVERIFY(decoded.empty());
+
+    decoded = decoder.decode("11111111");
+    QVERIFY(decoded.empty());
+
     clearText = getClearTextTests();
     encodedText = getEncodedTextTests();
 
@@ -70,6 +77,27 @@ void Base32CoderTests::isBase32EncodedTests()
     for (size_t i = 0; i < toTest.size(); i++) {
         QVERIFY(!Base32Coder::isBase32Encoded(toTest.at(i)));
     }
+
+    QVERIFY(!Base32Coder::isBase32Encoded("11111111"));
+}
+
+void Base32CoderTests::negativeTests()
+{
+    Base32CoderProxy bcProxy;
+    ByteArray result;
+
+    // Try to decode something too short.
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("1111"), 0, result));
+
+    // Try to decode something with an invalid character in each position.
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("1ZXW6YTB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("M1XW6YTB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZ1W6YTB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZX16YTB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW1YTB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW61TB"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW6Y1B"), 0, result));
+    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW6YT1"), 0, result));
 }
 
 std::vector<ByteArray> Base32CoderTests::getClearTextTests()

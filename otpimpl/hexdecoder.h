@@ -13,12 +13,13 @@ public:
 
     static bool isHexEncoded(const std::string &toTest);
 
-private:
+protected:
     unsigned char decodeOneByte(const std::string &oneByte);
     unsigned char decodeOneNibble(char oneNibble);
 
+private:
     static std::string cleanup(const std::string &toClean);
-    static std::string replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, bool global = true);
+    static std::string replaceInString(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith);
     static bool replaceSingleInstance(const std::string &sourceString, const std::string &toReplace, const std::string &replaceWith, std::string &result);
 };
 

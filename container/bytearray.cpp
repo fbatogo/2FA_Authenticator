@@ -302,11 +302,6 @@ bool ByteArray::append(const char *arrayToAppend, size_t length)
         return false;
     }
 
-    // If a 0 length was passed in, assume a null terminated C string was provided.
-    if (0 == length) {
-        length = strlen(arrayToAppend);
-    }
-
     // Copy the data to the buffer.
     memcpy(&mByteArray[mByteArrayLength], arrayToAppend, length);
     mByteArrayLength += length;

@@ -14,7 +14,7 @@ public:
 
     static bool isBase32Encoded(const ByteArray &toValidate);
 
-private:
+protected:
     bool decode8Chars(const ByteArray &data, size_t dataOffset, ByteArray &target);
     unsigned char decodeChar(unsigned char toDecode);
 };

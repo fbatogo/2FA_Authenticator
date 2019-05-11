@@ -92,3 +92,21 @@ void HexDecoderTests::isHexEncodedTest()
     QVERIFY(!HexDecoder::isHexEncoded("deadbeef is good"));
     QVERIFY(!HexDecoder::isHexEncoded("deadbeefz"));
 }
+
+void HexDecoderTests::decodeInvalidTextTest()
+{
+    ByteArray testArray("abc");
+    ByteArray result;
+    HexDecoder decoder;
+
+    result = decoder.decode(testArray);
+    QVERIFY(result.empty());
+}
+
+void HexDecoderTests::negativeTests()
+{
+    HexDecoderProxy hdProxy;
+
+    QCOMPARE(0x00, hdProxy.decodeOneByteProxy("a"));
+    QCOMPARE(0xff, hdProxy.decodeOneNibbleProxy('z'));
+}

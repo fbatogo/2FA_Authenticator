@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "../otpimpl/hexdecoder.h"
+
 class HexDecoderTests : public QObject
 {
     Q_OBJECT
@@ -10,8 +12,20 @@ class HexDecoderTests : public QObject
 private slots:
     void hexDecoderTest1();
     void isHexEncodedTest();
+    void decodeInvalidTextTest();
+    void negativeTests();
 };
 
-//DECLARE_TEST(HexDecoderTests)
+class HexDecoderProxy : public HexDecoder
+{
+public:
+    unsigned char decodeOneByteProxy(const std::string &oneByte) {
+        return decodeOneByte(oneByte);
+    }
+
+    unsigned char decodeOneNibbleProxy(char oneNibble) {
+        return decodeOneNibble(oneNibble);
+    }
+};
 
 #endif // HEXDECODERTESTS_H

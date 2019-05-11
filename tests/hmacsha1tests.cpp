@@ -82,13 +82,13 @@ void HmacSha1Tests::hmacTestCase3()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Build the data.
     data.setExtraAllocation(50);
     for (size_t i = 0; i < 50; i++) {
-        data.append(0xdd);
+        data.append((char)0xdd);
     }
 
     // Calculate the HMAC.
@@ -113,7 +113,7 @@ void HmacSha1Tests::hmacTestCase4()
     // Build the data.
     data.setExtraAllocation(50);
     for (size_t i = 0; i < 50; i++) {
-        data.append(0xcd);
+        data.append((char)0xcd);
     }
 
     // Calculate the HMAC.
@@ -167,7 +167,7 @@ void HmacSha1Tests::hmacTestCase6()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Calculate the HMAC.
@@ -187,7 +187,8 @@ void HmacSha1Tests::hmacTestCase7()
     ByteArray data("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data");
     ByteArray key;
     size_t keyLength = 80;
-    Hmac dohmac(std::shared_ptr<HashTypeBase>(new Sha1Hash()));
+    std::shared_ptr<HashTypeBase> hashType(new Sha1Hash());
+    Hmac dohmac(hashType);
     std::shared_ptr<ByteArray> result;
 
     // Pre-allocate enough memory to store all of our data.
@@ -195,14 +196,14 @@ void HmacSha1Tests::hmacTestCase7()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Calculate the HMAC.
     result = dohmac.calculate(key, data);
 
     // Make sure the length is what we expect.
-    QCOMPARE(result->size(), static_cast<size_t>(20));
+    QCOMPARE(result->size(), static_cast<size_t>(hashType->hashResultLength()));
     qDebug("Expected : %s", TestUtils::binaryToString(expectedDigest1, 20).c_str());
     qDebug("Got      : %s", TestUtils::binaryToString(result).c_str());
     QVERIFY(memcmp(result->toUCharArrayPtr(), expectedDigest1, 20) == 0);

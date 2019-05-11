@@ -18,6 +18,8 @@
 #include "sha512tests.h"
 #include "totptests.h"
 #include "container/bytearraytests.h"
+#include "generalinfosingletontests.h"
+#include "settingshandlertests.h"
 
 int main(int argc, char *argv[])
 {
@@ -75,6 +77,8 @@ int main(int argc, char *argv[])
     tests.addTest(new Sha512Tests());
     tests.addTest(new totpTests());
     tests.addTest(new ByteArrayTests());
+    tests.addTest(new GeneralInfoSingletonTests());
+    tests.addTest(new SettingsHandlerTests());
 
     return tests.executeAll();
 }

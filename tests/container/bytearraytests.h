@@ -11,6 +11,7 @@ private slots:
     void toStringTests();
     void emptyStringTests();
     void atTests();
+    void setAtTests();
     void equalityTests();
     void fromOthersTests();
     void assignmentTests();

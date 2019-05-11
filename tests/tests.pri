@@ -6,8 +6,10 @@ message(Building unit test binary...)
 # Add the extra source files that we use for testing.
 HEADERS += \
     $$PWD/container/bytearraytests.h \
+    $$PWD/generalinfosingletontests.h \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
+    $$PWD/settingshandlertests.h \
     $$PWD/sha1tests.h \
     $$PWD/hmacsha1tests.h \
     $$PWD/testutils.h \
@@ -22,8 +24,10 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/container/bytearraytests.cpp \
+    $$PWD/generalinfosingletontests.cpp \
     $$PWD/secretdatabasetests.cpp \
     $$PWD/qrcodestringparsertests.cpp \
+    $$PWD/settingshandlertests.cpp \
     $$PWD/sha1tests.cpp \
     $$PWD/hmacsha1tests.cpp \
     $$PWD/testutils.cpp \
