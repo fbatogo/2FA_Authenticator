@@ -10,7 +10,7 @@ void DatabaseKeyStorageTests::storageIdTests()
 {
     DatabaseKeyStorage dbStorageTest;
 
-    QCOMPARE(KEYSTORAGE_METHOD_DATABASE, dbStorageTest.storageId());
+    QCOMPARE(KEYSTORAGE_METHOD_DATABASE, (size_t)dbStorageTest.storageId());
 }
 
 void DatabaseKeyStorageTests::e2eTests()
@@ -67,7 +67,7 @@ void DatabaseKeyStorageTests::e2eTests()
 
     // Make sure the secret is what we expect, which proves the data was written to the
     // database, and read back.
-    QCOMPARE("secret", kEntry.secret().toString());
+    QCOMPARE(std::string("secret"), kEntry.secret().toString());
 
     // Attempt to get all the keys in the database.
     QVERIFY(dbStorageTest.getAllKeys(allKeys));
@@ -90,11 +90,11 @@ void DatabaseKeyStorageTests::e2eTests()
     QVERIFY(dbStorageTest.keyByIdentifier("Test Key", kEntry));
 
     // Make sure the secret is the updated value.
-    QCOMPARE("updatedsecret", kEntry.secret().toString());
+    QCOMPARE(std::string("updatedsecret"), kEntry.secret().toString());
 
     // Verify that all of the other values in the key entry are what we expect.
-    QCOMPARE("Test Key", kEntry.identifier());
-    QCOMPARE("Test Issuer", kEntry.issuer());
+    QCOMPARE(QString("Test Key"), kEntry.identifier());
+    QCOMPARE(QString("Test Issuer"), kEntry.issuer());
     QCOMPARE((size_t)1, kEntry.keyType());
     QCOMPARE((size_t)1, kEntry.otpType());
     QCOMPARE((size_t)30, kEntry.timeStep());

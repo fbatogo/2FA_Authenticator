@@ -60,7 +60,7 @@ void KeyStorageTests::e2eTests()
 
     // Make sure the secret is what we expect, which proves the data was written to the
     // database, and read back.
-    QCOMPARE("secret", kEntry.secret().toString());
+    QCOMPARE(std::string("secret"), kEntry.secret().toString());
 
     // Attempt to get all the keys in the database.
     QVERIFY(storageTest.getAllKeys(allKeys));
@@ -83,11 +83,11 @@ void KeyStorageTests::e2eTests()
     QVERIFY(storageTest.keyByIdentifier("Test Key", kEntry));
 
     // Make sure the secret is the updated value.
-    QCOMPARE("updatedsecret", kEntry.secret().toString());
+    QCOMPARE(std::string("updatedsecret"), kEntry.secret().toString());
 
     // Verify that all of the other values in the key entry are what we expect.
-    QCOMPARE("Test Key", kEntry.identifier());
-    QCOMPARE("Test Issuer", kEntry.issuer());
+    QCOMPARE(std::string("Test Key"), kEntry.identifier());
+    QCOMPARE(std::string("Test Issuer"), kEntry.issuer());
     QCOMPARE((size_t)1, kEntry.keyType());
     QCOMPARE((size_t)1, kEntry.otpType());
     QCOMPARE((size_t)30, kEntry.timeStep());
