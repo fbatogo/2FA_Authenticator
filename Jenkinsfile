@@ -26,26 +26,16 @@ pipeline {
           sh '''gcov base32coder.cpp hexdecoder.cpp hmac.cpp hotp.cpp sha1hash.cpp sha1impl.c sha256hash.cpp sha2.c sha512hash.cpp totp.cpp keyentry.cpp keystorage.cpp databasekeystorage.cpp secretdatabase.cpp otphandler.cpp bytearray.cpp'''    // Run coverage output.
       }
     }
-    stage('SonarQube analysis') {
-        
-      steps {
-            
-        script {
-          
-          // requires SonarQube Scanner 2.8+
-          
-          def scannerHome = tool 'SonarQube Scanner';
-          
-          withSonarQubeEnv('SonarQube in the Cloud') {
-            
-            sh "${scannerHome}/bin/sonar-scanner"
-          
-          }
-            
-        }
-        
-      }
-    
+    stage('SonarQube analysis') {        
+      steps {            
+        script {          
+          // requires SonarQube Scanner 2.8+          
+          def scannerHome = tool 'SonarQube Scanner';          
+          withSonarQubeEnv('SonarQube in the Cloud') {            
+            sh "${scannerHome}/bin/sonar-scanner"          
+          }            
+        }        
+      }    
     }    
   }
   post {

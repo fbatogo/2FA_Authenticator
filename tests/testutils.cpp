@@ -3,6 +3,10 @@
 #include <sstream>
 #include <iomanip>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif // _WIN32
+
 std::string TestUtils::binaryToString(const unsigned char *bytes, size_t bytesLength)
 {
     std::stringstream result;
