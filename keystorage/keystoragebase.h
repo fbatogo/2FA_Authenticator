@@ -28,7 +28,7 @@ public:
     virtual bool addKey(const KeyEntry &entry) = 0;
     virtual bool updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry) = 0;
     virtual bool deleteKeyByIdentifier(const QString &identifier) = 0;
-    virtual bool freeKeyStorage() = 0;
+    virtual bool freeKeyStorage();
 };
 
 #endif // KEYSTORAGEBASE_H

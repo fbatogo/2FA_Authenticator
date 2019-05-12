@@ -14,7 +14,7 @@ class KeyEntriesSingleton : public QObject
     Q_OBJECT
 
 public:
-    ~KeyEntriesSingleton();
+    ~KeyEntriesSingleton();                 //NOSONAR
 
     static KeyEntriesSingleton *getInstance();
     static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);

@@ -2,6 +2,7 @@
 #define KEYSTORAGE_H
 
 #include <vector>
+#include <memory>
 #include "keystoragebase.h"
 #include "keyentry.h"
 
@@ -11,8 +12,6 @@ class KeyStorage
 {
 public:
     KeyStorage();
-    KeyStorage(KeyStorage &toCopy);
-    ~KeyStorage();
 
     bool available();
 
@@ -24,13 +23,10 @@ public:
     bool deleteKeyByIdentifier(const QString &identifier);
     bool freeStorage();
 
-    KeyStorage& operator=(const KeyStorage& toCopy);
-
 private:
     bool findKeyByIdentifier(const QString &identifier, KeyEntry &result, int &storageDriverId);
-    void copy(const KeyStorage &toCopy);
 
-    std::vector<KeyStorageBase *> mKeyStorageDrivers;
+    std::vector<std::shared_ptr<KeyStorageBase> > mKeyStorageDrivers;
     bool mAvailable;
 };
 

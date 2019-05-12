@@ -25,18 +25,18 @@ void KeyEntry::clear()
     // Set default values.
     mIdentifier.clear();
     mSecret.clear();
-    mKeyType = -1;
-    mOtpType = -1;
-    mOutNumberCount = -1;
+    mKeyType = 0;
+    mOtpType = 0;
+    mOutNumberCount = 0;
     mTimeStep = 30;             // Recommended default.
     mTimeOffset = 0;            // Recommended default.
     mAlgorithm = KEYENTRY_ALG_SHA1;        // Recommended default.
-    mHotpCounter = -1;           // HOTP isn't used by default.
+    mHotpCounter = 0;           // HOTP isn't used by default.
     mIssuer.clear();
     mInvalidReason.clear();    
     mCurrentCode.clear();
     mPrintableCurrentCode.clear();
-    mStartTime = -1;
+    mStartTime = 0;
     mCodeValid = false;
 }
 

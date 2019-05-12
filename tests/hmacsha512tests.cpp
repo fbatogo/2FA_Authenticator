@@ -74,13 +74,13 @@ void HmacSha512Tests::hmacTestCase3()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Build the data.
     data.setExtraAllocation(50);
     for (size_t i = 0; i < 50; i++) {
-        data.append(0xdd);
+        data.append((char)0xdd);
     }
 
     // Calculate the HMAC.
@@ -105,7 +105,7 @@ void HmacSha512Tests::hmacTestCase4()
     // Build the data.
     data.setExtraAllocation(50);
     for (size_t i = 0; i < 50; i++) {
-        data.append(0xcd);
+        data.append((char)0xcd);
     }
 
     // Calculate the HMAC.
@@ -162,7 +162,7 @@ void HmacSha512Tests::hmacTestCase6()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Calculate the HMAC.
@@ -192,7 +192,7 @@ void HmacSha512Tests::hmacTestCase7()
 
     // Build the key.
     for (size_t i = 0; i < keyLength; i++) {
-        key.append(0xaa);
+        key.append((char)0xaa);
     }
 
     // Calculate the HMAC.

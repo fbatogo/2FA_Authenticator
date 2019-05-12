@@ -53,7 +53,7 @@ void hotpTests::invalidHotpTest()
     Hotp invalidHotp;
     ByteArray key;
 
-    QVERIFY(invalidHotp.calculate(key, 20, 0, 6).empty());
+    QVERIFY(invalidHotp.calculate(key, 20, 6, false).empty());
 }
 
 void hotpTests::hotpTest1()

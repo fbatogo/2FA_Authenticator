@@ -52,6 +52,7 @@ SOURCES += \
     container/bytearray.cpp \
     keystorage/keyentry.cpp \
     keystorage/keystorage.cpp \
+    keystorage/keystoragebase.cpp \
     logger.cpp \
     keystorage/database/databasekeystorage.cpp \
     otp/otphandler.cpp \
@@ -122,7 +123,6 @@ QML_DESIGNER_IMPORT_PATH =
 
 
 # If we are building in the unit tests, we need to tweak a few files.
-message($$QT)
 contains(QT, testlib) {
     # Include the test source files.
     include(tests/tests.pri)
