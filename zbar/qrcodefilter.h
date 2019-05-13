@@ -12,12 +12,12 @@ class QRCodeFilter : public QAbstractVideoFilter
     Q_OBJECT
 
 public:
-    QRCodeFilter(QObject *parent = nullptr);
+    explicit QRCodeFilter(QObject *parent = nullptr);
     ~QRCodeFilter();
 
     QVideoFilterRunnable *createFilterRunnable();
 
-signals:
+signals:                    //NOSONAR
     void signalFinished();
 };
 

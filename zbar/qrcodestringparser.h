@@ -42,7 +42,7 @@ protected:
     QMap<QString, QString> mAttributeValues;
 
 private:
-    QRCodeStringParser(QObject *parent = nullptr);
+    explicit QRCodeStringParser(QObject *parent = nullptr);
 
     ResultWithRemainder getType(const QString &schemeStripped);
     ResultWithRemainder getLabel(const QString &typeStripped);

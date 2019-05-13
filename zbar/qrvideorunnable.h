@@ -13,7 +13,7 @@ class QRCodeFilter;
 class QRVideoRunnable : public QVideoFilterRunnable
 {
 public:
-    QRVideoRunnable(QRCodeFilter *filter);
+    explicit QRVideoRunnable(QRCodeFilter *filter);
 
     QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
 

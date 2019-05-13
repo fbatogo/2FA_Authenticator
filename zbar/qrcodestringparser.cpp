@@ -365,7 +365,8 @@ QStringList QRCodeStringParser::getAvpStringList(const QString &parameters)
 void QRCodeStringParser::splitAndAddAvp(const QString &avpString)
 {
     QStringList parts;
-    QString key, value;
+    QString key;
+    QString value;
 
     parts.clear();
     key.clear();

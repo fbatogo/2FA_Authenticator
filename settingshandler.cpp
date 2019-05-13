@@ -176,8 +176,8 @@ QString SettingsHandler::dataPath()
 
 /**
  * @brief SettingsHandler::dataDirectoryExistsOrIsCreated - Check to see if our data directory
- *      exists.  If it exists, return true.  If it doesn't exist, attempt to create it and
- *      return true if it was created, or false if not.
+ *      exists.  If it exists, returns true.  If it doesn't exist, attempt to create it and
+ *      returns true if it was created, or false if not.
  *
  * @return true if the directory already exists or was created.  false if it doesn't exist and
  *      couldn't be created.

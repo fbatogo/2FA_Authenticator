@@ -10,11 +10,6 @@ Hmac::Hmac()
     mHashResult = nullptr;
 }
 
-Hmac::Hmac(Hmac &toCopy)
-{
-    copy(toCopy);
-}
-
 Hmac::Hmac(std::shared_ptr<HashTypeBase> hashType) :
     mHashType(hashType)
 {
@@ -139,17 +134,6 @@ std::shared_ptr<ByteArray> Hmac::calculate(const ByteArray &key, const ByteArray
     return mHashResult;
 }
 
-Hmac &Hmac::operator=(const Hmac &toCopy)
-{
-    if (this == &toCopy) {
-        return (*this);
-    }
-
-    copy(toCopy);
-
-    return (*this);
-}
-
 /**
  * @brief Hmac::clear - Clean up the internal variables, deleting any objects that we are
  *      configured to delete.
@@ -158,16 +142,3 @@ void Hmac::clear()
 {
     mHashType = nullptr;
 }
-
-/**
- * @brief Hmac::copy - Copy the members of the \c toCopy object in to the current
- *      object.
- *
- * @param toCopy - The object to copy from.
- */
-void Hmac::copy(const Hmac &toCopy)
-{
-    mHashType = toCopy.mHashType;
-    mHashResult = toCopy.mHashResult;
-}
-
