@@ -46,7 +46,7 @@ ByteArray HexDecoder::decode(const ByteArray &hexData)
     resultSize = (smashed.length() / 2);
 
     // Have our result buffer allocate extra space to speed things up.
-    result.setExtraAllocation((resultSize + 2));
+    result.setExtraAllocation(resultSize + 2);
 
     // Iterate the string passing 2 characters at a time in to decodeOneByte, and stashing the
     // result in our return buffer.

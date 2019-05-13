@@ -9,11 +9,6 @@ Hotp::Hotp()
     mHmacToUse = nullptr;
 }
 
-Hotp::Hotp(Hotp &toCopy)
-{
-    copy(toCopy);
-}
-
 Hotp::Hotp(std::shared_ptr<Hmac> &hmacToUse) :
     mHmacToUse(hmacToUse)
 {
@@ -48,8 +43,8 @@ void Hotp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
  * @param key - The DECODED key to use.  (20 byte string, *NOT* base32 encoded)
  * @param counter - The counter value to use.
  * @param digits - The number of digits to calculate.
- * @param addChecksum - true to include a checksum in the HOTP calculation.  false
- *      otherwise.
+ * @param addChecksum - true to include a checksum in the HOTP calculation.
+ *      false otherwise.
  * @param truncationOffset - The offset in to the HOTP that we should truncate to
  *      come up with the HOTP value.
  *
@@ -98,17 +93,6 @@ std::string Hotp::calculate(const ByteArray &key, uint64_t counter, size_t digit
     }
 
     return calculateHotpFromHmac((*calcResult.get()), digits, addChecksum, truncationOffset);
-}
-
-Hotp &Hotp::operator=(const Hotp &toCopy)
-{
-    if (this == &toCopy) {
-        return (*this);
-    }
-
-    copy(toCopy);
-
-    return (*this);
 }
 
 /**
@@ -258,14 +242,4 @@ ByteArray Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
     }
 
     return result;
-}
-
-/**
- * @brief Hotp::copy - Copy the members of the \c toCopy object in to this object.
- *
- * @param toCopy - The object to copy data from.
- */
-void Hotp::copy(const Hotp &toCopy)
-{
-    mHmacToUse = toCopy.mHmacToUse;
 }
