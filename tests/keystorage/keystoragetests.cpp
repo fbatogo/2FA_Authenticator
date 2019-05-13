@@ -66,7 +66,7 @@ void KeyStorageTests::e2eTests()
     QVERIFY(storageTest.getAllKeys(allKeys));
 
     // Make sure there is only a single entry.
-    QCOMPARE((size_t)1, allKeys.size());
+    QCOMPARE((int)1, allKeys.size());
 
     // Try to re-add the key (should fail).
     QVERIFY(!storageTest.addKey(kEntry));
@@ -86,8 +86,8 @@ void KeyStorageTests::e2eTests()
     QCOMPARE(std::string("updatedsecret"), kEntry.secret().toString());
 
     // Verify that all of the other values in the key entry are what we expect.
-    QCOMPARE(std::string("Test Key"), kEntry.identifier());
-    QCOMPARE(std::string("Test Issuer"), kEntry.issuer());
+    QCOMPARE(QString("Test Key"), kEntry.identifier());
+    QCOMPARE(QString("Test Issuer"), kEntry.issuer());
     QCOMPARE((size_t)1, kEntry.keyType());
     QCOMPARE((size_t)1, kEntry.otpType());
     QCOMPARE((size_t)30, kEntry.timeStep());
@@ -110,5 +110,5 @@ void KeyStorageTests::e2eTests()
 
     // Get all of the keys again.  The count should be 0.
     QVERIFY(storageTest.getAllKeys(allKeys));
-    QCOMPARE((size_t)0, allKeys.size());
+    QCOMPARE((int)0, allKeys.size());
 }

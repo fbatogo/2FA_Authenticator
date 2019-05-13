@@ -107,6 +107,6 @@ void HexDecoderTests::negativeTests()
 {
     HexDecoderProxy hdProxy;
 
-    QCOMPARE(0x00, hdProxy.decodeOneByteProxy("a"));
-    QCOMPARE(0xff, hdProxy.decodeOneNibbleProxy('z'));
+    QCOMPARE((unsigned char)0x00, hdProxy.decodeOneByteProxy("a"));
+    QCOMPARE((unsigned char)0xff, hdProxy.decodeOneNibbleProxy('z'));
 }

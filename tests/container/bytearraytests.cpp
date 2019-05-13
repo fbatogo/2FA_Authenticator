@@ -46,7 +46,7 @@ void ByteArrayTests::setAtTests()
     // Change the first character.
     QVERIFY(testArray.setAt(0, 'A'));
 
-    QCOMPARE("Aest String", testArray.toString());
+    QCOMPARE(std::string("Aest String"), testArray.toString());
 }
 
 void ByteArrayTests::equalityTests()
