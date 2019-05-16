@@ -55,7 +55,11 @@ void SHA1Transform(
     const unsigned char buffer[64]
 )
 {
-    uint32_t a, b, c, d, e;
+    uint32_t a;
+    uint32_t b;
+    uint32_t c;
+    uint32_t d;
+    uint32_t e;
 
     typedef union
     {
@@ -169,7 +173,7 @@ void SHA1Transform(
     state[3] += d;
     state[4] += e;
     /* Wipe variables */
-    a = b = c = d = e = 0;
+    a = b = c = d = e = 0;          //NOSONAR
 #ifdef SHA1HANDSOFF
     memset(block, '\0', sizeof(block));
 #endif

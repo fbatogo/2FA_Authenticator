@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <logger.h>
 
-#define DOT_DIRECTORY       ".Rollin"          // The name of the dot directory we will use in the user home directory.
+const QString DOT_DIRECTORY = ".Rollin";          // The name of the dot directory we will use in the user home directory.
 
 SettingsHandler::~SettingsHandler()
 {

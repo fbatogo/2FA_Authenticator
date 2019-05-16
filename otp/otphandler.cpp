@@ -247,7 +247,7 @@ size_t OtpHandler::getStartTime(size_t timeStep)
     size_t seconds;
 
     t = time(nullptr);
-    now = localtime(&t);
+    now = localtime(&t);            //NOSONAR
 
     seconds = static_cast<size_t>(now->tm_sec);
 

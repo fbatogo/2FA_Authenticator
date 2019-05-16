@@ -214,7 +214,8 @@ void sha256_transf(sha256_ctx *ctx, const unsigned char *message,
 {
     uint32 w[64];
     uint32 wv[8];
-    uint32 t1, t2;
+    uint32 t1;
+    uint32 t2;
     const unsigned char *sub_block;
     int i;
 
@@ -355,7 +356,9 @@ void sha256_update(sha256_ctx *ctx, const unsigned char *message,
                    unsigned int len)
 {
     unsigned int block_nb;
-    unsigned int new_len, rem_len, tmp_len;
+    unsigned int new_len;
+    unsigned int rem_len;
+    unsigned int tmp_len;
     const unsigned char *shifted_message;
 
     tmp_len = SHA256_BLOCK_SIZE - ctx->len;
@@ -430,9 +433,11 @@ void sha512_transf(sha512_ctx *ctx, const unsigned char *message,
 {
     uint64 w[80];
     uint64 wv[8];
-    uint64 t1, t2;
+    uint64 t1;
+    uint64 t2;
     const unsigned char *sub_block;
-    int i, j;
+    int i;
+    int j;
 
     for (i = 0; i < (int) block_nb; i++) {
         sub_block = message + (i << 7);
@@ -552,7 +557,9 @@ void sha512_update(sha512_ctx *ctx, const unsigned char *message,
                    unsigned int len)
 {
     unsigned int block_nb;
-    unsigned int new_len, rem_len, tmp_len;
+    unsigned int new_len;
+    unsigned int rem_len;
+    unsigned int tmp_len;
     const unsigned char *shifted_message;
 
     tmp_len = SHA512_BLOCK_SIZE - ctx->len;
@@ -654,7 +661,9 @@ void sha384_update(sha384_ctx *ctx, const unsigned char *message,
                    unsigned int len)
 {
     unsigned int block_nb;
-    unsigned int new_len, rem_len, tmp_len;
+    unsigned int new_len;
+    unsigned int rem_len;
+    unsigned int tmp_len;
     const unsigned char *shifted_message;
 
     tmp_len = SHA384_BLOCK_SIZE - ctx->len;
@@ -754,7 +763,9 @@ void sha224_update(sha224_ctx *ctx, const unsigned char *message,
                    unsigned int len)
 {
     unsigned int block_nb;
-    unsigned int new_len, rem_len, tmp_len;
+    unsigned int new_len;
+    unsigned int rem_len;
+    unsigned int tmp_len;
     const unsigned char *shifted_message;
 
     tmp_len = SHA224_BLOCK_SIZE - ctx->len;

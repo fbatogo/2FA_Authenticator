@@ -23,9 +23,8 @@ Base32Coder::Base32Coder()
 ByteArray Base32Coder::encode(const ByteArray &toEncode)
 {
     ByteArray result;
+    ByteArray encoded;
     size_t blocks;
-    size_t offset;
-    unsigned char b;
 
     // If we have nothing to encode, return an empty string.
     if (toEncode.empty()) {
@@ -34,80 +33,22 @@ ByteArray Base32Coder::encode(const ByteArray &toEncode)
 
     result.clear();
 
-    blocks = (toEncode.size() / 5);
-
-    if (blocks == 0) {
-        blocks = 1;
-    } else {
-        if ((toEncode.size() % 5) != 0) {
-            blocks++;
-        }
-    }
+    blocks = getBlocksFromSize(toEncode.size());
 
     // Set the result to pre-allocate enough space for our data.
     result.setExtraAllocation(blocks * 10);
 
     for (size_t i = 0; i < blocks; i++) {
-        // Calculate the 32bit offset in to the byte string.
-        offset = (i * 5);
+        encoded = encodeOneBlock(i, toEncode);
 
-        // Pull out the values that we need to look up.
-
-        // Take the first 5 bits.
-        result.append(base32chars[toEncode.at(offset) >> 3]);
-
-        // Take the last 3 bits in the first byte, and the first 2 of the 2nd byte.
-        b = ((toEncode.at(offset) & 0x07)  << 2);
-        if ((offset + 1) < toEncode.size()) {
-            b |= (toEncode.at(offset+1) >> 6);
+        // Make sure it is valid.
+        if (encoded.size() == 0) {
+            LOG_ERROR("Failed to base 32 encode the data at block " + QString::number(i) + "!");
+            return ByteArray();     // Return an empty byte array.
         }
-        result.append(base32chars[b]);
 
-        if ((offset + 1) >= toEncode.size()) {
-            result.append("======");
-        } else {
-            // Then, the 5 bits in the middle of the 2nd byte.
-            result.append(base32chars[(toEncode.at(offset+1) & 0x3f) >> 1]);
-
-            // Then, the last bit of the 2nd byte, and the high nibble of the 3rd.
-            b = ((toEncode.at(offset+1) & 0x01) << 4);
-            if ((offset + 2) < toEncode.size()) {
-                b |= (toEncode.at(offset+2) >> 4);
-            }
-            result.append(base32chars[b]);
-
-            if ((offset + 2) >= toEncode.size()) {
-                result.append("====");
-            } else {
-                // Then, the low nibble of the 3rd byte, and 1 bit from the 4th.
-                b = ((toEncode.at(offset+2) & 0x0f) << 1);
-                if ((offset + 3) < toEncode.size()) {
-                    b |= (toEncode.at(offset+3) >> 7);
-                }
-                result.append(base32chars[b]);
-
-                if ((offset + 3) >= toEncode.size()) {
-                    result.append("===");
-                } else {
-                    // Then the 5 middle-ish bits from the 4th byte.
-                    result.append(base32chars[(toEncode.at(offset+3) & 0x7f) >> 2]);
-
-                    // Then the low 2 bits of the 4th byte and the high 3 of the 5th.
-                    b = ((toEncode.at(offset+3) & 0x03) << 3);
-                    if ((offset + 4) < toEncode.size()) {
-                        b |= (toEncode.at(offset+4) >> 5);
-                    }
-                    result.append(base32chars[b]);
-
-                    if ((offset + 4) >= toEncode.size()) {
-                        result.append('=');
-                    } else {
-                        // Then, the last 5 bits of the 5th byte.
-                        result.append(base32chars[toEncode.at(offset+4) & 0x1f]);
-                    }
-                }
-            }
-        }
+        // Everything looks good.  Append it to our result data.
+        result.append(encoded);
     }
 
     return result;
@@ -194,6 +135,133 @@ bool Base32Coder::isBase32Encoded(const ByteArray &toValidate)
 
     // If we get here, then the string appears to be a valid base32 string.
     return true;
+}
+
+/**
+ * @brief Base32Coder::getBlocksFromSize - Given the size of a blob of data,
+ *      calculate the number of blocks that it represents.
+ *
+ * @param dataSize - The size (in bytes) of the data to calculate the block
+ *      count for.
+ *
+ * @return size_t containing the block count for the data size provided.
+ */
+size_t Base32Coder::getBlocksFromSize(size_t dataSize)
+{
+    size_t blocks;
+
+    blocks = (dataSize / 5);
+
+    if (blocks == 0) {
+        // If we have less than 5 bytes in the data, then we have
+        // a single block.
+        blocks = 1;
+    } else {
+        if ((dataSize % 5) != 0) {
+            // If the amount of data is NOT evenly divisible by 5,
+            // then we need to increment the block count by 1.
+            blocks++;
+        }
+    }
+
+    return blocks;
+}
+
+/**
+ * @brief Base32Coder::encodeOneBlock - Encode a single blocks worth of data.
+ *
+ * @param blockCount - The block number that we should be encoding.
+ * @param toEncode - A ByteArray that contains ALL of the data that we should
+ *      be encoding.  'blockCount' will be used to index into the data to
+ *      calculate the block.
+ *
+ * @return ByteArray containing a single blocks worth of encoded data.
+ */
+ByteArray Base32Coder::encodeOneBlock(size_t blockCount, const ByteArray &toEncode)
+{
+    size_t offset;
+    unsigned char b;
+    ByteArray result;
+
+    // Calculate our offset.
+    offset = (blockCount * 5);
+
+    // Make sure our offset isn't beyond the end of the available data.
+    if (offset > toEncode.size()) {
+        // Return an empty block as an error.
+        return ByteArray();
+    }
+
+    result.clear();
+
+    // Make sure our first allocation is enough to cover all of the encoded data.
+    result.setExtraAllocation(10);
+
+    // Pull out the values that we need to look up.
+
+    // Take the first 5 bits.
+    result.append(base32chars[toEncode.at(offset) >> 3]);
+
+    // Take the last 3 bits in the first byte, and the first 2 of the 2nd byte.
+    b = ((toEncode.at(offset) & 0x07)  << 2);
+    if ((offset + 1) < toEncode.size()) {
+        b |= (toEncode.at(offset+1) >> 6);
+    }
+    result.append(base32chars[b]);
+
+    // If this is the end, pad out the block with = characters.
+    if ((offset + 1) >= toEncode.size()) {
+        result.append("======");
+        return result;
+    }
+
+    // Then, the 5 bits in the middle of the 2nd byte.
+    result.append(base32chars[(toEncode.at(offset+1) & 0x3f) >> 1]);
+
+    // Then, the last bit of the 2nd byte, and the high nibble of the 3rd.
+    b = ((toEncode.at(offset+1) & 0x01) << 4);
+    if ((offset + 2) < toEncode.size()) {
+        b |= (toEncode.at(offset+2) >> 4);
+    }
+    result.append(base32chars[b]);
+
+    // If this is the end, pad out the block with = characters.
+    if ((offset + 2) >= toEncode.size()) {
+        result.append("====");
+        return result;
+    }
+
+    // Then, the low nibble of the 3rd byte, and 1 bit from the 4th.
+    b = ((toEncode.at(offset+2) & 0x0f) << 1);
+    if ((offset + 3) < toEncode.size()) {
+        b |= (toEncode.at(offset+3) >> 7);
+    }
+    result.append(base32chars[b]);
+
+    // If this is the end, pad out the block with = characters.
+    if ((offset + 3) >= toEncode.size()) {
+        result.append("===");
+        return result;
+    }
+
+    // Then the 5 middle-ish bits from the 4th byte.
+    result.append(base32chars[(toEncode.at(offset+3) & 0x7f) >> 2]);
+
+    // Then the low 2 bits of the 4th byte and the high 3 of the 5th.
+    b = ((toEncode.at(offset+3) & 0x03) << 3);
+    if ((offset + 4) < toEncode.size()) {
+        b |= (toEncode.at(offset+4) >> 5);
+    }
+    result.append(base32chars[b]);
+
+    if ((offset + 4) >= toEncode.size()) {
+        result.append('=');
+    } else {
+        // Then, the last 5 bits of the 5th byte.
+        result.append(base32chars[toEncode.at(offset+4) & 0x1f]);
+    }
+
+    return result;
 }
 
 /**
