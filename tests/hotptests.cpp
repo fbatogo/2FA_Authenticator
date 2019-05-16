@@ -52,18 +52,36 @@ void hotpTests::invalidHotpTest()
 {
     Hotp invalidHotp;
     ByteArray key;
+    std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
+    std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
 
+    // Fails because the key is empty.
     QVERIFY(invalidHotp.calculate(key, 20, 6, false).empty());
+
+    key.append("testing");
+
+    // Fails because no HMAC is set.
+    QVERIFY(invalidHotp.calculate(key, 20, 6, false).empty());
+
+    invalidHotp.setHmac(hmacToUse);
+
+    // Fails because the length is less than 6.
+    QVERIFY(invalidHotp.calculate(key, 20, 5, false).empty());
+
+    // Fails because the length is greater than 8.
+    QVERIFY(invalidHotp.calculate(key, 20, 9, false).empty());
 }
 
 void hotpTests::hotpTest1()
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
-    Hotp hotp(hmacToUse);
+    Hotp hotp;
     ByteArray secret("12345678901234567890");
     std::string hotpCalc;
     std::vector<std::string> expectedResults;
+
+    hotp.setHmac(hmacToUse);
 
     // Build the list of expected results.
     expectedResults.clear();
