@@ -26,7 +26,7 @@ pipeline {
       
 //	  sh '''make -j2'''
 	  sh '''./Rollin --xml'''
-          sh '''gcov base32coder.cpp hexdecoder.cpp hmac.cpp hotp.cpp sha1hash.cpp sha1impl.c sha256hash.cpp sha2.c sha512hash.cpp totp.cpp keyentry.cpp keystorage.cpp databasekeystorage.cpp secretdatabase.cpp otphandler.cpp bytearray.cpp generalinfosingleton.cpp settingshandler.cpp qrcodestringparser.cpp keyentrysingleton.cpp logger.cpp'''    // Run coverage output.
+          sh '''gcov base32coder.cpp hexdecoder.cpp hmac.cpp hotp.cpp sha1hash.cpp sha1impl.c sha256hash.cpp sha2.c sha512hash.cpp totp.cpp totp.h keyentry.cpp keystorage.cpp keystoragebase.cpp databasekeystorage.cpp secretdatabase.cpp otphandler.cpp bytearray.cpp generalinfosingleton.cpp settingshandler.cpp qrcodestringparser.cpp keyentrysingleton.cpp logger.cpp'''    // Run coverage output.
       }
     }
     stage('SonarQube analysis') {        

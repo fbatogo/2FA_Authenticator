@@ -65,7 +65,7 @@ void SHA1Transform(
     {
         unsigned char c[64];
         uint32_t l[16];
-    } CHAR64LONG16;
+    } CHAR64LONG16;                     //NOSONAR
 
 #ifdef SHA1HANDSOFF
     CHAR64LONG16 block[1];      /* use array to appear as a pointer */
