@@ -24,7 +24,7 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
 
     // If our QRCodeStringParser singleton indicates that we have a code in processing, then don't process this frame.
     if ((!QRCodeStringParser::getInstance()->isCodeProcessing()) &&
-        (input->handleType() == QAbstractVideoBuffer::NoHandle)) {
+            (input->handleType() == QAbstractVideoBuffer::NoHandle)) {
 
         if (mFrameSize != input->size()) {
             mImage.set_size(input->width(), input->height());
@@ -32,19 +32,18 @@ QVideoFrame QRVideoRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &
         }
 
         if ((input->pixelFormat() == QVideoFrame::Format_YUV420P) &&
-            (input->map(QAbstractVideoBuffer::ReadOnly))) {
-                mImage.set_data(input->bits(), input->width()*input->height());
-                input->unmap();
+                (input->map(QAbstractVideoBuffer::ReadOnly))) {
+            mImage.set_data(input->bits(), input->width()*input->height());
+            input->unmap();
 
-                mScanner.scan(mImage);
+            mScanner.scan(mImage);
 
-                for (auto it = mImage.symbol_begin(), end = mImage.symbol_end(); it != end; ++it) {
-                    // Feed the text to the QRCodeStringParser singleton.
-                    QRCodeStringParser::getInstance()->parseCode(QString::fromStdString(it->get_data()));
+            for (auto it = mImage.symbol_begin(), end = mImage.symbol_end(); it != end; ++it) {
+                // Feed the text to the QRCodeStringParser singleton.
+                QRCodeStringParser::getInstance()->parseCode(QString::fromStdString(it->get_data()));
 
-                    // The QR code appears to be a valid TOTP code.
-                    emit mFilter->signalFinished();
-                }
+                // The QR code appears to be a valid TOTP code.
+                emit mFilter->signalFinished();
             }
         }
     }
