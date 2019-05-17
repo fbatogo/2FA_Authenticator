@@ -21,11 +21,6 @@ Hmac::Hmac(Hmac &toCopy)
     copy(toCopy);
 }
 
-Hmac::~Hmac()
-{
-    clear();
-}
-
 /**
  * @brief Hmac::setHashType - Set the hash algorithm to use to create an HMAC.  This
  *      is an alternative to using the ctor to set this.
@@ -35,9 +30,6 @@ Hmac::~Hmac()
  */
 void Hmac::setHashType(const std::shared_ptr<HashTypeBase> &hashType)
 {
-    // Clean out anything that might already be configured.
-    clear();
-
     // Set the new values.
     mHashType = hashType;
 }
@@ -148,15 +140,6 @@ Hmac &Hmac::operator=(const Hmac &toCopy)
     copy(toCopy);
 
     return (*this);
-}
-
-/**
- * @brief Hmac::clear - Clean up the internal variables, deleting any objects that we are
- *      configured to delete.
- */
-void Hmac::clear()
-{
-    mHashType = nullptr;
 }
 
 /**

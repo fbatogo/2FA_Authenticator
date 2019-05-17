@@ -200,6 +200,7 @@ bool KeyEntriesSingleton::calculateEntries()
  * @brief KeyEntriesSingleton::addKeyEntry - Add a new key entry to the key storage.
  *
  * @param identifier - The identifier (name of the site) that this key is for.
+ * @param issuer - The issuer of this key.
  * @param secret - The secret code that is used for the site named by the 'identifier'.
  * @param keyType - One of the KEYENTRY_KEYTYPE_* values from keyentry.h
  * @param otpType - One of the KEYENTRY_OTPTYPE_* values from keyentry.h
@@ -210,7 +211,7 @@ bool KeyEntriesSingleton::calculateEntries()
  *
  * @return true if the key entry was stored to the data store.  false on error.
  */
-bool KeyEntriesSingleton::addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
+bool KeyEntriesSingleton::addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
 {
     KeyEntry toAdd;
 
@@ -221,6 +222,7 @@ bool KeyEntriesSingleton::addKeyEntry(QString identifier, QString secret, int ke
     // Populate the KeyEntry object that we want to write to the key storage method.
     toAdd.clear();
     toAdd.setIdentifier(identifier);
+    toAdd.setIssuer(issuer);
     toAdd.setSecret(ByteArray(secret.toStdString()));
     toAdd.setKeyType(keyType);
     toAdd.setOtpType(otpType);

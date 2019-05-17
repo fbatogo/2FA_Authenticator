@@ -23,7 +23,7 @@ public:
 
     bool calculateEntries();
 
-    Q_INVOKABLE bool addKeyEntry(QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
+    Q_INVOKABLE bool addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
     bool addKeyEntry(const KeyEntry &toAdd);
 
     Q_INVOKABLE bool updateKeyEntry(KeyEntry *currentEntry, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);

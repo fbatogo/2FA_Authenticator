@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlResult>
 #include <QVariant>
 
 // The schema version expected/used by this implementation of the app.
@@ -15,11 +16,6 @@ SecretDatabase::SecretDatabase()
 {
     // Set up the database object to use SQLITE.
     mDatabase = QSqlDatabase::addDatabase("QSQLITE");
-}
-
-SecretDatabase::SecretDatabase(SecretDatabase &toCopy)
-{
-    copy(toCopy);
 }
 
 SecretDatabase::~SecretDatabase()
@@ -122,6 +118,11 @@ bool SecretDatabase::add(const KeyEntry &entry)
     // Execute the query.
     if (!query.exec()) {
         LOG_ERROR("Failed to write the data to the database!");
+        return false;
+    }
+
+    if (query.numRowsAffected() != 1) {
+        LOG_ERROR("Failed to write a new key entry to the database!");
         return false;
     }
 
@@ -251,11 +252,17 @@ bool SecretDatabase::getAll(std::vector<KeyEntry> &result)
  */
 bool SecretDatabase::deleteByIdentifier(const QString &identifier)
 {
-    QSqlQuery query("DELETE from secretData where identifier=\"" + identifier + "\"");
+    KeyEntry testEntry;
+    QSqlQuery query;
 
-    if (!query.exec()) {
+    if (!query.exec("DELETE from secretData where identifier=\"" + identifier + "\"")) {
         LOG_ERROR("Failed to delete the key with identifier : " + identifier);
         LOG_ERROR("     Detailed Error : " + query.lastError().text());
+        return false;
+    }
+
+    if (query.numRowsAffected() == 0) {
+        LOG_ERROR("No key entry named '" + identifier + "' was available to delete!");
         return false;
     }
 
@@ -324,17 +331,6 @@ int SecretDatabase::schemaVersion(bool logError)
 
     LOG_DEBUG("Schema version is " + QString::number(result) + ".");
     return result;
-}
-
-SecretDatabase &SecretDatabase::operator=(const SecretDatabase &toCopy)
-{
-    if (this == &toCopy) {
-        return (*this);
-    }
-
-    copy(toCopy);
-
-    return (*this);
 }
 
 /**
@@ -553,17 +549,6 @@ bool SecretDatabase::upgradeSchema(size_t from)
     }
 
     return true;
-}
-
-/**
- * @brief SecretDatabase::copy - Copy the values from \c toCopy in to the members in
- *      this object.
- *
- * @param toCopy - The object to copy the members from.
- */
-void SecretDatabase::copy(const SecretDatabase &toCopy)
-{
-    mDatabase = toCopy.mDatabase;
 }
 
 /**

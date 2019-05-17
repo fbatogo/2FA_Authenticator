@@ -21,10 +21,6 @@ Totp::Totp(std::shared_ptr<Hmac> hmacToUse) :
  */
 void Totp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
 {
-    // If we are currently set to delete the HMAC object, and we have an HMAC object set,
-    // clean it up.
-    clear();
-
     // Set the new values to use.
     mHmacToUse = hmacToUse;
 }
@@ -56,13 +52,4 @@ std::string Totp::calculate(const ByteArray &decodedSecret, time_t utcTime, size
 
     // Then, calculate the HOTP using the key, and the calcTime.
     return hotp.calculate(decodedSecret, calcTime, digits);
-}
-
-/**
- * @brief Totp::clear - Clear out the values stored in this object, deleting any objects
- *      that we are configured to delete.
- */
-void Totp::clear()
-{
-    mHmacToUse = nullptr;
 }

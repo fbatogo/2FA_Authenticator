@@ -17,8 +17,6 @@ public:
     std::string calculate(const ByteArray &decodedSecret, time_t utcTime, size_t timeStep = 30, size_t digits = 6, uint64_t initialCounter = 0);
 
 private:
-    void clear();
-
     std::shared_ptr<Hmac> mHmacToUse;
 };
 

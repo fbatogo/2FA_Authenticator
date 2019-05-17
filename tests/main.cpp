@@ -22,6 +22,7 @@
 #include "settingshandlertests.h"
 #include "keystorage/database/databasekeystoragetests.h"
 #include "keystorage/keystoragetests.h"
+#include "keyentriessingletontests.h"
 
 int main(int argc, char *argv[])
 {
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
     tests.addTest(new SettingsHandlerTests());
     tests.addTest(new DatabaseKeyStorageTests());
     tests.addTest(new KeyStorageTests());
+    tests.addTest(new KeyEntriesSingletonTests());
 
     return tests.executeAll();
 }

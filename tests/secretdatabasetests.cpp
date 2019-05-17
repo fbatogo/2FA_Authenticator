@@ -34,7 +34,6 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 {
     KeyEntry toWrite;
     KeyEntry readBack;
-//    SecretDatabase testDatabase;
 
     // Make sure our toWrite value is invalid to start with.
     QCOMPARE(toWrite.valid(), false);
@@ -68,7 +67,6 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
 
 void SecretDatabaseTests::getAllEntriesTest()
 {
-//    SecretDatabase testDatabase;
     std::vector<KeyEntry> allEntries;
     KeyEntry currentEntry;
 
@@ -101,7 +99,6 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
 {
     KeyEntry readBack;
     KeyEntry newEntry;
-//    SecretDatabase testDatabase;
 
     // Find the id2 entry in the database.
     QVERIFY(testDatabase.getByIdentifier("id2", readBack));
@@ -150,4 +147,10 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
     QCOMPARE(readBack.outNumberCount(), (size_t)6);
+}
+
+void SecretDatabaseTests::deleteDatabaseEntryTest()
+{
+    // Attempt to delete an entry that doesn't exist.
+    QVERIFY(!testDatabase.deleteByIdentifier("Invalid Identifier"));
 }

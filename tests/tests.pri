@@ -7,6 +7,7 @@ message(Building unit test binary...)
 HEADERS += \
     $$PWD/container/bytearraytests.h \
     $$PWD/generalinfosingletontests.h \
+    $$PWD/keyentriessingletontests.h \
     $$PWD/keystorage/database/databasekeystoragetests.h \
     $$PWD/keystorage/keystoragetests.h \
     $$PWD/secretdatabasetests.h \
@@ -27,6 +28,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/container/bytearraytests.cpp \
     $$PWD/generalinfosingletontests.cpp \
+    $$PWD/keyentriessingletontests.cpp \
     $$PWD/keystorage/database/databasekeystoragetests.cpp \
     $$PWD/keystorage/keystoragetests.cpp \
     $$PWD/secretdatabasetests.cpp \

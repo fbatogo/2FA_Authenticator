@@ -9,22 +9,10 @@ Hotp::Hotp()
     mHmacToUse = nullptr;
 }
 
-/*
-Hotp::Hotp(Hotp &toCopy)
-{
-    copy(toCopy);
-}*/
-
 Hotp::Hotp(std::shared_ptr<Hmac> &hmacToUse) :
     mHmacToUse(hmacToUse)
 {
 }
-
-/*
-Hotp::~Hotp()
-{
-    clear();
-}*/
 
 /**
  * @brief Hotp::setHmac - Set the HMAC object to use when calculating the HOTP value.
@@ -36,10 +24,6 @@ Hotp::~Hotp()
  */
 void Hotp::setHmac(std::shared_ptr<Hmac> &hmacToUse)
 {
-    // If we are currently set to take ownership of the HMAC object, and an HMAC object
-    // is set, clean it up.
-    clear();
-
     // Set the new values to use.
     mHmacToUse = hmacToUse;
 }
@@ -100,27 +84,6 @@ std::string Hotp::calculate(const ByteArray &key, uint64_t counter, size_t digit
     }
 
     return calculateHotpFromHmac((*calcResult.get()), digits, addChecksum, truncationOffset);
-}
-
-/*
-Hotp &Hotp::operator=(const Hotp &toCopy)
-{
-    if (this == &toCopy) {
-        return (*this);
-    }
-
-    copy(toCopy);
-
-    return (*this);
-}*/
-
-/**
- * @brief Hotp::clear - If necessary, delete the current HMAC object.  Then, set the current
- *      object to be a nullptr.
- */
-void Hotp::clear()
-{
-    mHmacToUse = nullptr;
 }
 
 /**
@@ -262,14 +225,3 @@ ByteArray Hotp::dynamicTruncate(const ByteArray &hmac, size_t truncateOffset)
 
     return result;
 }
-
-/**
- * @brief Hotp::copy - Copy the members of the \c toCopy object in to this object.
- *
- * @param toCopy - The object to copy data from.
- */
-/*
-void Hotp::copy(const Hotp &toCopy)
-{
-    mHmacToUse = toCopy.mHmacToUse;
-}*/
