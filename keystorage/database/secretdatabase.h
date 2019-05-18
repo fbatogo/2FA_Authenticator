@@ -12,6 +12,7 @@ class SecretDatabase
 {
 public:
     SecretDatabase();
+    SecretDatabase(SecretDatabase &toCopy);
     ~SecretDatabase();
 
     bool open(const QString &path);
@@ -30,6 +31,8 @@ public:
 
     int schemaVersion(bool logError = true);
 
+    SecretDatabase& operator=(const SecretDatabase& toCopy);
+
 private:
     bool createBoundQuery(const QString &query, const KeyEntry &toBind, QSqlQuery &sqlQuery);
     bool queryToKeyEntry(const QSqlQuery &query, KeyEntry &result);
@@ -41,6 +44,8 @@ private:
     // Functions that are used to upgrade the schema to a newer version.  If the new version is more than
     // one step up from the current, we will iterate through all of the different version upgrades.
     bool upgradeToVersion1();
+
+    void copy(const SecretDatabase &toCopy);
 
     QSqlDatabase mDatabase;
 };

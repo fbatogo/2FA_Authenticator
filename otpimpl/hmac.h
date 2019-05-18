@@ -11,6 +11,7 @@ public:
     Hmac();
     explicit Hmac(std::shared_ptr<HashTypeBase> hashType);
     Hmac(Hmac &toCopy);
+    ~Hmac() = default;
 
     void setHashType(const std::shared_ptr<HashTypeBase> &hashType);
 
