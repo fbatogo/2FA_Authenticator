@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/keyentriessingletontests.h \
     $$PWD/keystorage/database/databasekeystoragetests.h \
     $$PWD/keystorage/keystoragetests.h \
+    $$PWD/loggertests.h \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
     $$PWD/settingshandlertests.h \
@@ -23,7 +24,8 @@ HEADERS += \
     $$PWD/sha256tests.h \
     $$PWD/sha512tests.h \
     $$PWD/hmacsha256tests.h \
-    $$PWD/hmacsha512tests.h
+    $$PWD/hmacsha512tests.h \
+    $$PWD/uiclipboardtests.h
 
 SOURCES += \
     $$PWD/container/bytearraytests.cpp \
@@ -31,6 +33,7 @@ SOURCES += \
     $$PWD/keyentriessingletontests.cpp \
     $$PWD/keystorage/database/databasekeystoragetests.cpp \
     $$PWD/keystorage/keystoragetests.cpp \
+    $$PWD/loggertests.cpp \
     $$PWD/secretdatabasetests.cpp \
     $$PWD/qrcodestringparsertests.cpp \
     $$PWD/settingshandlertests.cpp \
@@ -45,7 +48,8 @@ SOURCES += \
     $$PWD/sha512tests.cpp \
     $$PWD/hmacsha256tests.cpp \
     $$PWD/hmacsha512tests.cpp \
-    $$PWD/main.cpp
+    $$PWD/main.cpp \
+    $$PWD/uiclipboardtests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.

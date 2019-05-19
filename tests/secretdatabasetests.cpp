@@ -38,6 +38,9 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     // Make sure our toWrite value is invalid to start with.
     QCOMPARE(toWrite.valid(), false);
 
+    // Try to add an invalid entry.
+    QVERIFY(!testDatabase.add(toWrite));
+
     // Build the secret entry that we want to write.
     toWrite.setIdentifier("id2");
     toWrite.setSecret("mysecret2");
@@ -100,6 +103,9 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     KeyEntry readBack;
     KeyEntry newEntry;
 
+    // try to get an empty identifier.
+    QVERIFY(!testDatabase.getByIdentifier("", readBack));
+
     // Find the id2 entry in the database.
     QVERIFY(testDatabase.getByIdentifier("id2", readBack));
 
@@ -153,4 +159,16 @@ void SecretDatabaseTests::deleteDatabaseEntryTest()
 {
     // Attempt to delete an entry that doesn't exist.
     QVERIFY(!testDatabase.deleteByIdentifier("Invalid Identifier"));
+}
+
+void SecretDatabaseTests::miscTests()
+{
+    // Copy ctor test.
+    SecretDatabase copiedDb(testDatabase);
+
+    // Attempt to assign a SecretDatabase to itself.
+    copiedDb = copiedDb;
+
+    // Assign from a different SecretDatabase to another value.
+    copiedDb = testDatabase;
 }

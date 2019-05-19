@@ -23,6 +23,8 @@
 #include "keystorage/database/databasekeystoragetests.h"
 #include "keystorage/keystoragetests.h"
 #include "keyentriessingletontests.h"
+#include "uiclipboardtests.h"
+#include "loggertests.h"
 
 int main(int argc, char *argv[])
 {
@@ -85,6 +87,8 @@ int main(int argc, char *argv[])
     tests.addTest(new DatabaseKeyStorageTests());
     tests.addTest(new KeyStorageTests());
     tests.addTest(new KeyEntriesSingletonTests());
+    tests.addTest(new UiClipboardTests());
+    tests.addTest(new LoggerTests());
 
     return tests.executeAll();
 }

@@ -5,6 +5,8 @@
 
 void SettingsHandlerTests::getSetSettingsTests()
 {
+    QVERIFY(nullptr != SettingsHandler::getQmlSingleton(nullptr, nullptr));
+
     QVERIFY(SettingsHandler::getInstance()->dataDirectoryExistsOrIsCreated());
     QVERIFY(!SettingsHandler::getInstance()->dataPath().isEmpty());
 

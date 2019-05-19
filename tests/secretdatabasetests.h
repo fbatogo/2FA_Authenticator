@@ -15,6 +15,7 @@ private slots:
     void getAllEntriesTest();
     void updateDatabaseEntryTest();
     void deleteDatabaseEntryTest();
+    void miscTests();
 
 private:
     SecretDatabase testDatabase;
