@@ -11,6 +11,7 @@ HEADERS += \
     $$PWD/keystorage/database/databasekeystoragetests.h \
     $$PWD/keystorage/keystoragetests.h \
     $$PWD/loggertests.h \
+    $$PWD/otp/otphandlertests.h \
     $$PWD/secretdatabasetests.h \
     $$PWD/qrcodestringparsertests.h \
     $$PWD/settingshandlertests.h \
@@ -34,6 +35,7 @@ SOURCES += \
     $$PWD/keystorage/database/databasekeystoragetests.cpp \
     $$PWD/keystorage/keystoragetests.cpp \
     $$PWD/loggertests.cpp \
+    $$PWD/otp/otphandlertests.cpp \
     $$PWD/secretdatabasetests.cpp \
     $$PWD/qrcodestringparsertests.cpp \
     $$PWD/settingshandlertests.cpp \

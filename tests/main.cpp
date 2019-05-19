@@ -25,6 +25,7 @@
 #include "keyentriessingletontests.h"
 #include "uiclipboardtests.h"
 #include "loggertests.h"
+#include "otp/otphandlertests.h"
 
 int main(int argc, char *argv[])
 {
@@ -89,6 +90,7 @@ int main(int argc, char *argv[])
     tests.addTest(new KeyEntriesSingletonTests());
     tests.addTest(new UiClipboardTests());
     tests.addTest(new LoggerTests());
+    tests.addTest(new OtpHandlerTests());
 
     return tests.executeAll();
 }

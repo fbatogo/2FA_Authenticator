@@ -17,6 +17,8 @@ void KeyStorageTests::e2eTests()
     // Try to delete an entry when the database isn't open.
     QVERIFY(!storageTest.deleteKeyByIdentifier("Test Key"));
 
+    QVERIFY(!storageTest.available());
+
     // If we have an old database file hanging around, delete it.
     dbPath = SettingsHandler::getInstance()->dataPath() + "keydatabase.db";
     if (dbPath.isEmpty()) {
@@ -49,6 +51,16 @@ void KeyStorageTests::e2eTests()
     kEntry.setOutNumberCount(8);
     kEntry.setPrintableCurrentCode("123 4567");
 
+    // Make it invalid and try to write it.
+    kEntry.setInvalidReason("Invalid");
+    QVERIFY(!kEntry.valid());
+
+    QVERIFY(!storageTest.addKey(kEntry));
+
+    // Make it valid again.
+    kEntry.setInvalidReason("");
+    QVERIFY(kEntry.valid());
+
     // Write it to the database.
     QVERIFY(storageTest.addKey(kEntry));
 
@@ -75,6 +87,11 @@ void KeyStorageTests::e2eTests()
     newEntry = kEntry;
     newEntry.setSecret("updatedsecret");
     QVERIFY(storageTest.updateKey(kEntry, newEntry));
+
+    // Make one of the entries invalid, and try to update it again.
+    newEntry.setInvalidReason("Invalid");
+    QVERIFY(!newEntry.valid());
+    QVERIFY(!storageTest.updateKey(kEntry, newEntry));
 
     // Clear both key entries, and read back the updated value.
     newEntry.clear();
