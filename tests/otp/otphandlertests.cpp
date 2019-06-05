@@ -4,7 +4,7 @@
 
 #include "otp/otphandler.h"
 
-void OtpHandlerTests::calculateOtpForKeyEntry()
+void OtpHandlerTests::calculateHotpForKeyEntry()
 {
     OtpHandler handler;
     KeyEntry kEntry;
