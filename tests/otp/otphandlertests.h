@@ -8,8 +8,8 @@ class OtpHandlerTests : public QObject
     Q_OBJECT
 
 private slots:
-    void calculateHotpForKeyEntry();
-    void calculateTotpForKeyEntry();
+    void calculateOtpForKeyEntryTest();
+    void calculateOtpForKeyEntryTest2();
 };
 
 #endif // OTPHANDLERTESTS_H
