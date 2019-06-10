@@ -20,6 +20,14 @@ Item {
         }
     }
 */
+    onVisibleChanged: {
+        if (visible) {
+            console.log("NewEntryScreen is now visible!");
+        } else {
+            console.log("NewEntryScreen is no longer visible!");
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -306,8 +314,9 @@ Item {
                                     errorText.text = qsTr("Unable to save the key entry.  Be sure that values are provided for all of the settings above.");
 
                                     // Create a timer to make the error text disappear after a few seconds.
-                                    Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
-                                    console.info("Timer set..");
+/*                                    Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
+                                    console.info("Timer set..");*/
+                                    toast.show(errorText.text, 5000);
                                 }
 
                                 InterfaceSingleton.logError("Failed to save the key data!  Error : " + errorText.text);

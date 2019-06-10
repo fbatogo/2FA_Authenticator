@@ -14,13 +14,22 @@ Item {
     property bool editing: false
     property string identifier: ""
 
-    Component.onCompleted: {
-        NewOrEdit.init();
-        siteNameInput.focus = true;
-        siteNameInput.forceActiveFocus();
+    Component.onCompleted: NewOrEdit.init();
+
+    onActiveFocusChanged: {
+        NewOrEdit.onActiveFocusChanged(activeFocus);
+
+        if (activeFocus) {
+            // The lines below will cause the widget to lose active focus, but we
+            // will end up with focus where we want it instead.
+            siteNameInput.focus = true;
+            siteNameInput.forceActiveFocus();
+        }
     }
 
-    onVisibleChanged: NewOrEdit.onVisibleChanged(visible);
+    ToastManager {
+        id: toast
+    }
 
     // Create the "Select Algorithm" screen that will be shown if the user clicks the ... button next to the algorithm text.
     Component {
@@ -353,27 +362,6 @@ Item {
 
                 HorizontalPadding {
                     size: 5
-                }
-            }
-
-            RowLayout {
-                Rectangle {
-                    Layout.fillWidth: true
-                    color: "transparent"
-                }
-
-                Text {
-                    // Hidden error text.
-                    id: errorText
-
-                    color: "red"
-                    text: qsTr("Provided data is invalid!")
-                    visible: false
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    color: "transparent"
                 }
             }
 

@@ -12,7 +12,7 @@ Rectangle {
 
     Layout.row: row
     Layout.column: column
-    color: "lightgrey"
+    color: "transparent"
     width: 20
     height: 20
 
@@ -27,14 +27,28 @@ Rectangle {
         }
     }
 
+    Keys.onPressed: {
+        if ((event.key === Qt.Key_Space) || (event.key === Qt.Key_Enter)) {
+            // This is the same as clicking the mouse.
+            if (showScreen === "") {
+                Log.logError("ERROR : No screen set to show when button was clicked!");
+                return;
+            }
+
+            screenStack.push(showScreen, { selected: selected });
+        }
+    }
+
     Image {
+        id: editImage
         anchors.fill: parent
         source: "/resources/images/pencil.svg"
         fillMode: Image.Stretch
+        z: 22
 
         MouseArea {
             anchors.fill: parent
-            z:2
+            z:23
 
             onClicked: {
                 if (showScreen === "") {

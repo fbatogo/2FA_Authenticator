@@ -6,11 +6,14 @@
 UiClipboard::UiClipboard(QObject *parent) :
     QObject(parent)
 {
-    mClipboard = QGuiApplication::clipboard();
 }
 
 void UiClipboard::setText(QString text)
 {
-    mClipboard->setText(text, QClipboard::Clipboard);
-    mClipboard->setText(text, QClipboard::Selection);
+    QGuiApplication::clipboard()->setText(text, QClipboard::Clipboard);
+
+    // If this OS supports the "selection" clipboard, copy the data there as well.
+    if (QGuiApplication::clipboard()->supportsSelection()) {
+        QGuiApplication::clipboard()->setText(text, QClipboard::Selection);
+    }
 }

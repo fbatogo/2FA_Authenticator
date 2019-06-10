@@ -17,21 +17,20 @@ Component {
             // If we don't have anything in our list model, show the StartHereScreen.
             if (otpListModel.count <= 0) {
                 Log.logDebug("No entries exist in the database.  Showing the 'StartHereScreen'.");
-                screenStack.push(showStartHereScreen);
+                screenStack.push(startHereScreen);
             }
-        }
-
-        Connections {
-            target: window
-            onUpdateOtpData: SecretScreenImpl.updateScreen(otpListModel);
         }
 
         UiClipboard {
             id: clipboard
         }
 
-        onVisibleChanged: {
-            if (visible) {
+        ToastManager {
+            id: toast
+        }
+
+        onActiveFocusChanged: {
+            if (activeFocus) {
                 SecretScreenImpl.updateScreen(otpListModel);
             }
         }
@@ -67,6 +66,7 @@ Component {
                         visible: !showError
                         Layout.fillWidth: true
                         height: identifierText.height + identifierText.anchors.topMargin + otpNumberLabel.height + otpNumberLabel.anchors.topMargin
+                        clip: true
 
                         Text {
                             id: identifierText
@@ -79,14 +79,15 @@ Component {
                             y: 5
                             text: otpObject.mIdentifier
                             font.bold: true
-                            font.pointSize: 14
+                            font.pixelSize: 14
                         }
 
-                        // Show the issue, if enabled.
+                        // Show the issuer, if enabled.
                         Text {
                             id: issuer
                             width: parent.width
-                            x: 25
+                            x: 20
+                            font.pixelSize: 10
 
                             visible: ((!showError) && (SettingsHandler.showIssuer()))
 
@@ -103,7 +104,8 @@ Component {
                         Text {
                             id: hotpCounterLabel
                             width: parent.width
-                            x: 25
+                            x: 20
+                            font.pixelSize: 10
 
                             visible: ((!showError) && (otpObject.mOtpType === 1) && (SettingsHandler.showHotpCounterValue()))
 
@@ -120,7 +122,8 @@ Component {
                         Text {
                             id: hashUsedLabel
                             width: parent.width
-                            x: 25
+                            x: 20
+                            font.pixelSize: 10
 
                             visible: ((!showError) && (SettingsHandler.showHashAlgorithm()))
 
@@ -134,9 +137,9 @@ Component {
                             visible: !showError
 
                             text: otpObject.mPrintableCurrentCode
-                            x: 25
+                            x: 20
                             color: "blue"
-                            font.pointSize: 32
+                            font.pixelSize: 26
                             font.bold: true
                         }
                     }
@@ -151,6 +154,7 @@ Component {
 
                         ProgressCircle {
                             id: timerCircle
+                            name: otpObject.mIdentifier
                             size: parent.height
                             maxTime: 30
                             currentTime: (otpObject.mTimeStep - otpObject.mStartTime)
@@ -213,7 +217,15 @@ Component {
                             anchors.fill: parent
                             onClicked: {
                                 Log.logDebug("Copied to the clipboard.");
-                                clipboard.setText(otpNumberLabel.text.replace(/\s+/g, ''));
+
+                                // Remove the blank spaces.
+                                var numberToCopy = otpNumberLabel.text.replace(/\s+/g, '');
+
+                                // Put the data on our clipboard.
+                                clipboard.setText(numberToCopy);
+
+                                // Show a toast indicating we copied the data.
+                                toast.show("Copied " + numberToCopy + " to the clipboard!");
                             }
                         }
                     }

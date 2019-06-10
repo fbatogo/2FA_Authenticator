@@ -18,11 +18,11 @@ protected:
     static bool decodeBase32Key(const KeyEntry &keydata, ByteArray &decodedSecret);
     static bool decodeHexKey(const KeyEntry &keydata, ByteArray &decodedSecret);
 
-    static QString calculateCode(const KeyEntry &keydata, const ByteArray &decodedSecret);
-    static QString calculateTotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
-    static QString calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret);
+    static QString calculateCode(const KeyEntry &keydata);
+    static QString calculateTotp(const KeyEntry &keydata);
+    static QString calculateHotp(const KeyEntry &keydata);
 
-    static size_t getStartTime(size_t timeStep);
+    static unsigned int getStartTime(unsigned int timeStep);
 
 private:
     static std::shared_ptr<Hmac> getHmacForKeyData(const KeyEntry &keydata);

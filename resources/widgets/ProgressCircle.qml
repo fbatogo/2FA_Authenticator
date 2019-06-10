@@ -10,6 +10,7 @@ Item {
     width: size
     height: size
 
+    property string name: ""             // The name of this progress circle.
     property int size: 200               // The size of the circle in pixels
     property int maxTime: 30             // The length of time that will show the circle at 100%
     property int currentTime: 30         // The current time in the countdown.
@@ -18,6 +19,11 @@ Item {
 
 
     onCurrentTimeChanged: {
+        if (circleAnimation.running) {
+            console.log("Circle '" + name + "' animation still running!");
+        }
+
+        console.log("Circle '" + name + "' time changed : " + currentTime);
         // Make sure the animation is stopped.
         circleAnimation.stop();
 
@@ -27,18 +33,21 @@ Item {
         // Set the new to/from/duration values.
         if (currentTime == 0) {
             circleAnimation.from = 360;
+            countDown = 30000;
+            circleAnimation.duration = 30000;
         } else {
             circleAnimation.from = ((currentTime / maxTime) * 360);
+            circleAnimation.duration = (currentTime * 1000);
+            countDown = (currentTime * 1000);
         }
 
-        circleAnimation.duration = (currentTime * 1000);
 
         circleAnimation.start();
     }
 
     onCountDownChanged: {
 
-        //console.log("Count down = " + countDown);
+        console.log("[" + Math.floor(Date.now() / 1000) + "] '" + name + "' count down = " + countDown);
         canvas.requestPaint();
     }
 
@@ -63,7 +72,7 @@ Item {
             var x = width / 2
             var y = height / 2
             var start = Math.PI * 0
-            var end = Math.PI * (countDown / 180)
+            var end = Math.PI * ((countDown + 1) / 180)
 
             ctx.reset()
 

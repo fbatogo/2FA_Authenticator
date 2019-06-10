@@ -14,8 +14,6 @@ ApplicationWindow {
         }
     }
 
-    signal updateOtpData()
-
     property string appName: "Rollin'"
 
     visible: true
@@ -75,7 +73,7 @@ ApplicationWindow {
 
             text: appName
             font.bold: true
-            font.pointSize: 12
+            font.pixelSize: 20
         }
 
         Text {
@@ -87,7 +85,7 @@ ApplicationWindow {
 
             text: bannerTextSize.text
             font.bold: bannerTextSize.font.bold
-            font.pointSize: bannerTextSize.font.pointSize
+            font.pixelSize: bannerTextSize.font.pointSize
         }
     }
 
@@ -95,28 +93,22 @@ ApplicationWindow {
         id: drawer
     }
 
-
     StackView {
         id: screenStack
         initialItem: secretScreen
         anchors.fill: parent
 
-        SecretScreen {
-            id: secretScreen
+        onCurrentItemChanged: {
+            currentItem.forceActiveFocus();
         }
+    }
 
-        Component {
-            id: showStartHereScreen
+    SecretScreen {
+        id: secretScreen
+    }
 
-            StartHereScreen {
-                id: startHereScreen
-
-                onSignalClosing: {
-                    // Force update the SecretScreen.
-                    updateOtpData();
-                }
-            }
-        }
+    StartHereScreen {
+        id: startHereScreen
     }
 }
 

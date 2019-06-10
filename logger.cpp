@@ -76,7 +76,7 @@ void Logger::log(const QString &logline)
 #ifdef USE_QDEBUG
     qInfo("%s", logline.toStdString().c_str());
 #else
-    std::cout << logline.toStdString() << std::endl;
+    std::cout << "[" << QDateTime::currentDateTime().toSecsSinceEpoch() << "] " << logline.toStdString() << std::endl;
 #endif // USE_QDEBUG
 
     // Write to our file, if needed.
@@ -93,7 +93,7 @@ void Logger::logDebug(const QString &logline)
 #ifdef USE_QDEBUG
     qDebug("%s", logline.toStdString().c_str());
 #else
-    std::cout << "*DEBUG* " << logline.toStdString() << std::endl;
+    std::cout << "*DEBUG* " << "[" << QDateTime::currentDateTime().toSecsSinceEpoch() << "] " << logline.toStdString() << std::endl;
 #endif // USE_QDEBUG
 
     // Write to our file, if needed.
@@ -110,7 +110,7 @@ void Logger::logError(const QString &logline)
 #ifdef USE_QDEBUG
     qCritical("%s", logline.toStdString().c_str());
 #else
-    std::cout << "!ERROR! " << logline.toStdString() << std::endl;
+    std::cout << "!ERROR! " << "[" << QDateTime::currentDateTime().toSecsSinceEpoch() << "] " << logline.toStdString() << std::endl;
 #endif // USE_QDEBUG
 
     // Write to our file, if needed.
@@ -127,7 +127,7 @@ void Logger::logWarning(const QString &logline)
 #ifdef USE_QDEBUG
     qWarning("%s", logline.toStdString().c_str());
 #else
-    std::cout << "<WARNING> " << logline.toStdString() << std::endl;
+    std::cout << "<WARNING> " << "[" << QDateTime::currentDateTime().toSecsSinceEpoch() << "] " << logline.toStdString() << std::endl;
 #endif // USE_QDEBUG
 
     // Write to our file, if needed.

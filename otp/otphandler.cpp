@@ -9,7 +9,7 @@
 #include "../otpimpl/sha256hash.h"
 #include "../otpimpl/sha512hash.h"
 
-#include <time.h>
+#include <QDateTime>
 
 
 OtpHandler::OtpHandler()
@@ -44,18 +44,23 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
         return;
     }
 
-    // Start by converting the secret to the correct format for us to use.
-    if (!decodeSecret((*keydata), dSecret)) {
-        LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata->identifier());
+    // If we don't have a decoded secret already cached, decoded it.
+    if (keydata->decodedSecret().empty()) {
+        if (!decodeSecret((*keydata), dSecret)) {
+            LOG_ERROR("Unable to decode the key secret value for identifier : " + keydata->identifier());
 
-        // Set the invalid reason, and flag the code as invalid.
-        keydata->setInvalidReason("Unable to decode the key secret value!");
-        keydata->setCodeValid(false);
-        return;
+            // Set the invalid reason, and flag the code as invalid.
+            keydata->setInvalidReason("Unable to decode the key secret value!");
+            keydata->setCodeValid(false);
+            return;
+        }
+
+        // Cache the decoded secret.
+        keydata->setDecodedSecret(dSecret);
     }
 
     // Calculate the OTP code.
-    calculatedCode = calculateCode((*keydata), dSecret);
+    calculatedCode = calculateCode((*keydata));
 
     dSecret.clear();
 
@@ -70,7 +75,7 @@ void OtpHandler::calculateOtpForKeyEntry(KeyEntry *keydata)
 
     // Calculate the number of seconds in to the lifetime of the OTP that we are.
     keydata->setStartTime(getStartTime(keydata->timeStep()));
-    LOG_DEBUG("New start time is : " + QString::number(keydata->startTime()));
+    LOG_DEBUG("New start time for '" + keydata->identifier() + "' is : " + QString::number(keydata->startTime()));
 
     // The code should be valid.
     keydata->setCodeValid(true);
@@ -144,18 +149,17 @@ bool OtpHandler::decodeHexKey(const KeyEntry &keydata, ByteArray &decodedSecret)
  *      in the KeyEntry provided, and the decoded secret value.
  *
  * @param keydata - The KeyEntry to use to calculate the OTP.
- * @param decodedSecret[OUT] - The secret value that should be used to calculate the OTP.
  *
  * @return QString containing the calculated OTP.  On failure, an empty string will
  *      be returned.
  */
-QString OtpHandler::calculateCode(const KeyEntry &keydata, const ByteArray &decodedSecret)
+QString OtpHandler::calculateCode(const KeyEntry &keydata)
 {
     // Figure out which type of OTP we need to calculate.
     if (KEYENTRY_OTPTYPE_TOTP == keydata.otpType()) {
-        return calculateTotp(keydata, decodedSecret);
+        return calculateTotp(keydata);
     } else if (KEYENTRY_OTPTYPE_HOTP == keydata.otpType()) {
-        return calculateHotp(keydata, decodedSecret);
+        return calculateHotp(keydata);
     }
 
     // If we get here, then we don't know the OTP type to generate.
@@ -168,13 +172,11 @@ QString OtpHandler::calculateCode(const KeyEntry &keydata, const ByteArray &deco
  *
  * @param keydata - A KeyEntry that contains most of the information we need
  *      to calculate a TOTP value.
- * @param decodedSecret - The decoded secret value to use to calculate the
- *      TOTP value.
  *
  * @return QString containing the calculated TOTP.  On error, an empty
  *      string will be returned.
  */
-QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &decodedSecret)
+QString OtpHandler::calculateTotp(const KeyEntry &keydata)
 {
     time_t now;
     std::string otp;
@@ -194,7 +196,7 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
     now = time(nullptr);
 
     // Calculate the TOTP with HMAC-SHA1
-    otp = totp.calculate(decodedSecret, now, keydata.timeStep(), keydata.outNumberCount());
+    otp = totp.calculate(keydata.decodedSecret(), now, keydata.timeStep(), keydata.outNumberCount());
 
     // Return the calculated value.
     return QString::fromStdString(otp);
@@ -205,13 +207,11 @@ QString OtpHandler::calculateTotp(const KeyEntry &keydata, const ByteArray &deco
  *
  * @param keydata - A KeyEntry that contains most of the information we need
  *      to calculate an HOTP value.
- * @param decodedSecret - The decoded secret value to use to calculate the
- *      HOTP value.
  *
  * @return QString containing the calculated HOTP.  On error, an empty
  *      string will be returned.
  */
-QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &decodedSecret)
+QString OtpHandler::calculateHotp(const KeyEntry &keydata)
 {
     std::string otp;
     Hotp hotp;
@@ -227,7 +227,7 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
     hotp.setHmac(hmac);
 
     // Calculate the HOTP value.
-    otp = hotp.calculate(decodedSecret, keydata.hotpCounter(), keydata.outNumberCount());
+    otp = hotp.calculate(keydata.decodedSecret(), keydata.hotpCounter(), keydata.outNumberCount());
 
     return QString::fromStdString(otp);
 }
@@ -238,21 +238,12 @@ QString OtpHandler::calculateHotp(const KeyEntry &keydata, const ByteArray &deco
  *
  * @param timeStep - The 'time step' for the OTP.
  *
- * @return size_t containing the number of seconds in to the lifetime of the current OTP.
+ * @return unsigned int containing the number of seconds in to the lifetime of the current OTP.
  */
-size_t OtpHandler::getStartTime(size_t timeStep)
+unsigned int OtpHandler::getStartTime(unsigned int timeStep)
 {
-    time_t t;
-    tm *now;
-    size_t seconds;
-
-    t = time(nullptr);
-    now = localtime(&t);            //NOSONAR
-
-    seconds = static_cast<size_t>(now->tm_sec);
-
-    // Return the number of seconds beyond the time step that have elapsed.
-    return (seconds & timeStep);
+    // Get the current timestamp.
+    return (QDateTime::currentDateTimeUtc().toSecsSinceEpoch() % timeStep);
 }
 
 /**

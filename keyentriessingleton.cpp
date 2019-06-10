@@ -91,12 +91,10 @@ void KeyEntriesSingleton::clear()
  * @param otpType
  * @param numberCount
  * @param algorithm
- * @param period
- * @param offset
  *
  * @return true if the parameters are all valid.  false if any aren't.
  */
-bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, size_t keyType, size_t otpType, int numberCount, size_t algorithm, int period, int offset)
+bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm)
 {
     // Validate inputs.
     if (identifier.isEmpty()) {
@@ -129,16 +127,6 @@ bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QStr
         return false;
     }
 
-    if (period < 0) {
-        LOG_ERROR("Unable to use a period length less than 0!");
-        return false;
-    }
-
-    if (offset < 0) {
-        LOG_ERROR("Unable to use an offset value less than 0!");
-        return false;
-    }
-
     return true;
 }
 
@@ -151,7 +139,6 @@ bool KeyEntriesSingleton::entryParametersAreValid(const QString &addUpdate, QStr
 bool KeyEntriesSingleton::populateEntries()
 {
     QList<KeyEntry> allKeys;
-    bool result;
     KeyEntry *temp;
 
     allKeys.clear();
@@ -170,15 +157,20 @@ bool KeyEntriesSingleton::populateEntries()
     }
 
     // Calculate the codes to show.
-    result = calculateEntries();
+    //result = calculateEntries();
 
     // Start the update timer.
-    if ((result) && (!updateTimer())) {
+    //if ((result) && (!updateTimer())) {
+/*    if (!updateTimer()) {
         LOG_ERROR("Failed to start the OTP update timer!");
         return false;
     }
 
-    return result;
+    return calculateEntries(); //result;
+    */
+    slotUpdateOtpValues();
+
+    return true;
 }
 
 /**
@@ -211,11 +203,11 @@ bool KeyEntriesSingleton::calculateEntries()
  *
  * @return true if the key entry was stored to the data store.  false on error.
  */
-bool KeyEntriesSingleton::addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
+bool KeyEntriesSingleton::addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm, unsigned int period, unsigned int offset)
 {
     KeyEntry toAdd;
 
-    if (!entryParametersAreValid("add", identifier, secret, keyType, otpType, numberCount, algorithm, period, offset)) {
+    if (!entryParametersAreValid("add", identifier, secret, keyType, otpType, numberCount, algorithm)) {
         return false;
     }
 
@@ -290,11 +282,11 @@ bool KeyEntriesSingleton::addKeyEntry(const KeyEntry &toAdd)
  *
  * @return true if the key entry was updated.  false on error.
  */
-bool KeyEntriesSingleton::updateKeyEntry(KeyEntry *currentEntry, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset)
+bool KeyEntriesSingleton::updateKeyEntry(KeyEntry *currentEntry, QString identifier, QString secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm, unsigned int period, unsigned int offset)
 {
     KeyEntry toUpdate;
 
-    if (!entryParametersAreValid("update", identifier, secret, keyType, otpType, numberCount, algorithm, period, offset)) {
+    if (!entryParametersAreValid("update", identifier, secret, keyType, otpType, numberCount, algorithm)) {
         return false;
     }
 
@@ -651,14 +643,10 @@ bool KeyEntriesSingleton::addKeyEntryInMemory(const KeyEntry &toAdd)
  */
 bool KeyEntriesSingleton::updateTimer()
 {
-    int nextUpdate;
+    unsigned int nextUpdate;
 
     // Figure out the shortest period before one of the entries needs to be updated.
     nextUpdate = shortestUpdatePeriod();
-    if (nextUpdate < 0) {
-        LOG_ERROR("Got an invalid period of " + QString::number(nextUpdate) + " to the next code update!   Updating will stop!");
-        return false;
-    }
 
     // If the shortest time is 0 seconds, then we need to update again in a little bit.
     if (nextUpdate == 0) {
@@ -668,7 +656,7 @@ bool KeyEntriesSingleton::updateTimer()
     }
 
     // Then, set our timer to call our slot when the next update period expires.
-    mUpdateTimer.start(nextUpdate * 1000);
+    mUpdateTimer.start(static_cast<int>(nextUpdate * 1000));
 
     return true;
 }
@@ -680,11 +668,11 @@ bool KeyEntriesSingleton::updateTimer()
  * @return int containing the shortest time until we need to update at least one of the OTP
  *      values.  On error, -1 will be returned.
  */
-int KeyEntriesSingleton::shortestUpdatePeriod()
+unsigned int KeyEntriesSingleton::shortestUpdatePeriod()
 {
     bool allHotp = true;
-    int shortestTime = 0xffff;          // Shouldn't be possible for it to be that long.
-    int interval;
+    unsigned int shortestTime = 0xffff;          // Shouldn't be possible for it to be that long.
+    unsigned int interval;
 
     for (int i = 0; i < mEntryList.size(); i++) {
         if (mEntryList.at(i)->keyType() != KEYENTRY_OTPTYPE_HOTP) {

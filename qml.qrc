@@ -36,5 +36,7 @@
         <file>resources/images/pencil.svg</file>
         <file>resources/images/refresh.svg</file>
         <file>resources/images/startherearrow.svg</file>
+        <file>resources/Toast.qml</file>
+        <file>resources/ToastManager.qml</file>
     </qresource>
 </RCC>

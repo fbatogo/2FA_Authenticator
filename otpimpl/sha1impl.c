@@ -215,7 +215,8 @@ void SHA1Update(
     j = (j >> 3) & 63;
     if ((j + len) > 63)
     {
-        memcpy(&context->buffer[j], data, (i = 64 - j));
+        i = 64 - j;
+        memcpy(&context->buffer[j], data, i);
         SHA1Transform(context->state, context->buffer);
         for (; i + 63 < len; i += 64)
         {
@@ -261,7 +262,7 @@ void SHA1Final(
 #else
     for (i = 0; i < 8; i++)
     {
-        finalcount[i] = (unsigned char) ((context->count[(i >= 4 ? 0 : 1)] >> ((3 - (i & 3)) * 8)) & 255);      /* Endian independent */
+        finalcount[i] = (unsigned char) ((context->count[i >= 4 ? 0 : 1] >> ((3 - (i & 3)) * 8)) & 255);      /* Endian independent */
     }
 #endif
     c = 0200;

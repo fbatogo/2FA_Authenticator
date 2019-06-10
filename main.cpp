@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<QRCodeStringParser>("Rollin.QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
 
+    qmlRegisterSingletonType( QUrl(":/resources/ToastManager.qml"), "ToastManagerSingleton", 1, 0, "ToastManager" );
+
     qmlRegisterSingletonType<SettingsHandler>("Rollin.SettingsHandler", 1, 0, "SettingsHandler", SettingsHandler::getQmlSingleton);
 
     qmlRegisterSingletonType<SettingsHandler>("Rollin.Logger", 1, 0, "Log", Logger::getQmlSingleton);

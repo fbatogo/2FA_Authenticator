@@ -8,6 +8,7 @@
 .import QtMultimedia 5.11 as QtMultimedia
 .import "utils.js" as Utils
 .import Rollin.Logger 1.0 as Logger
+.import ToastManagerSingleton 1.0 as Toast
 
 /**
  * init() - Configure the NewOrEditEntryScreen to be either in edit mode, or
@@ -72,41 +73,44 @@ function init() {
     checkEnableSave();
 }
 
-function onVisibleChanged(visible) {
-    if (visible) {
-        // See if the QR code singleton is valid.
-        if ((QRCodeSingleton.isOtpCode()) && (QRCodeSingleton.isCodeProcessing())) {
-            var temp;
+function onActiveFocusChanged(myfocus) {
+    if (myfocus) {       
+        console.log("Got active focus!");
+        if (GeneralInfoSingletonImpl.GeneralInfoSingleton.haveZBar()) {
+            // See if the QR code singleton is valid.
+            if ((QRCodeSingleton.isOtpCode()) && (QRCodeSingleton.isCodeProcessing())) {
+                var temp;
 
-            // Read out the data, and fill in our form.
+                // Read out the data, and fill in our form.
 
-            // Populate the UI.
+                // Populate the UI.
 
-            // Start with the secret, since if it isn't defined, then we shouldn't update anything!
-            temp = QRCodeSingleton.parameterByKey("secret");
-            if (temp) {
-                secretValueInput.boxText = temp;
-            } else {
-                Logger.Log.logError("No secret was found in the QR code!?");
+                // Start with the secret, since if it isn't defined, then we shouldn't update anything!
+                temp = QRCodeSingleton.parameterByKey("secret");
+                if (temp) {
+                    secretValueInput.boxText = temp;
+                } else {
+                    Logger.Log.logError("No secret was found in the QR code!?");
 
-                // Do nothing.
-                return;
-            }
+                    // Do nothing.
+                    return;
+                }
 
-            temp = QRCodeSingleton.label();
-            if (temp) {
-                siteNameInput.boxText = temp;
-            }
+                temp = QRCodeSingleton.label();
+                if (temp) {
+                    siteNameInput.boxText = temp;
+                }
 
-            var digits = QRCodeSingleton.parameterByKey("digits");
-            var otpType = QRCodeSingleton.type();
-            //var encodingType = QRCodeSingleton.parameterByKey()
+                var digits = QRCodeSingleton.parameterByKey("digits");
+                var otpType = QRCodeSingleton.type();
+                //var encodingType = QRCodeSingleton.parameterByKey()
 
-            setComboBoxes(otpType, 1, digits);
+                setComboBoxes(otpType, 1, digits);
 
-            // See if the save button should be enabled.
-            checkEnableSave();
-        }  // Otherwise, the user may have cancelled, so don't do anything.
+                // See if the save button should be enabled.
+                checkEnableSave();
+            }  // Otherwise, the user may have cancelled, so don't do anything.
+        }
     }
 }
 
@@ -157,11 +161,8 @@ function checkEnableSave() {
 function showError(newErrorText) {
     Logger.Log.logError(newErrorText);
 
-    errorText.text = newErrorText;
-    errorText.visible = true;
-
-    // Create a timer to make the error text disappear after a few seconds.
-    Qt.createQmlObject("import QtQuick 2.0; Timer { interval: 3000; running: true; repeat: false; onTriggered: errorText.visible = false; }", parent, "timer");
+    // Show a toast with the error text in it.
+    toast.show(newErrorText, 3000);
 }
 
 function saveConfiguration() {
@@ -214,12 +215,12 @@ function saveConfiguration() {
     }
 
     if (editing) {
-        if (!KeyEntriesSingletonImpl.KeyEntriesSingleton.updateKeyEntry(siteNameInput.boxText, secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
+        if (!KeyEntriesSingletonImpl.KeyEntriesSingleton.updateKeyEntry(siteNameInput.boxText, "", secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
             showError(qsTr("Unable to update the key entry.  Please be sure that values a provided for all of the settings above."));
             return;     // Don't close the window.
         }
     } else {
-        if (!KeyEntriesSingletonImpl.KeyEntriesSingleton.addKeyEntry(siteNameInput.boxText, secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
+        if (!KeyEntriesSingletonImpl.KeyEntriesSingleton.addKeyEntry(siteNameInput.boxText, "", secretValueInput.boxText, keyType, otpType, numberCount, algorithm, period, offset)) {
             showError(qsTr("Unable to save the key entry.  Please be sure that values are provided for all of the settings above."));
             return;     // Don't close the window.
         }

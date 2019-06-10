@@ -23,10 +23,10 @@ public:
 
     bool calculateEntries();
 
-    Q_INVOKABLE bool addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
+    Q_INVOKABLE bool addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm, unsigned int period, unsigned int offset);
     bool addKeyEntry(const KeyEntry &toAdd);
 
-    Q_INVOKABLE bool updateKeyEntry(KeyEntry *currentEntry, QString identifier, QString secret, int keyType, int otpType, int numberCount, int algorithm, int period, int offset);
+    Q_INVOKABLE bool updateKeyEntry(KeyEntry *currentEntry, QString identifier, QString secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm, unsigned int period, unsigned int offset);
     bool updateKeyEntry(const KeyEntry &original, const KeyEntry &updated);
 
     Q_INVOKABLE bool deleteKeyEntry(const QString &toDelete);
@@ -46,7 +46,7 @@ private slots:
 private:                                //NOSONAR
     explicit KeyEntriesSingleton(QObject *parent = nullptr);
 
-    bool entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, size_t keyType, size_t otpType, int numberCount, size_t algorithm, int period, int offset);
+    bool entryParametersAreValid(const QString &addUpdate, QString identifier, QString secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm);
     bool populateEntries();
     int indexFromIdentifierInMemory(const QString &identifier);
     KeyEntry *fromIdentifierInMemory(const QString &identifier);
@@ -56,7 +56,7 @@ private:                                //NOSONAR
     bool addKeyEntryInMemory(const KeyEntry &toAdd);
 
     bool updateTimer();
-    int shortestUpdatePeriod();
+    unsigned int shortestUpdatePeriod();
 
     QList<KeyEntry *> mEntryList;
 
