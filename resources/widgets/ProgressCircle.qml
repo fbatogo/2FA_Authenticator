@@ -17,15 +17,17 @@ Item {
     property string circleColor: "#0000ff"
     property int countDown: 0
 
+    function startIfNotRunning() {
+        if (!circleAnimation.running) {
+            circleAnimation.restart();
+        }
+    }
+
 
     onCurrentTimeChanged: {
         if (circleAnimation.running) {
-            console.log("Circle '" + name + "' animation still running!");
+            circleAnimation.stop();
         }
-
-        console.log("Circle '" + name + "' time changed : " + currentTime);
-        // Make sure the animation is stopped.
-        circleAnimation.stop();
 
         // Draw the current view before starting the countdown.
         canvas.requestPaint();
@@ -33,30 +35,32 @@ Item {
         // Set the new to/from/duration values.
         if (currentTime == 0) {
             circleAnimation.from = 360;
-            countDown = 30000;
             circleAnimation.duration = 30000;
         } else {
             circleAnimation.from = ((currentTime / maxTime) * 360);
             circleAnimation.duration = (currentTime * 1000);
-            countDown = (currentTime * 1000);
         }
+        circleAnimation.to = 0;
 
 
-        circleAnimation.start();
+        circleAnimation.restart();
     }
 
     onCountDownChanged: {
 
-        console.log("[" + Math.floor(Date.now() / 1000) + "] '" + name + "' count down = " + countDown);
+        //console.log("[" + Math.floor(Date.now() / 1000) + "] '" + name + "' count down = " + countDown);
         canvas.requestPaint();
-    }
 
+        if (countDown <= 0) {
+            // Make sure the animation stops when we are done.
+            circleAnimation.stop();
+        }
+    }
 
     NumberAnimation {
         id: circleAnimation
         target: root
         property: "countDown"
-        duration: ((maxTime - currentTime) * 1000);
         easing.type: Easing.Linear
         to: 0
         running: false
@@ -72,7 +76,7 @@ Item {
             var x = width / 2
             var y = height / 2
             var start = Math.PI * 0
-            var end = Math.PI * ((countDown + 1) / 180)
+            var end = Math.PI * (countDown / 180)
 
             ctx.reset()
 

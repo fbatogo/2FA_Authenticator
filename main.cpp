@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    // Need the environment setting below or the timer animation runs too fast.
+    qputenv("QSG_RENDER_LOOP", "basic");
+
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 

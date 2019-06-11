@@ -141,6 +141,10 @@ Component {
                             color: "blue"
                             font.pixelSize: 26
                             font.bold: true
+
+                            onTextChanged: {
+                                timerCircle.startIfNotRunning();
+                            }
                         }
                     }
 
