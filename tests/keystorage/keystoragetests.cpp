@@ -105,17 +105,17 @@ void KeyStorageTests::e2eTests()
     // Verify that all of the other values in the key entry are what we expect.
     QCOMPARE(QString("Test Key"), kEntry.identifier());
     QCOMPARE(QString("Test Issuer"), kEntry.issuer());
-    QCOMPARE((size_t)1, kEntry.keyType());
-    QCOMPARE((size_t)1, kEntry.otpType());
-    QCOMPARE((size_t)30, kEntry.timeStep());
-    QCOMPARE((size_t)1, kEntry.algorithm());
+    QCOMPARE((unsigned int)1, kEntry.keyType());
+    QCOMPARE((unsigned int)1, kEntry.otpType());
+    QCOMPARE((unsigned int)30, kEntry.timeStep());
+    QCOMPARE((unsigned int)1, kEntry.algorithm());
     QVERIFY(!kEntry.codeValid());
-    QCOMPARE((size_t)0, kEntry.startTime());
-    QCOMPARE((size_t)456, kEntry.timeOffset());
+    QCOMPARE((unsigned int)0, kEntry.startTime());
+    QCOMPARE((unsigned int)456, kEntry.timeOffset());
     QVERIFY(kEntry.currentCode().isEmpty());        // Should be empty.  Not calculated yet.
-    QCOMPARE((size_t)9, kEntry.hotpCounter());
+    QCOMPARE((unsigned int)9, kEntry.hotpCounter());
     QVERIFY(kEntry.invalidReason().isEmpty());      // Should be empty.  Data is all valid.
-    QCOMPARE((size_t)8, kEntry.outNumberCount());
+    QCOMPARE((unsigned int)8, kEntry.outNumberCount());
     QVERIFY(kEntry.printableCurrentCode().isEmpty());   // Should be empty.  Not calculated.
 
     // Then, attempt to delete the entry.

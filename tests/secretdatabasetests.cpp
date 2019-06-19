@@ -65,7 +65,7 @@ void SecretDatabaseTests::addDatabaseEntryKeyEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), (size_t)7);
+    QCOMPARE(readBack.outNumberCount(), (unsigned int)7);
 }
 
 void SecretDatabaseTests::getAllEntriesTest()
@@ -77,10 +77,10 @@ void SecretDatabaseTests::getAllEntriesTest()
     QVERIFY(testDatabase.getAll(allEntries));
 
     // There should be two entries in the database.
-    QCOMPARE(allEntries.size(), static_cast<size_t>(1));
+    QCOMPARE(allEntries.size(), static_cast<unsigned int>(1));
 
     // Make sure they look how we expect them to.
-    for (size_t i = 0; i < allEntries.size(); i++) {
+    for (unsigned int i = 0; i < allEntries.size(); i++) {
         currentEntry = allEntries.at(i);
 
         // Make sure it indicates it is valid.
@@ -90,7 +90,7 @@ void SecretDatabaseTests::getAllEntriesTest()
             QCOMPARE(currentEntry.secret().toString(), std::string("mysecret2"));
             QCOMPARE(currentEntry.keyType(), KEYENTRY_KEYTYPE_BASE32);
             QCOMPARE(currentEntry.otpType(), KEYENTRY_OTPTYPE_HOTP);
-            QCOMPARE(currentEntry.outNumberCount(), (size_t)7);
+            QCOMPARE(currentEntry.outNumberCount(), (unsigned int)7);
         } else {
             // Unexpected entry!
             QFAIL("Unexpected entry in the database!");
@@ -114,7 +114,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), (size_t)7);
+    QCOMPARE(readBack.outNumberCount(), (unsigned int)7);
 
     // Copy the data, and update the identifier name.
     newEntry = readBack;
@@ -131,7 +131,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret2"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
-    QCOMPARE(readBack.outNumberCount(), (size_t)7);
+    QCOMPARE(readBack.outNumberCount(), (unsigned int)7);
 
     // Then copy the data and update all of the values.
     newEntry = readBack;
@@ -152,7 +152,7 @@ void SecretDatabaseTests::updateDatabaseEntryTest()
     QCOMPARE(readBack.secret().toString(), std::string("mysecret4"));
     QCOMPARE(readBack.keyType(), KEYENTRY_KEYTYPE_HEX);
     QCOMPARE(readBack.otpType(), KEYENTRY_OTPTYPE_TOTP);
-    QCOMPARE(readBack.outNumberCount(), (size_t)6);
+    QCOMPARE(readBack.outNumberCount(), (unsigned int)6);
 }
 
 void SecretDatabaseTests::deleteDatabaseEntryTest()
