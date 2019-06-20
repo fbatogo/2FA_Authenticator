@@ -4,7 +4,7 @@
 #include "../keystoragebase.h"
 #include "secretdatabase.h"
 
-const size_t KEYSTORAGE_METHOD_DATABASE=1;       // Store key entries in a local database.
+const unsigned int KEYSTORAGE_METHOD_DATABASE=1;       // Store key entries in a local database.
 
 class DatabaseKeyStorage : public KeyStorageBase
 {

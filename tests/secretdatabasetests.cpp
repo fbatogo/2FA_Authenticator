@@ -77,7 +77,7 @@ void SecretDatabaseTests::getAllEntriesTest()
     QVERIFY(testDatabase.getAll(allEntries));
 
     // There should be two entries in the database.
-    QCOMPARE(allEntries.size(), static_cast<unsigned int>(1));
+    QCOMPARE(allEntries.size(), static_cast<size_t>(1));
 
     // Make sure they look how we expect them to.
     for (unsigned int i = 0; i < allEntries.size(); i++) {
