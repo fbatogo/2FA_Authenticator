@@ -81,16 +81,16 @@ void KeyEntriesSingletonTests::e2eTests()
     // Verify that all of the other values in the key entry are what we expect.
     QCOMPARE(QString("Test Key"), foundKey->identifier());
     QCOMPARE(QString("Test Issuer"), foundKey->issuer());
-    QCOMPARE((size_t)KEYENTRY_KEYTYPE_HEX, foundKey->keyType());
-    QCOMPARE((size_t)KEYENTRY_OTPTYPE_HOTP, foundKey->otpType());
-    QCOMPARE((size_t)30, foundKey->timeStep());
-    QCOMPARE((size_t)KEYENTRY_ALG_SHA1, foundKey->algorithm());
+    QCOMPARE((unsigned int)KEYENTRY_KEYTYPE_HEX, foundKey->keyType());
+    QCOMPARE((unsigned int)KEYENTRY_OTPTYPE_HOTP, foundKey->otpType());
+    QCOMPARE((unsigned int)30, foundKey->timeStep());
+    QCOMPARE((unsigned int)KEYENTRY_ALG_SHA1, foundKey->algorithm());
     QVERIFY(foundKey->codeValid());
-    QCOMPARE((size_t)0, foundKey->timeOffset());
+    QCOMPARE((unsigned int)0, foundKey->timeOffset());
     QVERIFY(!foundKey->currentCode().isEmpty());        // Should be empty.  Not calculated yet.
-    QCOMPARE((size_t)0, foundKey->hotpCounter());
+    QCOMPARE((unsigned int)0, foundKey->hotpCounter());
     QVERIFY(foundKey->invalidReason().isEmpty());      // Should be empty.  Data is all valid.
-    QCOMPARE((size_t)6, foundKey->outNumberCount());
+    QCOMPARE((unsigned int)6, foundKey->outNumberCount());
     QVERIFY(!foundKey->printableCurrentCode().isEmpty());   // Should be empty.  Not calculated.
 
     // Attempt to increment an invalid  HOTP counter.
