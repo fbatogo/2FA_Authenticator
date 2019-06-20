@@ -82,5 +82,9 @@ void OtpHandlerTests::calculateOtpForKeyEntryTest2()
 
     // Calculate the HOTP code for SHA512.
     handler.calculateOtpForKeyEntry(&kEntry);
+
+    // Try to calculate with an invalid algorithm.
+    kEntry.setAlgorithm(1234);
+    handler.calculateOtpForKeyEntry(&kEntry);
 }
 
