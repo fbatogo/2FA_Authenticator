@@ -151,6 +151,38 @@ void SettingsHandler::setLogToFile(bool newvalue)
 }
 
 /**
+ * @brief SettingsHandler::databaseLocation - Return the location that the database file is
+ *      written to.
+ *
+ * @return QString containing the path to the location of the database file.
+ */
+QString SettingsHandler::databaseLocation()
+{
+    // If we don't have a database location explicitly defined, return the dataPath().
+    if (mDatabaseLocation.isEmpty()) {
+        return dataPath();
+    }
+
+    // Otherwise, return the custom path.
+    return mDatabaseLocation;
+}
+
+/**
+ * @brief SettingsHandler::setDatabaseLocation - Change the location that the database file
+ *      will be written to.  (The caller needs to handle moving any existing database files,
+ *      this will only update where we look.)
+ *
+ * @param newLocation - QString containing the new location to read/write the database file
+ *      to/from.
+ */
+void SettingsHandler::setDatabaseLocation(const QString &newLocation)
+{
+    mDatabaseLocation = newLocation;
+
+    mSettingsDatabase->setValue("Settings/databaseLocation", mDatabaseLocation);
+}
+
+/**
  * @brief SettingsHandler::dataPath - Get the path the should be used to store data for this app.
  *
  * @return QString containing the path that should be used to store data files for this app.
@@ -184,7 +216,7 @@ QString SettingsHandler::dataPath()
  */
 bool SettingsHandler::dataDirectoryExistsOrIsCreated()
 {
-    QDir targetDir(dataPath());
+    QDir targetDir(databaseLocation());
 
     if (!targetDir.exists()) {
         LOG_DEBUG("The dot directory doesn't exist.  Attempting to create it...");
@@ -208,6 +240,8 @@ SettingsHandler::SettingsHandler()
     mShowIssuer = false;
     mLogToFile = false;
 
+    mDatabaseLocation.clear();
+
     // Make sure the data directory exists, so that we can read or write our settings.
     if (!dataDirectoryExistsOrIsCreated()) {
         LOG_ERROR("Unable to create the data directory!");
@@ -226,6 +260,7 @@ SettingsHandler::SettingsHandler()
     mShowHotpCounter = mSettingsDatabase->value("Settings/showHotpCounter", false).toBool();
     mShowAlgorithm = mSettingsDatabase->value("Settings/showHashAlgorithm", false).toBool();
     mLogToFile = mSettingsDatabase->value("Settings/logToFile", false).toBool();
+    mDatabaseLocation = mSettingsDatabase->value("Settings/databasePath", "").toString();
 
     LOG_DEBUG("Saving settings to  : " + mSettingsDatabase->fileName());
 }

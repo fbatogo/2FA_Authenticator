@@ -1,8 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 import Rollin.SettingsHandler 1.0
+import Rollin.Logger 1.0 as Logger
 
+import "javascript/utils.js" as Utils
 import "widgets/"
 
 Item {
@@ -73,6 +76,35 @@ Item {
 
                         onToggled: SettingsHandler.setLogToFile(checked);
                     }
+
+                    RowLayout {
+                        Label {
+                            text: qsTr("Database location : ");
+                        }
+
+                        TextInput {
+                            id: databaseLocation
+                            text: SettingsHandler.databaseLocation();
+                        }
+
+                        Button {
+                            id: selectDatabaseLocation
+                            text: qsTr("Select");
+
+                            onClicked: {
+                                // Set the path to the current folder.
+                                databaseLocationFileDialog.folder = "file:///" + SettingsHandler.databaseLocation();
+
+                                // Open the dialog.
+                                databaseLocationFileDialog.open();
+                            }
+                        }
+
+                        Button {
+                            id: resetDatabaseLocation
+                            text: qsTr("Reset");
+                        }
+                    }
                 }
             }
 
@@ -80,4 +112,30 @@ Item {
             }
         }
     }
+
+    FileDialog {
+        id: databaseLocationFileDialog
+        visible: false
+        modality: Qt.WindowModal
+        title: qsTr("Select a folder");
+        selectMultiple: false
+        selectFolder: true
+        nameFilters: [ "All files (*)" ]
+        selectedNameFilter: "All files (*)"
+        sidebarVisible: true
+        onAccepted: {
+            var strippedPath = Utils.stripPrefix(fileUrls[0], "file:///");
+
+            console.log("Accepted: " + strippedPath);
+
+            // Update the settings with the path, if it has changed.
+            if (strippedPath !== SettingsHandler.databaseLocation()) {
+
+            } else {
+                Logger.logDebug("Not updating the database location, because it wasn't changed!");
+            }
+        }
+        onRejected: { console.log("Rejected") }
+    }
+
 }
