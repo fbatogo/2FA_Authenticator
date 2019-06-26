@@ -5,7 +5,6 @@ import QtQuick.Dialogs 1.2
 import Rollin.SettingsHandler 1.0
 import Rollin.Logger 1.0 as Logger
 
-import "javascript/utils.js" as Utils
 import "widgets/"
 
 Item {
@@ -113,6 +112,8 @@ Item {
         }
     }
 
+    // XXX Change this screen to use the pencil to select a new path, similar to other
+    // items in the NewOrEditEntryScreen.
     FileDialog {
         id: databaseLocationFileDialog
         visible: false
@@ -124,12 +125,11 @@ Item {
         selectedNameFilter: "All files (*)"
         sidebarVisible: true
         onAccepted: {
-            var strippedPath = Utils.stripPrefix(fileUrls[0], "file:///");
-
-            console.log("Accepted: " + strippedPath);
+            console.log("Accepted: " + fileUrls[0]);
 
             // Update the settings with the path, if it has changed.
-            if (strippedPath !== SettingsHandler.databaseLocation()) {
+            if (fileUrls !== SettingsHandler.databaseLocation()) {
+                // XXX Close the database file, move it to the new location, reopen it, and update the location in our settings.
 
             } else {
                 Logger.logDebug("Not updating the database location, because it wasn't changed!");

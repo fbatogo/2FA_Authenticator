@@ -16,7 +16,7 @@ void KeyEntriesSingletonTests::e2eTests()
     QList<KeyEntry> allKeys;
 
     // If we have an old database file hanging around, delete it.
-    dbPath = SettingsHandler::getInstance()->dataPath() + "keydatabase.db";
+    dbPath = SettingsHandler::getInstance()->fullDatabasePathAndFilename();
     if (dbPath.isEmpty()) {
         QFAIL("The database path was empty!");
     }

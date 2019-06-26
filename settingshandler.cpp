@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <logger.h>
 
-const QString DOT_DIRECTORY = ".Rollin";          // The name of the dot directory we will use in the user home directory.
+const QString DOT_DIRECTORY = ".Rollin";          // The name of the dot directory we will initially use to store the database file.
 
 SettingsHandler::~SettingsHandler()
 {
@@ -169,17 +169,97 @@ QString SettingsHandler::databaseLocation()
 
 /**
  * @brief SettingsHandler::setDatabaseLocation - Change the location that the database file
- *      will be written to.  (The caller needs to handle moving any existing database files,
- *      this will only update where we look.)
+ *      will be written to by moving the existing database to the new location, and updating
+ *      the settings value.
  *
  * @param newLocation - QString containing the new location to read/write the database file
  *      to/from.
+ *
+ * @return true if the new database location was set, and the database was moved to it.
+ *      false if the database location wasn't set because the database file couldn't
+ *      be moved for some reason.   In the case that false is returned, the new
+ *      directory setting will be ignored, and the old value will continue to be used.
  */
-void SettingsHandler::setDatabaseLocation(const QString &newLocation)
+bool SettingsHandler::setDatabaseLocation(const QString &newLocation)
 {
+    QString dbPath;
+
+    // If the path hasn't changed, don't do anything.
+    if (mDatabaseLocation == newLocation) {
+        return true;
+    }
+
+    // If the newLocation string is empty, reset the path back to the default.
+    if (newLocation.isEmpty()) {
+
+    }
+
+    // XXX Move the database to the new location.
+
+    // Update the settings data.
     mDatabaseLocation = newLocation;
 
     mSettingsDatabase->setValue("Settings/databaseLocation", mDatabaseLocation);
+
+    // XXX Change this once the implementation is finished.
+    return false;
+}
+
+/**
+ * @brief SettingsHandler::databaseDirectoryExistsOrIsCreated - Check to see if the
+ *      directory specified to store the database file exists.  If it doesn't attempt
+ *      to create it.
+ *
+ * @return true if the directory exists, or was created.  false if it doesn't exist,
+ *      or couldn't be created.
+ */
+bool SettingsHandler::databaseDirectoryExistsOrIsCreated()
+{
+    return directoryExistsOrIsCreated(databaseLocation());
+}
+
+/**
+ * @brief SettingsHandler::databaseFilename - Get the file name that should be used to
+ *      store the database.
+ *
+ * @return QString containing the file name that the database should be stored to.
+ */
+QString SettingsHandler::databaseFilename()
+{
+    return mDatabaseFilename;
+}
+
+/**
+ * @brief SettingsHandler::setDatabaseFilename - Set a new file name to store the database
+ *      file as.
+ *
+ * @param newFilename - The new file name (sans path) that should be used to store the
+ *      database.
+ *
+ * @return true if the database file name was changed, and the database was moved to the
+ *      new file name.  false is the database file name couldn't be changed.  If the
+ *      file name can't be changed, the change will be discarded, and the old file name
+ *      will continue to be used.
+ */
+bool SettingsHandler::setDatabaseFilename(const QString &newFilename)
+{
+    // Rename the database file to the new name.
+
+    // Then update the file name stored in the settings.
+
+    // XXX Implement.
+    return false;
+}
+
+/**
+ * @brief SettingsHandler::fullDatabasePathAndFilename - Convenience call to return the
+ *      full path and file name of the database file.
+ *
+ * @return QString containing the full path and file name of the database file.
+ */
+QString SettingsHandler::fullDatabasePathAndFilename()
+{
+    return databaseLocation() + "/" + databaseFilename();
 }
 
 /**
@@ -190,6 +270,8 @@ void SettingsHandler::setDatabaseLocation(const QString &newLocation)
 QString SettingsHandler::dataPath()
 {
     QString dotDirectory;
+
+    // XXX Update this so that it stores in the AppData directory on Windows, and a dot directory on *nix.  (Maybe the .config directory on *nix?)
 
     // Start by getting the user home directory.
     dotDirectory = QDir::homePath();
@@ -216,18 +298,48 @@ QString SettingsHandler::dataPath()
  */
 bool SettingsHandler::dataDirectoryExistsOrIsCreated()
 {
-    QDir targetDir(databaseLocation());
+    return directoryExistsOrIsCreated(dataPath());
+}
+
+/**
+ * @brief SettingsHandler::directoryExistsOrIsCreated - Check to see if a directory
+ *      exists.  If it doesn't, then attempt to create it.
+ *
+ * @param directory - The path of the directory that we want to check the existance of
+ *      or to create if it doesn't exist.
+ *
+ * @return true if the directory exists, or was created.  false if it doesn't exist,
+ *      and couldn't be created.
+ */
+bool SettingsHandler::directoryExistsOrIsCreated(const QString &directory)
+{
+    QDir targetDir(directory);
 
     if (!targetDir.exists()) {
-        LOG_DEBUG("The dot directory doesn't exist.  Attempting to create it...");
+        LOG_DEBUG("The directory '" + directory + "' doesn't exist.  Attempting to create it...");
 
         if (!targetDir.mkpath(".")) {
-            LOG_ERROR("Unable to create the dot directory to store the key entry database!");
+            LOG_ERROR("Unable to create the directory '" + directory + "'!");
             return false;
         }
     }
 
     return true;
+}
+
+/**
+ * @brief SettingsHandler::moveDatabaseToNewTarget - Change the location and/or file name
+ *      of the database file.
+ *
+ * @param oldPath - The current path to the database file.
+ * @param newPath - The destination path of the database file.
+ *
+ * @return true if the database file was moved to the new location.  false if it wasn't.
+ */
+bool SettingsHandler::moveDatabaseToNewTarget(const QString &oldPath, const QString &newPath)
+{
+    // XXX Implement!
+    return false;
 }
 
 SettingsHandler::SettingsHandler()
@@ -239,8 +351,8 @@ SettingsHandler::SettingsHandler()
     mShowHotpCounter = false;
     mShowIssuer = false;
     mLogToFile = false;
-
     mDatabaseLocation.clear();
+    mDatabaseFilename = "keydatabase.db";
 
     // Make sure the data directory exists, so that we can read or write our settings.
     if (!dataDirectoryExistsOrIsCreated()) {
@@ -260,7 +372,15 @@ SettingsHandler::SettingsHandler()
     mShowHotpCounter = mSettingsDatabase->value("Settings/showHotpCounter", false).toBool();
     mShowAlgorithm = mSettingsDatabase->value("Settings/showHashAlgorithm", false).toBool();
     mLogToFile = mSettingsDatabase->value("Settings/logToFile", false).toBool();
-    mDatabaseLocation = mSettingsDatabase->value("Settings/databasePath", "").toString();
+    mDatabaseLocation = mSettingsDatabase->value("Settings/databasePath", "").toString();               // An empty string will map to the DOT_DIRECTORY value at the top of this file.
+    mDatabaseFilename = mSettingsDatabase->value("Settings/databaseFilename", "keydatabase.db").toString();
 
     LOG_DEBUG("Saving settings to  : " + mSettingsDatabase->fileName());
+
+    // XXX Open the database file using the information available?
+
+    // XXX Need to use a lock file to indicate when the database file is in use.  This
+    // is to allow us to handle the situation where the database file is stored someplace
+    // where two instances of the app might use it at the same time, such as a file
+    // server or syncing system (like Syncthing).
 }

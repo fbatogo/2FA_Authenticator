@@ -2,10 +2,6 @@
 
 .import Rollin.Logger 1.0 as Logger
 
-function stripPrefix(stringToStrip, prefix) {
-    return stringToStrip.replace(prefix, "");
-}
-
 // Convert the secret encoding type of a string to the integer value used in the C++
 // code.
 function secretTypeToInt(secretEncoding) {

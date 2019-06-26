@@ -57,6 +57,7 @@ SOURCES += \
     keystorage/database/databasekeystorage.cpp \
     otp/otphandler.cpp \
     uiclipboard.cpp \
+    utils.cpp \
     zbar/qrcodefilter.cpp \
     zbar/qrvideorunnable.cpp \
     zbar/qrcodestringparser.cpp \
@@ -85,6 +86,7 @@ HEADERS += \
     keystorage/database/databasekeystorage.h \
     otp/otphandler.h \
     uiclipboard.h \
+    utils.h \
     zbar/qrcodefilter.h \
     zbar/qrvideorunnable.h \
     zbar/qrcodestringparser.h \

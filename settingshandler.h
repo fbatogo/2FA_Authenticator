@@ -29,12 +29,21 @@ public:
     Q_INVOKABLE void setLogToFile(bool newvalue);
 
     Q_INVOKABLE QString databaseLocation();
-    Q_INVOKABLE void setDatabaseLocation(const QString &newLocation);
+    Q_INVOKABLE bool setDatabaseLocation(const QString &newLocation);
+    bool databaseDirectoryExistsOrIsCreated();
+
+    Q_INVOKABLE QString databaseFilename();
+    Q_INVOKABLE bool setDatabaseFilename(const QString &newFilename);
+
+    Q_INVOKABLE QString fullDatabasePathAndFilename();
 
     QString dataPath();
     bool dataDirectoryExistsOrIsCreated();
 
 private:
+    bool directoryExistsOrIsCreated(const QString &directory);
+    bool moveDatabaseToNewTarget(const QString &oldPath, const QString &newPath);
+
     SettingsHandler();
 
     bool mValid;
@@ -44,6 +53,7 @@ private:
     bool mShowAlgorithm;
     bool mLogToFile;
     QString mDatabaseLocation;
+    QString mDatabaseFilename;
 
     QSettings *mSettingsDatabase;
 };

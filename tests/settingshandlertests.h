@@ -9,6 +9,8 @@ class SettingsHandlerTests : public QObject
 
 private slots:
     void getSetSettingsTests();
+    void databasePathLocationTests();
+    void databaseFileLocationTests();
 };
 
 #endif // SETTINGSHANDLERTESTS_H

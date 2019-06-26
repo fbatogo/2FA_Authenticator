@@ -34,7 +34,7 @@ bool DatabaseKeyStorage::initKeyStorage()
     }
 
     // Open/create the SecretDatabase file.
-    return mSecretDatabase.open(SettingsHandler::getInstance()->dataPath() + "keydatabase.db");
+    return mSecretDatabase.open(SettingsHandler::getInstance()->fullDatabasePathAndFilename());
 }
 
 /**

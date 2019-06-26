@@ -26,6 +26,7 @@
 #include "uiclipboardtests.h"
 #include "loggertests.h"
 #include "otp/otphandlertests.h"
+#include "utilstests.h"
 
 int main(int argc, char *argv[])
 {
@@ -91,6 +92,7 @@ int main(int argc, char *argv[])
     tests.addTest(new UiClipboardTests());
     tests.addTest(new LoggerTests());
     tests.addTest(new OtpHandlerTests());
+    tests.addTest(new UtilsTests());
 
     return tests.executeAll();
 }

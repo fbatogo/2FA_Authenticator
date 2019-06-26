@@ -20,6 +20,11 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
+    // Set the global Qt application settings values.
+    app.setOrganizationName("Rollin' Organization");
+    app.setOrganizationDomain("rollin.local");
+    app.setApplicationName("Rollin'");
+
     qmlRegisterSingletonType<GeneralInfoSingleton>("Rollin.GeneralInfoSingleton", 1, 0, "GeneralInfoSingleton", GeneralInfoSingleton::getQmlSingleton);
     qmlRegisterSingletonType<KeyEntriesSingleton>("Rollin.KeyEntriesSingleton", 1, 0, "KeyEntriesSingleton", KeyEntriesSingleton::getQmlSingleton);
 
@@ -36,6 +41,9 @@ int main(int argc, char *argv[])
 #ifndef NO_ZBAR
     qmlRegisterType<QRCodeFilter>("QRFilter", 1, 0, "QRFilter");
 #endif // NO_ZBAR
+
+    // One more Qt application setting value.
+    app.setApplicationVersion(GeneralInfoSingleton::getInstance()->version());
 
     engine.load(QUrl(QStringLiteral("qrc:/resources/main.qml")));
     if (engine.rootObjects().isEmpty()) {

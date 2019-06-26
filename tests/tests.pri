@@ -26,7 +26,8 @@ HEADERS += \
     $$PWD/sha512tests.h \
     $$PWD/hmacsha256tests.h \
     $$PWD/hmacsha512tests.h \
-    $$PWD/uiclipboardtests.h
+    $$PWD/uiclipboardtests.h \
+    $$PWD/utilstests.h
 
 SOURCES += \
     $$PWD/container/bytearraytests.cpp \
@@ -51,7 +52,8 @@ SOURCES += \
     $$PWD/hmacsha256tests.cpp \
     $$PWD/hmacsha512tests.cpp \
     $$PWD/main.cpp \
-    $$PWD/uiclipboardtests.cpp
+    $$PWD/uiclipboardtests.cpp \
+    $$PWD/utilstests.cpp
 
 
 # And, add our testmain.cpp as the 'main' that we want to use.
