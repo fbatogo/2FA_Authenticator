@@ -76,8 +76,9 @@ bool SecretDatabase::close()
     }
 
     mDatabase.close();
+    mDatabase.setDatabaseName("");
 
-    return true;            // I guess a close can't fail?
+    return (!mDatabase.isOpen());            // I guess a close can't fail?
 }
 
 /**
@@ -99,8 +100,15 @@ bool SecretDatabase::isOpen()
  */
 bool SecretDatabase::add(const KeyEntry &entry)
 {
+    // Make sure the database is open.
+    if (!isOpen()) {
+        LOG_ERROR("The database isn't open while attemping to add a new key entry!");
+        return false;
+    }
+
     QSqlQuery query;
     KeyEntry foundEntry;
+
 
     // Make sure the entry we are going to write is valid.
     if (!entry.valid()) {

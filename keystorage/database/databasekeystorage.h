@@ -12,6 +12,7 @@ public:
     DatabaseKeyStorage();
 
     int storageId();
+    bool isOpen();
 
     bool initKeyStorage();
     bool keyByIdentifier(const QString &identifier, KeyEntry &result);
@@ -19,6 +20,7 @@ public:
     bool addKey(const KeyEntry &entry);
     bool updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry);
     bool deleteKeyByIdentifier(const QString &identifier);
+    bool freeKeyStorage();
 
 private:
     SecretDatabase mSecretDatabase;

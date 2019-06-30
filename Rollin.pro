@@ -1,5 +1,10 @@
 QT += quick sql multimedia svg
 
+# To enable unit tests, add CONFIG+=unittests, or QT+=testlib
+unittests {
+    QT *= testlib
+}
+
 # If we aren't building on Windows, use the x11 extras.
 !win32 {
     #DEFINES += NO_ZBAR

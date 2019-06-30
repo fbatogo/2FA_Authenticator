@@ -14,6 +14,7 @@ public:
     KeyStorage();
 
     bool available();
+    bool isOpen();
 
     bool initStorage();
     bool keyByIdentifier(const QString &identifier, KeyEntry &result);

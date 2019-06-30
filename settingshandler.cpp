@@ -4,6 +4,8 @@
 #include <QVariant>
 #include <logger.h>
 
+#include "keyentriessingleton.h"
+
 const QString DOT_DIRECTORY = ".Rollin";          // The name of the dot directory we will initially use to store the database file.
 
 SettingsHandler::~SettingsHandler()
@@ -160,10 +162,12 @@ QString SettingsHandler::databaseLocation()
 {
     // If we don't have a database location explicitly defined, return the dataPath().
     if (mDatabaseLocation.isEmpty()) {
+        qDebug("Database location is : %s", dataPath().toStdString().c_str());
         return dataPath();
     }
 
     // Otherwise, return the custom path.
+    qDebug("Database location is : %s", mDatabaseLocation.toStdString().c_str());
     return mDatabaseLocation;
 }
 
@@ -182,27 +186,53 @@ QString SettingsHandler::databaseLocation()
  */
 bool SettingsHandler::setDatabaseLocation(const QString &newLocation)
 {
-    QString dbPath;
+    QString dbPathAndFilename;
+    QString currentDbPathAndFilename;
 
     // If the path hasn't changed, don't do anything.
     if (mDatabaseLocation == newLocation) {
         return true;
     }
 
-    // If the newLocation string is empty, reset the path back to the default.
+    // Construct the full path and filename of the existing database location.
+    currentDbPathAndFilename = mDatabaseLocation + "/" + databaseFilename();
+    LOG_DEBUG("Current database path + file name : " + currentDbPathAndFilename);
+
+    // If the newLocation string is empty, reset the path back to the default, but
+    // use the current file name.
     if (newLocation.isEmpty()) {
-
+        dbPathAndFilename = dataPath() + "/" + databaseFilename();
+    } else {
+        dbPathAndFilename = newLocation + "/" + databaseFilename();
     }
+    LOG_DEBUG("New database path + file name : " + dbPathAndFilename);
 
-    // XXX Move the database to the new location.
+    // Copy the existing database to the new location.
+    if (!moveDatabaseToNewTarget(currentDbPathAndFilename, dbPathAndFilename)) {
+        LOG_ERROR("Failed to move the current database!  Will continue to use the old path!");
+
+        // Make sure the database is open, in case it was closed before the move error
+        // occurred.
+        if (!KeyEntriesSingleton::getInstance()->open()) {
+            LOG_ERROR("*CRITICAL ERROR* Unable to reopen the old database location!");
+
+            // XXX Need to handle this properly.  Should probably show a dialog to the
+            // user, and then close the app?
+
+            return false;
+        }
+
+        // Return false.
+        return false;
+    }
 
     // Update the settings data.
     mDatabaseLocation = newLocation;
 
     mSettingsDatabase->setValue("Settings/databaseLocation", mDatabaseLocation);
 
-    // XXX Change this once the implementation is finished.
-    return false;
+    // Then, reopen the database at the new location.
+    return KeyEntriesSingleton::getInstance()->open();
 }
 
 /**
@@ -259,6 +289,7 @@ bool SettingsHandler::setDatabaseFilename(const QString &newFilename)
  */
 QString SettingsHandler::fullDatabasePathAndFilename()
 {
+    qDebug("Full database path and filename : %s/%s", databaseLocation().toStdString().c_str(), databaseFilename().toStdString().c_str());
     return databaseLocation() + "/" + databaseFilename();
 }
 
@@ -329,7 +360,9 @@ bool SettingsHandler::directoryExistsOrIsCreated(const QString &directory)
 
 /**
  * @brief SettingsHandler::moveDatabaseToNewTarget - Change the location and/or file name
- *      of the database file.
+ *      of the database file.  The database file should be closed before it is moved, but
+ *      this function will do a check, and close the database if needed.  It *WILL NOT*,
+ *      however, reopen the database once it has been copied!
  *
  * @param oldPath - The current path to the database file.
  * @param newPath - The destination path of the database file.
@@ -338,8 +371,59 @@ bool SettingsHandler::directoryExistsOrIsCreated(const QString &directory)
  */
 bool SettingsHandler::moveDatabaseToNewTarget(const QString &oldPath, const QString &newPath)
 {
-    // XXX Implement!
-    return false;
+    QFile sourceDatabase(oldPath);
+    QDir targetDir;
+    QFileInfo targetDatabase(newPath);
+
+    // Make sure the source and target paths are not empty.
+    if (oldPath.isEmpty()) {
+        LOG_ERROR("The 'old path' used to move the database location from was empty!");
+        return false;
+    }
+
+    if (newPath.isEmpty()) {
+        LOG_ERROR("The 'new path' used to move the database locatio to was empty!");
+        return false;
+    }
+
+    // Make sure the database is closed before we attempt to move it.
+    if (!KeyEntriesSingleton::getInstance()->close()) {
+        LOG_ERROR("Unable to close the existing database!");
+        return false;
+    }
+
+    // Need to get just the path portion of the target file, and feed it in to our QDir.
+    targetDir = targetDatabase.absoluteDir();
+    LOG_DEBUG("Target database directory : " + targetDir.path());
+
+    // See if our target directory exists.
+    if (!targetDir.exists()) {
+        LOG_DEBUG("The target directory '" + newPath + "' does not exist!  Will attempt to create it!");
+
+        if (!targetDir.mkpath(targetDir.absolutePath())) {
+            LOG_ERROR("Failed to create the path '" + targetDir.absolutePath() + "'.  Will continue to use the old database path and file name!");
+            return false;
+        }
+    }
+
+    // See if a file already exists at our target location.  If it does, attempt to
+    // delete it.
+    if (QFile::exists(newPath)) {
+        LOG_DEBUG("A file already exists at the path '" + newPath + "'.  Attempting to delete it before copying our database.");
+        if (!QFile::remove(newPath)) {
+            LOG_ERROR("Unable to delete the file at : " + newPath);
+            return false;
+        }
+    }
+
+    // Copy the database file from the old path to the new path.
+    if (!sourceDatabase.copy(newPath)) {
+        LOG_ERROR("Failed to copy the database from '" + oldPath + "' to '" + newPath + "'!  Error : " + sourceDatabase.errorString());
+        return false;
+    }
+
+    // Database has been moved.
+    return true;
 }
 
 SettingsHandler::SettingsHandler()

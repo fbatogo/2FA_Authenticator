@@ -92,12 +92,10 @@ Drawer {
                     id: menuName
                     text: name
                     color: "black"
-                    font.pointSize: 24
+                    font.pixelSize: 20
                     Layout.leftMargin: 10
                 }
             }
-
-
 
             MouseArea {
                 anchors.fill: parent

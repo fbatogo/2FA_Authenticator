@@ -9,29 +9,15 @@ KeyEntriesSingleton::KeyEntriesSingleton(QObject *parent) :
 {
     mEntryList.clear();
 
-    if (!mKeyStorage.initStorage()) {
-        LOG_ERROR("Unable to initialize the key storage!");
-    }
-
-    // Configure our timer as a single shot timer.
-    mUpdateTimer.setSingleShot(true);
-
-    // Connect the QTimer slots and signals.
-    connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateOtpValues()));
-
-    populateEntries();
+    // When we are first created, we want to open the backing key entry store
+    // by default.
+    open();
 }
 
 KeyEntriesSingleton::~KeyEntriesSingleton()
 {
-    // Disconnect the QTimer slots and signals.
-    disconnect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateOtpValues()));
-
-    clear();
-
-    if (!mKeyStorage.freeStorage()) {
-        LOG_ERROR("Unable to free the key storage!");
-    }
+    // Clean up.
+    close();
 }
 
 /**
@@ -80,6 +66,56 @@ void KeyEntriesSingleton::clear()
 
     // Then, clear the list container.
     mEntryList.clear();
+}
+
+/**
+ * @brief KeyEntriesSingleton::open - Open the backing key storage, and connect the
+ *      signal that is used to calculate and update the keys.
+ *
+ * @return true if the key entry store was opened, false otherwise.
+ */
+bool KeyEntriesSingleton::open()
+{
+    if (!mKeyStorage.initStorage()) {
+        LOG_ERROR("Unable to initialize the key storage!");
+        return false;
+    }
+
+    // Configure our timer as a single shot timer.
+    mUpdateTimer.setSingleShot(true);
+
+    // Connect the QTimer slots and signals.
+    connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateOtpValues()));
+
+    populateEntries();
+
+    return true;
+}
+
+bool KeyEntriesSingleton::isOpen()
+{
+    return mKeyStorage.isOpen();
+}
+
+/**
+ * @brief KeyEntriesSingleton::close - Close the key entry database, and stop updating
+ *      the key entry calculations.
+ *
+ * @return true if the key entry database was closed properly.  false on error.
+ */
+bool KeyEntriesSingleton::close()
+{
+    // Disconnect the QTimer slots and signals.
+    disconnect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(slotUpdateOtpValues()));
+
+    clear();
+
+    if (!mKeyStorage.freeStorage()) {
+        LOG_ERROR("Unable to free the key storage!");
+        return false;
+    }
+
+    return true;
 }
 
 /**

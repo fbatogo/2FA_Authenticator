@@ -25,6 +25,17 @@ bool KeyStorage::available()
     return mAvailable;
 }
 
+bool KeyStorage::isOpen()
+{
+    for (size_t i = 0; i < mKeyStorageDrivers.size(); i++) {
+        if (mKeyStorageDrivers.at(i)->isOpen()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /**
  * @brief KeyStorage::initStorage - Iterate through all of the key storage drivers and
  *      initialize them.
@@ -111,7 +122,7 @@ bool KeyStorage::addKey(const KeyEntry &entry, int keyStorageMethod)
         return false;
     }
 
-    // See if the entry alreeady exists somewhere.
+    // See if the entry already exists somewhere.
     if (keyByIdentifier(entry.identifier(), temp)) {
         LOG_ERROR("Cannot add a key entry that already exists in a key provider!  Did you mean to update?");
         return false;

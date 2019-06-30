@@ -160,7 +160,6 @@ Item {
                         onEditingComplete: NewOrEdit.checkEnableSave();
                     }
 
-
                     // Secret value.
                     Text {
                         id: secretValueLabel

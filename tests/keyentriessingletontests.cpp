@@ -128,3 +128,64 @@ void KeyEntriesSingletonTests::e2eTests()
     // Get all of the keys again.  The count should be 0.
     QCOMPARE((int)0, KeyEntriesSingleton::getInstance()->count());
 }
+
+void KeyEntriesSingletonTests::openCloseTests()
+{
+    KeyEntry *testEntry;
+
+    // Make sure our test entries don't exist.  Ignore the result value because a "false"
+    // return value should only indicate that they don't already exist.
+    KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test");
+    KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test 2");
+
+    // By default, the key entry backing store should be open, so we should be able
+    // to add a key entry.
+    QVERIFY(KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test", "Open/Close Test Issuer", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
+
+    // And, we should be able to read it back.
+    testEntry = KeyEntriesSingleton::getInstance()->fromIdentifier("Open/Close Test");
+
+    // And, the resulting entry shouldn't be null.
+    QVERIFY(nullptr != testEntry);
+
+    // Make sure the issuer name for the returned object is what we expect.
+    QCOMPARE(testEntry->issuer(), "Open/Close Test Issuer");
+
+    // Then, close the key entry backing store.
+    QVERIFY(KeyEntriesSingleton::getInstance()->close());
+
+    QVERIFY(!KeyEntriesSingleton::getInstance()->isOpen());
+
+    // Try to add another key entry.  (Should fail.)
+    QVERIFY(!KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test 2", "Open/Close Test Issuer 2", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
+
+    // Try to read it back (should return nullptr)
+    testEntry = KeyEntriesSingleton::getInstance()->fromIdentifier("Open/Close Test 2");
+
+    QVERIFY(nullptr == testEntry);
+
+    // Then, reopen the backing store.
+    QVERIFY(KeyEntriesSingleton::getInstance()->open());
+
+    // Attempt to read the key entry that we wrote while the store was closed.  (Should return nullptr.)
+    testEntry = KeyEntriesSingleton::getInstance()->fromIdentifier("Open/Close Test 2");
+
+    QVERIFY(nullptr == testEntry);
+
+
+    // Now, attempt to add in the entry we tried to add while the store was closed.
+    QVERIFY(KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test 2", "Open/Close Test Issuer 2", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
+
+    // Then, read it back and verify the issuer is what we expect.
+    testEntry = KeyEntriesSingleton::getInstance()->fromIdentifier("Open/Close Test 2");
+
+    // And, the resulting entry shouldn't be null.
+    QVERIFY(nullptr != testEntry);
+
+    // Make sure the issuer name for the returned object is what we expect.
+    QCOMPARE(testEntry->issuer(), "Open/Close Test Issuer 2");
+
+    // Clean up the entries so later tests don't have to worry about them.
+    QVERIFY(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test"));
+    QVERIFY(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test 2"));
+}

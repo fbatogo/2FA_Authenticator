@@ -19,6 +19,11 @@ int DatabaseKeyStorage::storageId()
     return KEYSTORAGE_METHOD_DATABASE;
 }
 
+bool DatabaseKeyStorage::isOpen()
+{
+    return mSecretDatabase.isOpen();
+}
+
 /**
  * @brief DatabaseKeyStorage::initKeyStorage - Make sure the path for the database
  *      exists and open the database.
@@ -108,4 +113,15 @@ bool DatabaseKeyStorage::deleteKeyByIdentifier(const QString &identifier)
     }
 
     return mSecretDatabase.deleteByIdentifier(identifier);
+}
+
+/**
+ * @brief DatabaseKeyStorage::freeKeyStorage - "Free" the key storage database by closing
+ *      the database itself.
+ *
+ * @return true if the database was closed.  false otherwise.
+ */
+bool DatabaseKeyStorage::freeKeyStorage()
+{
+    return mSecretDatabase.close();
 }

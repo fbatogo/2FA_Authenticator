@@ -21,6 +21,10 @@ public:
 
     void clear();
 
+    bool open();
+    bool isOpen();
+    bool close();
+
     bool calculateEntries();
 
     Q_INVOKABLE bool addKeyEntry(const QString &identifier, const QString &issuer, const QString &secret, unsigned int keyType, unsigned int otpType, unsigned int numberCount, unsigned int algorithm, unsigned int period, unsigned int offset);

@@ -56,7 +56,7 @@ void SettingsHandlerTests::databasePathLocationTests()
     QVERIFY(SettingsHandler::getInstance()->setDatabaseLocation(""));
 
     // Read the setting back, and store it for later use.
-    QVERIFY(SettingsHandler::getInstance()->databaseLocation().endsWith(".Rollin"));
+    QVERIFY(SettingsHandler::getInstance()->databaseLocation().endsWith(".Rollin/"));
 
     // Store the full path and file name for later use.
     oldLocation = SettingsHandler::getInstance()->fullDatabasePathAndFilename();

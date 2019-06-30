@@ -9,6 +9,7 @@ class KeyEntriesSingletonTests : public QObject
 
 private slots:
     void e2eTests();
+    void openCloseTests();
 };
 
 #endif // KEYENTRIESSINGLETONTESTS_H

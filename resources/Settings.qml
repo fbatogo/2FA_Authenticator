@@ -21,24 +21,30 @@ Item {
             anchors.fill: parent
 
             VerticalPadding {
+                Layout.fillWidth: true
                 size: 10
             }
 
             SubHeader {
+                Layout.fillWidth: true
                 headerText: qsTr("Settings");
             }
 
             VerticalPadding {
+                Layout.fillWidth: true
                 size: 10
             }
 
             RowLayout {
+                Layout.fillWidth: true
 
                 VerticalPadding {
                     size: 10
                 }
 
                 ColumnLayout {
+                    Layout.fillWidth: true
+
                     // List the configuration options that we allow.
                     CheckBox {
                         id: showIssuer
@@ -76,19 +82,17 @@ Item {
                         onToggled: SettingsHandler.setLogToFile(checked);
                     }
 
+                    // Button for changing the location of the database.
                     RowLayout {
-                        Label {
-                            text: qsTr("Database location : ");
-                        }
+                        Layout.fillWidth: true
 
-                        TextInput {
-                            id: databaseLocation
-                            text: SettingsHandler.databaseLocation();
+                        Rectangle {
+                            Layout.fillWidth: true
                         }
 
                         Button {
-                            id: selectDatabaseLocation
-                            text: qsTr("Select");
+                            id: resetDatabaseLocation
+                            text: qsTr("Change Database Location");
 
                             onClicked: {
                                 // Set the path to the current folder.
@@ -99,9 +103,8 @@ Item {
                             }
                         }
 
-                        Button {
-                            id: resetDatabaseLocation
-                            text: qsTr("Reset");
+                        Rectangle {
+                            Layout.fillWidth: true
                         }
                     }
                 }
