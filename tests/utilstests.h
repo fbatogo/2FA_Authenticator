@@ -8,7 +8,7 @@ class UtilsTests : public QObject
     Q_OBJECT
 
 private slots:
-    void pathToLocalTest();
+    void concatenateFilenameAndPathTests();
 };
 
 #endif // UTILSTESTS_H
