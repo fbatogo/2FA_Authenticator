@@ -10,6 +10,7 @@ class DatabaseKeyStorage : public KeyStorageBase
 {
 public:
     DatabaseKeyStorage();
+    ~DatabaseKeyStorage();
 
     int storageId();
     bool isOpen();
@@ -23,7 +24,7 @@ public:
     bool freeKeyStorage();
 
 private:
-    SecretDatabase mSecretDatabase;
+    SecretDatabase *mSecretDatabase;
 };
 
 #endif // DATABASEKEYSTORAGE_H

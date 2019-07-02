@@ -13,7 +13,6 @@ void KeyEntriesSingletonTests::e2eTests()
     KeyEntry kEntry;
     KeyEntry newEntry;
     KeyEntry *foundKey = nullptr;
-    QList<KeyEntry> allKeys;
 
     // If we have an old database file hanging around, delete it.
     dbPath = SettingsHandler::getInstance()->fullDatabasePathAndFilename();
@@ -26,6 +25,9 @@ void KeyEntriesSingletonTests::e2eTests()
         // Delete it.
         QVERIFY(TestUtils::deleteFile(dbPath.toStdString()));
     }
+
+    // Make sure the database is open.
+    QVERIFY(KeyEntriesSingleton::getInstance()->open());
 
     // Write a key entry to the database.
     QVERIFY(KeyEntriesSingleton::getInstance()->addKeyEntry("Test Key", "Test Issuer", "3132333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA1, 30, 0));

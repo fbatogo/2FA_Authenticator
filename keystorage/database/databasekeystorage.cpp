@@ -6,6 +6,15 @@
 
 DatabaseKeyStorage::DatabaseKeyStorage()
 {
+    mSecretDatabase = nullptr;
+}
+
+DatabaseKeyStorage::~DatabaseKeyStorage()
+{
+    // Free the database object, if it isn't already freed.
+    if (nullptr != mSecretDatabase) {
+        freeKeyStorage();
+    }
 }
 
 /**
@@ -21,7 +30,12 @@ int DatabaseKeyStorage::storageId()
 
 bool DatabaseKeyStorage::isOpen()
 {
-    return mSecretDatabase.isOpen();
+    if (nullptr == mSecretDatabase) {
+        // The database isn't allocated, so it isn't open.
+        return false;
+    }
+
+    return mSecretDatabase->isOpen();
 }
 
 /**
@@ -38,8 +52,15 @@ bool DatabaseKeyStorage::initKeyStorage()
         return false;
     }
 
+    // Create the database object.
+    mSecretDatabase = new SecretDatabase();
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("Unable to allocate a new SecretDatabase object!");
+        return false;
+    }
+
     // Open/create the SecretDatabase file.
-    return mSecretDatabase.open(SettingsHandler::getInstance()->fullDatabasePathAndFilename());
+    return mSecretDatabase->open(SettingsHandler::getInstance()->fullDatabasePathAndFilename());
 }
 
 /**
@@ -55,7 +76,12 @@ bool DatabaseKeyStorage::initKeyStorage()
  */
 bool DatabaseKeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &result)
 {
-    return mSecretDatabase.getByIdentifier(identifier, result);
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("The database is not open while attempting to get a key by identifier!");
+        return false;
+    }
+
+    return mSecretDatabase->getByIdentifier(identifier, result);
 }
 
 /**
@@ -69,7 +95,12 @@ bool DatabaseKeyStorage::keyByIdentifier(const QString &identifier, KeyEntry &re
  */
 bool DatabaseKeyStorage::getAllKeys(std::vector<KeyEntry> &result)
 {
-    return mSecretDatabase.getAll(result);
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("The secret database isn't open while attempting to get all key data!");
+        return false;
+    }
+
+    return mSecretDatabase->getAll(result);
 }
 
 /**
@@ -81,7 +112,12 @@ bool DatabaseKeyStorage::getAllKeys(std::vector<KeyEntry> &result)
  */
 bool DatabaseKeyStorage::addKey(const KeyEntry &entry)
 {
-    return mSecretDatabase.add(entry);
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("The secret database isn't open while attempting to add a key entry!");
+        return false;
+    }
+
+    return mSecretDatabase->add(entry);
 }
 
 /**
@@ -94,7 +130,12 @@ bool DatabaseKeyStorage::addKey(const KeyEntry &entry)
  */
 bool DatabaseKeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry &newEntry)
 {
-    return mSecretDatabase.update(currentEntry, newEntry);
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("The secret database isn't open while attempting to update a key entry!");
+        return false;
+    }
+
+    return mSecretDatabase->update(currentEntry, newEntry);
 }
 
 /**
@@ -107,12 +148,17 @@ bool DatabaseKeyStorage::updateKey(const KeyEntry &currentEntry, const KeyEntry 
  */
 bool DatabaseKeyStorage::deleteKeyByIdentifier(const QString &identifier)
 {
-    if (!mSecretDatabase.isOpen()) {
+    if (nullptr == mSecretDatabase) {
+        LOG_ERROR("The database was not initialized before attempting to delete a key by identifier!");
+        return false;
+    }
+
+    if (!mSecretDatabase->isOpen()) {
         LOG_ERROR("Unable to delete the key with identifier '" + identifier + "'.  The database isn't open!");
         return false;
     }
 
-    return mSecretDatabase.deleteByIdentifier(identifier);
+    return mSecretDatabase->deleteByIdentifier(identifier);
 }
 
 /**
@@ -123,5 +169,19 @@ bool DatabaseKeyStorage::deleteKeyByIdentifier(const QString &identifier)
  */
 bool DatabaseKeyStorage::freeKeyStorage()
 {
-    return mSecretDatabase.close();
+    if (nullptr == mSecretDatabase) {
+        LOG_DEBUG("The secret database wasn't open/allocated when trying to free.  Ignoring.");
+        return false;
+    }
+
+    if (!mSecretDatabase->close()) {
+        LOG_ERROR("Failed to close the secret key database!");
+        return false;
+    }
+
+    // Delete the object in memory.
+    delete mSecretDatabase;
+    mSecretDatabase = nullptr;
+
+    return true;
 }
