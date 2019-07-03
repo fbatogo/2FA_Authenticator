@@ -198,9 +198,9 @@ bool SettingsHandler::setDatabaseLocation(const QString &newLocation)
     // If the newLocation string is empty, reset the path back to the default, but
     // use the current file name.
     if (newLocation.isEmpty()) {
-        dbPathAndFilename = Utils::concatenateFilenameAndPath(dataPath(), databaseFilename());
+        dbPathAndFilename = Utils::getInstance()->concatenateFilenameAndPath(dataPath(), databaseFilename());
     } else {
-        dbPathAndFilename = Utils::concatenateFilenameAndPath(newLocation, databaseFilename());
+        dbPathAndFilename = Utils::getInstance()->concatenateFilenameAndPath(newLocation, databaseFilename());
     }
     LOG_DEBUG("New database path + file name : " + dbPathAndFilename);
 
@@ -282,7 +282,7 @@ bool SettingsHandler::setDatabaseFilename(const QString &newFilename)
     }
 
     // Build the target path and file name in to a single string.
-    targetPathAndFilename = Utils::concatenateFilenameAndPath(databaseLocation(), targetFilename);
+    targetPathAndFilename = Utils::getInstance()->concatenateFilenameAndPath(databaseLocation(), targetFilename);
     LOG_DEBUG("New database file name and path : " + targetPathAndFilename);
 
     // Rename the database file to the new name.
@@ -321,7 +321,7 @@ bool SettingsHandler::setDatabaseFilename(const QString &newFilename)
  */
 QString SettingsHandler::fullDatabasePathAndFilename()
 {
-    return Utils::concatenateFilenameAndPath(databaseLocation(), databaseFilename());
+    return Utils::getInstance()->concatenateFilenameAndPath(databaseLocation(), databaseFilename());
 }
 
 /**

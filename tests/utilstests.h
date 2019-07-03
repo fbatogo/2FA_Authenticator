@@ -9,6 +9,13 @@ class UtilsTests : public QObject
 
 private slots:
     void concatenateFilenameAndPathTests();
+    void fileExistsAndDeleteFileTests();
+    void copyFileAndDeleteFileTests();
+    void moveFileAndDeleteFileTests();
+    void createPathAndPathExistsTests();
+
+private:
+    bool createTestFile(const QString &filename);
 };
 
 #endif // UTILSTESTS_H

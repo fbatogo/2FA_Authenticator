@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 import Rollin.SettingsHandler 1.0
 import Rollin.Logger 1.0 as Logger
+import Rollin.Utils 1.0
 
 import "widgets/"
 
