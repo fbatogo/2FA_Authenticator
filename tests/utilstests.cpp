@@ -204,6 +204,12 @@ void UtilsTests::createPathAndPathExistsTests()
     // Make sure an error was stored.
     QVERIFY(!Utils::getInstance()->lastError().isEmpty());
 
+    // If our test path already exists, clean it up.
+    if (Utils::getInstance()->pathExists("testpath")) {
+        pathTest.setPath("testpath");
+        QVERIFY(pathTest.removeRecursively());
+    }
+
     // Attempt to create a simple path.
     QVERIFY(Utils::getInstance()->createPath("testpath"));
 
@@ -220,7 +226,8 @@ void UtilsTests::createPathAndPathExistsTests()
     QVERIFY(!Utils::getInstance()->lastError().isEmpty());
 
     // Remove it.
-    QVERIFY(pathTest.remove("testpath"));
+    pathTest.setPath("testpath");
+    QVERIFY(pathTest.removeRecursively());
 
     // Make sure it no longer exists.
     QVERIFY(!Utils::getInstance()->pathExists("testpath"));
@@ -241,8 +248,8 @@ void UtilsTests::createPathAndPathExistsTests()
     QVERIFY(!Utils::getInstance()->lastError().isEmpty());
 
     // Remove each component of the path.
-    QVERIFY(pathTest.remove("testpath/testpathagain"));
-    QVERIFY(pathTest.remove("testpath"));
+    pathTest.setPath("testpath");
+    QVERIFY(pathTest.removeRecursively());
 
     // Make sure neither parts of the path exist anymore.
     QVERIFY(!Utils::getInstance()->pathExists("testpath/testpathagain"));

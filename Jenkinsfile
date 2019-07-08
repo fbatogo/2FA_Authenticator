@@ -20,7 +20,7 @@ pipeline {
           // Clean up the old coverage files.
           sh '''rm -f *.gcov *.gcno *.gcda'''
 
-	  sh '''qmake -qt=qt5 QT+=testlib'''
+          sh '''~/Qt/5.12.4/gcc_64/bin/qmake -qt=qt5 QT+=testlib'''
           sh '''make -j4 clean'''
           sh '''/usr/local/sonar/wrapper/build-wrapper-linux-x86-64 --out-dir bw_output make -j4 all'''
       

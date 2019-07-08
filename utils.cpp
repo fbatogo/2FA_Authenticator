@@ -126,10 +126,10 @@ bool Utils::copyFile(QString srcFile, QString destFile)
     }
 
     // Set the path of the file we are going to copy from.
-    toCopyFrom.setFileName(srcFile);
+    toCopyFrom.setFileName(stripFilePrefix(srcFile));
 
     // Copy the data.
-    if (!toCopyFrom.copy(destFile)) {
+    if (!toCopyFrom.copy(stripFilePrefix(destFile))) {
         logError("Failed to copy from '" + srcFile + "' to '" + destFile + "'!  Error : " + toCopyFrom.errorString());
         return false;
     }
@@ -169,10 +169,10 @@ bool Utils::moveFile(QString srcFile, QString destFile)
     }
 
     // Load the srcFile path to our QFile object.
-    moveFrom.setFileName(srcFile);
+    moveFrom.setFileName(stripFilePrefix(srcFile));
 
     // Move the file.
-    if (!moveFrom.rename(destFile)) {
+    if (!moveFrom.rename(stripFilePrefix(destFile))) {
         logError("Failed to move the file '" + srcFile + "' to '" + destFile + "'!  Error : " + moveFrom.errorString());
         return false;
     }
@@ -189,7 +189,7 @@ bool Utils::moveFile(QString srcFile, QString destFile)
  */
 bool Utils::deleteFile(QString fileToDelete)
 {
-    QFile toDelete(fileToDelete);
+    QFile toDelete(stripFilePrefix(fileToDelete));
 
     mLastError.clear();
 

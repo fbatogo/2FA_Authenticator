@@ -22,13 +22,12 @@ public:
     Q_INVOKABLE bool deleteFile(QString fileToDelete);
     Q_INVOKABLE bool pathExists(QString path);
     Q_INVOKABLE bool createPath(QString path);
+    Q_INVOKABLE QString stripFilePrefix(const QString &fileUrl);
 
     Q_INVOKABLE QString lastError();
 
 private:
     Utils();
-
-    QString stripFilePrefix(const QString &fileUrl);
 
     void logError(const QString &errorString);
     QString mLastError;
