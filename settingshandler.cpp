@@ -232,7 +232,12 @@ bool SettingsHandler::setDatabaseLocation(const QString &newLocation)
     mSettingsDatabase->setValue("Settings/databaseLocation", mDatabaseLocation);
 
     // Then, reopen the database at the new location.
-    return KeyEntriesSingleton::getInstance()->open();
+    if (!KeyEntriesSingleton::getInstance()->open()) {
+        LOG_ERROR("Failed to open the database at the new location!");
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -373,7 +378,8 @@ bool SettingsHandler::moveDatabaseToNewTarget(const QString &oldPath, const QStr
 {
     QFile sourceDatabase(oldPath);
     QDir targetDir;
-    QFileInfo targetDatabase(newPath);
+    QFileInfo targetDatabase;
+    QString strippedPath;
 
     // Make sure the source and target paths are not empty.
     if (oldPath.isEmpty()) {
@@ -391,6 +397,12 @@ bool SettingsHandler::moveDatabaseToNewTarget(const QString &oldPath, const QStr
         LOG_ERROR("Unable to close the existing database!");
         return false;
     }
+
+    strippedPath = newPath;
+    if (strippedPath.startsWith("file://")) {
+        strippedPath = newPath.mid(8);
+    }
+    targetDatabase.setFile(strippedPath);
 
     // Need to get just the path portion of the target file, and feed it in to our QDir.
     targetDir = targetDatabase.absoluteDir();
@@ -416,13 +428,16 @@ bool SettingsHandler::moveDatabaseToNewTarget(const QString &oldPath, const QStr
         }
     }
 
-    // Copy the database file from the old path to the new path.
-    if (!sourceDatabase.copy(newPath)) {
-        LOG_ERROR("Failed to copy the database from '" + oldPath + "' to '" + newPath + "'!  Error : " + sourceDatabase.errorString());
-        return false;
+    // See if the database already exists at the target location.  If it does, move it.
+    if (QFile::exists(oldPath)) {
+        // Copy the database file from the old path to the new path.
+        if (!sourceDatabase.copy(newPath)) {
+            LOG_ERROR("Failed to copy the database from '" + oldPath + "' to '" + newPath + "'!  Error : " + sourceDatabase.errorString());
+            return false;
+        }
+        // Database has been moved.
     }
 
-    // Database has been moved.
     return true;
 }
 

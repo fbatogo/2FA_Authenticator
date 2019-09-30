@@ -132,8 +132,10 @@ Item {
 
             // Update the settings with the path, if it has changed.
             if (fileUrls !== SettingsHandler.databaseLocation()) {
-                // XXX Close the database file, move it to the new location, reopen it, and update the location in our settings.
-
+                if (!SettingsHandler.setDatabaseLocation(fileUrls[0])) {
+                    Logger.logError("Failed to change the database location!");
+                    // XXX Show an error dialog.
+                }
             } else {
                 Logger.logDebug("Not updating the database location, because it wasn't changed!");
             }
