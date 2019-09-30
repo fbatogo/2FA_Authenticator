@@ -8,7 +8,14 @@ class UtilsTests : public QObject
     Q_OBJECT
 
 private slots:
-    void pathToLocalTest();
+    void concatenateFilenameAndPathTests();
+    void fileExistsAndDeleteFileTests();
+    void copyFileAndDeleteFileTests();
+    void moveFileAndDeleteFileTests();
+    void createPathAndPathExistsTests();
+
+private:
+    bool createTestFile(const QString &filename);
 };
 
 #endif // UTILSTESTS_H

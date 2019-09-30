@@ -152,3 +152,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     resources/licenses.txt
 
+message($$QT_VERSION)

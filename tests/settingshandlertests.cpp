@@ -3,6 +3,9 @@
 #include <QtTest>
 #include "../settingshandler.h"
 
+#include "logger.h"
+#include "keyentriessingleton.h"
+
 void SettingsHandlerTests::getSetSettingsTests()
 {
     QVERIFY(nullptr != SettingsHandler::getQmlSingleton(nullptr, nullptr));
@@ -52,6 +55,9 @@ void SettingsHandlerTests::databasePathLocationTests()
 {
     QString oldLocation;
 
+    // Make sure a database file exists.
+    KeyEntriesSingleton::getInstance()->open();
+
     // Set the db location to the default.
     QVERIFY(SettingsHandler::getInstance()->setDatabaseLocation(""));
 
@@ -68,7 +74,7 @@ void SettingsHandlerTests::databasePathLocationTests()
     QVERIFY(SettingsHandler::getInstance()->setDatabaseLocation("dbtest"));   // A relative directory called "dbtest".
 
     // Read the value back.
-    QCOMPARE(SettingsHandler::getInstance()->databaseLocation(), "dbtest");
+    QCOMPARE(SettingsHandler::getInstance()->databaseLocation(), QString("dbtest"));
 
     // Make sure the database file was moved to that location...
     QVERIFY(QFile(SettingsHandler::getInstance()->fullDatabasePathAndFilename()).exists());
@@ -112,7 +118,7 @@ void SettingsHandlerTests::databaseFileLocationTests()
     QVERIFY(SettingsHandler::getInstance()->setDatabaseFilename("unittest.db"));
 
     // Read the value back.
-    QCOMPARE(SettingsHandler::getInstance()->databaseFilename(), "unittest.db");
+    QCOMPARE(SettingsHandler::getInstance()->databaseFilename(), QString("unittest.db"));
 
     // Make sure the database file was moved to that location...
     QVERIFY(QFile(SettingsHandler::getInstance()->fullDatabasePathAndFilename()).exists());

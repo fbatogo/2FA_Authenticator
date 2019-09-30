@@ -13,7 +13,6 @@ void KeyEntriesSingletonTests::e2eTests()
     KeyEntry kEntry;
     KeyEntry newEntry;
     KeyEntry *foundKey = nullptr;
-    QList<KeyEntry> allKeys;
 
     // If we have an old database file hanging around, delete it.
     dbPath = SettingsHandler::getInstance()->fullDatabasePathAndFilename();
@@ -26,6 +25,9 @@ void KeyEntriesSingletonTests::e2eTests()
         // Delete it.
         QVERIFY(TestUtils::deleteFile(dbPath.toStdString()));
     }
+
+    // Make sure the database is open.
+    QVERIFY(KeyEntriesSingleton::getInstance()->open());
 
     // Write a key entry to the database.
     QVERIFY(KeyEntriesSingleton::getInstance()->addKeyEntry("Test Key", "Test Issuer", "3132333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA1, 30, 0));
@@ -133,13 +135,15 @@ void KeyEntriesSingletonTests::openCloseTests()
 {
     KeyEntry *testEntry;
 
+    // Make sure the key database is open to start with.
+    KeyEntriesSingleton::getInstance()->open();
+
     // Make sure our test entries don't exist.  Ignore the result value because a "false"
     // return value should only indicate that they don't already exist.
     KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test");
     KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test 2");
 
-    // By default, the key entry backing store should be open, so we should be able
-    // to add a key entry.
+    // Try to add a key.
     QVERIFY(KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test", "Open/Close Test Issuer", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
 
     // And, we should be able to read it back.
@@ -149,7 +153,7 @@ void KeyEntriesSingletonTests::openCloseTests()
     QVERIFY(nullptr != testEntry);
 
     // Make sure the issuer name for the returned object is what we expect.
-    QCOMPARE(testEntry->issuer(), "Open/Close Test Issuer");
+    QCOMPARE(testEntry->issuer(), QString("Open/Close Test Issuer"));
 
     // Then, close the key entry backing store.
     QVERIFY(KeyEntriesSingleton::getInstance()->close());
@@ -183,7 +187,7 @@ void KeyEntriesSingletonTests::openCloseTests()
     QVERIFY(nullptr != testEntry);
 
     // Make sure the issuer name for the returned object is what we expect.
-    QCOMPARE(testEntry->issuer(), "Open/Close Test Issuer 2");
+    QCOMPARE(testEntry->issuer(), QString("Open/Close Test Issuer 2"));
 
     // Clean up the entries so later tests don't have to worry about them.
     QVERIFY(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test"));

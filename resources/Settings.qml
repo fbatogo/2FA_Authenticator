@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 import Rollin.SettingsHandler 1.0
 import Rollin.Logger 1.0 as Logger
+import Rollin.Utils 1.0
+import Rollin.KeyEntriesSingleton 1.0
 
 import "widgets/"
 
@@ -121,21 +123,30 @@ Item {
         id: databaseLocationFileDialog
         visible: false
         modality: Qt.WindowModal
-        title: qsTr("Select a folder");
+        title: qsTr("Select a new database file name and location");
         selectMultiple: false
-        selectFolder: true
-        nameFilters: [ "All files (*)" ]
-        selectedNameFilter: "All files (*)"
+        selectFolder: false
+        nameFilters: [ "Key Database (*.db)", "All files (*)" ]
+        selectedNameFilter: "Key Database (*.db)"
         sidebarVisible: true
         onAccepted: {
+            var strippedTarget = Utils.stripFilePrefix(fileUrls[0]);
             console.log("Accepted: " + fileUrls[0]);
 
+
             // Update the settings with the path, if it has changed.
-            if (fileUrls !== SettingsHandler.databaseLocation()) {
-                if (!SettingsHandler.setDatabaseLocation(fileUrls[0])) {
-                    Logger.logError("Failed to change the database location!");
-                    // XXX Show an error dialog.
+            if (strippedTarget !== SettingsHandler.fullDatabasePathAndFilename()) {
+                // See if the target directory already contains a file with our target name.
+                if (Utils.fileExists(strippedTarget)) {
+                    // XXX Pop up a dialog asking the user if they want to overwrite the target file.
+
                 }
+
+                // If the target file doesn't exist, just move the file to the new location by
+                // changing the setting.
+                //if (!SettingsHandler.setDatabaseLocation(strippedTarget)) {
+                    // XXX Show a toast indicating that we couldn't change the database location.
+                //}
             } else {
                 Logger.logDebug("Not updating the database location, because it wasn't changed!");
             }
