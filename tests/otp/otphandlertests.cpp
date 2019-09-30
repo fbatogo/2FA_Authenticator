@@ -1,10 +1,10 @@
-#include "otphandlertests.h"
-
-#include <QtTest>
+#include <testsuitebase.h>
 
 #include "otp/otphandler.h"
 
-void OtpHandlerTests::calculateOtpForKeyEntryTest()
+SIMPLE_TEST_SUITE(OtpHandlerTests, OtpHandler);
+
+TEST_F(OtpHandlerTests, CalculateOtpForKeyEntryTest)
 {
     OtpHandler handler;
     KeyEntry kEntry;
@@ -48,7 +48,7 @@ void OtpHandlerTests::calculateOtpForKeyEntryTest()
 }
 
 // Run the test with a base32 encoded value.
-void OtpHandlerTests::calculateOtpForKeyEntryTest2()
+TEST_F(OtpHandlerTests, CalculateOtpForKeyEntryTest2)
 {
     OtpHandler handler;
     KeyEntry kEntry;
@@ -87,4 +87,3 @@ void OtpHandlerTests::calculateOtpForKeyEntryTest2()
     kEntry.setAlgorithm(1234);
     handler.calculateOtpForKeyEntry(&kEntry);
 }
-

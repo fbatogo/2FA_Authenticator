@@ -10,6 +10,7 @@
 
 Logger::Logger()
 {
+    mLogFilename.clear();       // Make sure it starts out empty.
 }
 
 /**
@@ -47,6 +48,25 @@ QObject *Logger::getQmlSingleton(QQmlEngine *, QJSEngine *)
     QQmlEngine::setObjectOwnership(cSingleton, QQmlEngine::CppOwnership);
 
     return static_cast<QObject *>(cSingleton);
+}
+
+/**
+ * @brief Logger::setLogFile - Set the path and file name for the log file that
+ *      we will write to.  If a log file is already open, it will be closed and
+ *      a file with the new name and path will be created.
+ *
+ * @param logFilePathAndName - The path and file name for the log file that we
+ *      want to write to.
+ *
+ * @note If calling this function, there is no need to call setLogToFile(true), as
+ *      this function will do that.
+ */
+void Logger::setLogFile(const QString &logFilePathAndName)
+{
+    mLogFilename = logFilePathAndName;
+
+    // We want to write to a log file, or else this function wouldn't have been called.
+    setLogToFile(true);
 }
 
 /**
@@ -148,8 +168,14 @@ void Logger::openLogFile()
         return;
     }
 
+    // If we don't have a log file defined, set the default path using the
+    // dataPath() from the SettingsHandler.
+    if (mLogFilename.isEmpty()) {
+        mLogFilename = SettingsHandler::getInstance()->dataPath() + "Rollin.log";
+    }
+
     // Try to open the file.
-    mLogFile.setFileName(SettingsHandler::getInstance()->dataPath() + "Rollin.log");
+    mLogFile.setFileName(mLogFilename);
 
     if (!mLogFile.open((QIODevice::WriteOnly | QIODevice::Append))) {
         qCritical("Unable to open/create a log file at '%s', error : %s", (SettingsHandler::getInstance()->dataPath() + "Rollin.log").toStdString().c_str(), mLogFile.errorString().toStdString().c_str());

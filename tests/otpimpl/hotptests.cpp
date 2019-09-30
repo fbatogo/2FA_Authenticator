@@ -1,9 +1,8 @@
-#include "hotptests.h"
+#include <testsuitebase.h>
 
-#include <QtTest>
-#include "../otpimpl/hotp.h"
-#include "../otpimpl/hmac.h"
-#include "../otpimpl/sha1hash.h"
+#include "otpimpl/hotp.h"
+#include "otpimpl/hmac.h"
+#include "otpimpl/sha1hash.h"
 
 #include <QDebug>
 
@@ -48,40 +47,40 @@
    9        2679dc69        645520489     520489
    */
 
-void hotpTests::invalidHotpTest()
+SIMPLE_TEST_SUITE(HotpTests, Hotp);
+
+TEST_F(HotpTests, InvalidHotpTest)
 {
-    Hotp invalidHotp;
     ByteArray key;
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
 
     // Fails because the key is empty.
-    QVERIFY(invalidHotp.calculate(key, 20, 6, false).empty());
+    EXPECT_TRUE(calculate(key, 20, 6, false).empty());
 
     key.append("testing");
 
     // Fails because no HMAC is set.
-    QVERIFY(invalidHotp.calculate(key, 20, 6, false).empty());
+    EXPECT_TRUE(calculate(key, 20, 6, false).empty());
 
-    invalidHotp.setHmac(hmacToUse);
+    setHmac(hmacToUse);
 
     // Fails because the length is less than 6.
-    QVERIFY(invalidHotp.calculate(key, 20, 5, false).empty());
+    EXPECT_TRUE(calculate(key, 20, 5, false).empty());
 
     // Fails because the length is greater than 8.
-    QVERIFY(invalidHotp.calculate(key, 20, 9, false).empty());
+    EXPECT_TRUE(calculate(key, 20, 9, false).empty());
 }
 
-void hotpTests::hotpTest1()
+TEST_F(HotpTests, HotpTest1)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
-    Hotp hotp;
     ByteArray secret("12345678901234567890");
     std::string hotpCalc;
     std::vector<std::string> expectedResults;
 
-    hotp.setHmac(hmacToUse);
+    setHmac(hmacToUse);
 
     // Build the list of expected results.
     expectedResults.clear();
@@ -98,12 +97,12 @@ void hotpTests::hotpTest1()
     expectedResults.push_back("520489");
 
     for (size_t i = 0; i < expectedResults.size(); i++) {
-        hotpCalc = hotp.calculate(secret, i, 6);
+        hotpCalc = calculate(secret, i, 6);
         if (hotpCalc.empty()) {
-            QFAIL("Failed to generate an HOTP value!");
+            FAIL() << "Failed to generate an HOTP value!";
         }
 
         qDebug("HOTP calculated value %zu : %s ==? %s", i, hotpCalc.c_str(), expectedResults.at(i).c_str());
-        QCOMPARE(hotpCalc, expectedResults.at(i));
+        EXPECT_EQ(hotpCalc, expectedResults.at(i));
     }
 }

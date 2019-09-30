@@ -1,19 +1,19 @@
-#include "databasekeystoragetests.h"
+#include <testsuitebase.h>
 
-#include <QtTest>
-
-#include "tests/testutils.h"
+#include <testutils.h>
 #include "keystorage/database/databasekeystorage.h"
 #include "settingshandler.h"
 
-void DatabaseKeyStorageTests::storageIdTests()
+SIMPLE_TEST_SUITE(DatabaseKeyStorageTests, DatabaseKeyStorage);
+
+TEST_F(DatabaseKeyStorageTests, StorageIdTests)
 {
     DatabaseKeyStorage dbStorageTest;
 
-    QCOMPARE(KEYSTORAGE_METHOD_DATABASE, (unsigned int)dbStorageTest.storageId());
+    EXPECT_EQ(KEYSTORAGE_METHOD_DATABASE, (unsigned int)dbStorageTest.storageId());
 }
 
-void DatabaseKeyStorageTests::e2eTests()
+TEST_F(DatabaseKeyStorageTests, E2ETests)
 {
     DatabaseKeyStorage dbStorageTest;
     QString dbPath;
@@ -22,22 +22,22 @@ void DatabaseKeyStorageTests::e2eTests()
     std::vector<KeyEntry> allKeys;
 
     // Try to delete an entry when the database isn't open.
-    QVERIFY(!dbStorageTest.deleteKeyByIdentifier("Test Key"));
+    EXPECT_TRUE(!dbStorageTest.deleteKeyByIdentifier("Test Key"));
 
     // If we have an old database file hanging around, delete it.
     dbPath = SettingsHandler::getInstance()->fullDatabasePathAndFilename();
     if (dbPath.isEmpty()) {
-        QFAIL("The database path was empty!");
+        FAIL() << "The database path was empty!";
     }
 
     // See if the database exists.
     if (TestUtils::fileExists(dbPath.toStdString())) {
         // Delete it.
-        QVERIFY(TestUtils::deleteFile(dbPath.toStdString()));
+        EXPECT_TRUE(TestUtils::deleteFile(dbPath.toStdString()));
     }
 
     // Init the database key storage.
-    QVERIFY(dbStorageTest.initKeyStorage());
+    EXPECT_TRUE(dbStorageTest.initKeyStorage());
 
     // Build a key entry to write to the database.
     kEntry.clear();
@@ -57,65 +57,65 @@ void DatabaseKeyStorageTests::e2eTests()
     kEntry.setPrintableCurrentCode("123 4567");
 
     // Write it to the database.
-    QVERIFY(dbStorageTest.addKey(kEntry));
+    EXPECT_TRUE(dbStorageTest.addKey(kEntry));
 
     // Clear the key entry so we can load it back.
     kEntry.clear();
 
     // Find the key entry by identifier.
-    QVERIFY(dbStorageTest.keyByIdentifier("Test Key", kEntry));
+    EXPECT_TRUE(dbStorageTest.keyByIdentifier("Test Key", kEntry));
 
     // Make sure the secret is what we expect, which proves the data was written to the
     // database, and read back.
-    QCOMPARE(std::string("secret"), kEntry.secret().toString());
+    EXPECT_EQ(std::string("secret"), kEntry.secret().toString());
 
     // Attempt to get all the keys in the database.
-    QVERIFY(dbStorageTest.getAllKeys(allKeys));
+    EXPECT_TRUE(dbStorageTest.getAllKeys(allKeys));
 
     // Make sure there is only a single entry.
-    QCOMPARE((size_t)1, allKeys.size());
+    EXPECT_EQ((size_t)1, allKeys.size());
 
     // Try to re-add the key (should fail).
-    QVERIFY(!dbStorageTest.addKey(kEntry));
+    EXPECT_TRUE(!dbStorageTest.addKey(kEntry));
 
     // Change the secret, and update the database record.
     newEntry = kEntry;
     newEntry.setSecret("updatedsecret");
-    QVERIFY(dbStorageTest.updateKey(kEntry, newEntry));
+    EXPECT_TRUE(dbStorageTest.updateKey(kEntry, newEntry));
 
     // Clear both key entries, and read back the updated value.
     newEntry.clear();
     kEntry.clear();
 
-    QVERIFY(dbStorageTest.keyByIdentifier("Test Key", kEntry));
+    EXPECT_TRUE(dbStorageTest.keyByIdentifier("Test Key", kEntry));
 
     // Make sure the secret is the updated value.
-    QCOMPARE(std::string("updatedsecret"), kEntry.secret().toString());
+    EXPECT_EQ(std::string("updatedsecret"), kEntry.secret().toString());
 
     // Verify that all of the other values in the key entry are what we expect.
-    QCOMPARE(QString("Test Key"), kEntry.identifier());
-    QCOMPARE(QString("Test Issuer"), kEntry.issuer());
-    QCOMPARE((unsigned int)1, kEntry.keyType());
-    QCOMPARE((unsigned int)1, kEntry.otpType());
-    QCOMPARE((unsigned int)30, kEntry.timeStep());
-    QCOMPARE((unsigned int)1, kEntry.algorithm());
-    QVERIFY(!kEntry.codeValid());
-    QCOMPARE((unsigned int)0, kEntry.startTime());
-    QCOMPARE((unsigned int)456, kEntry.timeOffset());
-    QVERIFY(kEntry.currentCode().isEmpty());        // Should be empty.  Not calculated yet.
-    QCOMPARE((unsigned int)9, kEntry.hotpCounter());
-    QVERIFY(kEntry.invalidReason().isEmpty());      // Should be empty.  Data is all valid.
-    QCOMPARE((unsigned int)8, kEntry.outNumberCount());
-    QVERIFY(kEntry.printableCurrentCode().isEmpty());   // Should be empty.  Not calculated.
+    EXPECT_EQ(QString("Test Key"), kEntry.identifier());
+    EXPECT_EQ(QString("Test Issuer"), kEntry.issuer());
+    EXPECT_EQ((unsigned int)1, kEntry.keyType());
+    EXPECT_EQ((unsigned int)1, kEntry.otpType());
+    EXPECT_EQ((unsigned int)30, kEntry.timeStep());
+    EXPECT_EQ((unsigned int)1, kEntry.algorithm());
+    EXPECT_TRUE(!kEntry.codeValid());
+    EXPECT_EQ((unsigned int)0, kEntry.startTime());
+    EXPECT_EQ((unsigned int)456, kEntry.timeOffset());
+    EXPECT_TRUE(kEntry.currentCode().isEmpty());        // Should be empty.  Not calculated yet.
+    EXPECT_EQ((unsigned int)9, kEntry.hotpCounter());
+    EXPECT_TRUE(kEntry.invalidReason().isEmpty());      // Should be empty.  Data is all valid.
+    EXPECT_EQ((unsigned int)8, kEntry.outNumberCount());
+    EXPECT_TRUE(kEntry.printableCurrentCode().isEmpty());   // Should be empty.  Not calculated.
 
     // Then, attempt to delete the entry.
-    QVERIFY(dbStorageTest.deleteKeyByIdentifier("Test Key"));
+    EXPECT_TRUE(dbStorageTest.deleteKeyByIdentifier("Test Key"));
 
     // Attempt to find it again, which should fail.
     kEntry.clear();
-    QVERIFY(!dbStorageTest.keyByIdentifier("Test Key", kEntry));
+    EXPECT_TRUE(!dbStorageTest.keyByIdentifier("Test Key", kEntry));
 
     // Get all of the keys again.  The count should be 0.
-    QVERIFY(dbStorageTest.getAllKeys(allKeys));
-    QCOMPARE((size_t)0, allKeys.size());
+    EXPECT_TRUE(dbStorageTest.getAllKeys(allKeys));
+    EXPECT_EQ((size_t)0, allKeys.size());
 }

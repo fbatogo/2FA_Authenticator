@@ -1,7 +1,6 @@
-#include "base32codertests.h"
+#include <testsuitebase.h>
 
-#include <QtTest>
-#include "../otpimpl/base32coder.h"
+#include "otpimpl/base32coder.h"
 
 #include "testutils.h"
 
@@ -9,12 +8,17 @@
 #include <iostream>
 #include <QDebug>
 
+SIMPLE_TEST_SUITE(Base32CoderTests, Base32Coder);
+
+// Some forward decls.
+std::vector<ByteArray> getEncodedTextTests();
+std::vector<ByteArray> getClearTextTests();
+
 // Tests from RFC 4648, found at https://tools.ietf.org/html/rfc4648
 // The final test was generated using the base32 encoder at : https://emn178.github.io/online-tools/base32_encode.html
 
-void Base32CoderTests::encoderTest1()
+TEST_F(Base32CoderTests, EncoderTest1)
 {
-    Base32Coder encoder;
     std::vector<ByteArray> clearText;
     std::vector<ByteArray> encodedText;
     ByteArray encoded;
@@ -23,43 +27,42 @@ void Base32CoderTests::encoderTest1()
     encodedText = getEncodedTextTests();
 
     for (size_t i = 0; i < clearText.size(); i++) {
-        encoded = encoder.encode(clearText.at(i));
+        encoded = encode(clearText.at(i));
         qDebug("Expected : %s    Calculated : %s", encodedText.at(i).toCharArrayPtr(), encoded.toCharArrayPtr());
         if (encodedText.at(i) != encoded) {
-            QFAIL(QString("Encoded text at index " + QString::number(i) + " didn't match!").toStdString().c_str());
+            FAIL() << "Encoded text at index " + QString::number(i).toStdString() + " didn't match!";
         }
     }
 }
 
-void Base32CoderTests::decoderTest1()
+TEST_F(Base32CoderTests, DecoderTest1)
 {
-    Base32Coder decoder;
     std::vector<ByteArray> clearText;
     std::vector<ByteArray> encodedText;
     ByteArray decoded;
 
     // Try to decode some invalid blocks.
-    decoded = decoder.decode("1234");
-    QVERIFY(decoded.empty());
+    decoded = decode("1234");
+    EXPECT_TRUE(decoded.empty());
 
-    decoded = decoder.decode("11111111");
-    QVERIFY(decoded.empty());
+    decoded = decode("11111111");
+    EXPECT_TRUE(decoded.empty());
 
     clearText = getClearTextTests();
     encodedText = getEncodedTextTests();
 
     for (size_t i = 0; i < clearText.size(); i++) {
-        decoded = decoder.decode(encodedText.at(i));
+        decoded = decode(encodedText.at(i));
 
         qDebug("%s  Expected : %s", clearText.at(i).toCharArrayPtr(), TestUtils::binaryToString(clearText.at(i)).c_str());
         qDebug("%s  Decoded  : %s", clearText.at(i).toCharArrayPtr(), TestUtils::binaryToString(decoded).c_str());
 
         // Compare the results.
-        QVERIFY(clearText.at(i) == decoded);
+        EXPECT_TRUE(clearText.at(i) == decoded);
     }
 }
 
-void Base32CoderTests::isBase32EncodedTests()
+TEST_F(Base32CoderTests, IsBase32EncodedTests)
 {
     std::vector<ByteArray> toTest;
 
@@ -68,39 +71,38 @@ void Base32CoderTests::isBase32EncodedTests()
 
     // Skip the value at index 0, because an empty string would be invalid.
     for (size_t i = 1; i < toTest.size(); i++) {
-        QVERIFY(Base32Coder::isBase32Encoded(toTest.at(i)));
+        EXPECT_TRUE(Base32Coder::isBase32Encoded(toTest.at(i)));
     }
 
     // Then, use the original clear text as negative tests.
     toTest = getClearTextTests();
 
     for (size_t i = 0; i < toTest.size(); i++) {
-        QVERIFY(!Base32Coder::isBase32Encoded(toTest.at(i)));
+        EXPECT_TRUE(!Base32Coder::isBase32Encoded(toTest.at(i)));
     }
 
-    QVERIFY(!Base32Coder::isBase32Encoded("11111111"));
+    EXPECT_TRUE(!Base32Coder::isBase32Encoded("11111111"));
 }
 
-void Base32CoderTests::negativeTests()
+TEST_F(Base32CoderTests, NegativeTests)
 {
-    Base32CoderProxy bcProxy;
     ByteArray result;
 
     // Try to decode something too short.
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("1111"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("1111"), 0, result));
 
     // Try to decode something with an invalid character in each position.
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("1ZXW6YTB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("M1XW6YTB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZ1W6YTB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZX16YTB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW1YTB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW61TB"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW6Y1B"), 0, result));
-    QVERIFY(!bcProxy.decode8CharsProxy(ByteArray("MZXW6YT1"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("1ZXW6YTB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("M1XW6YTB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZ1W6YTB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZX16YTB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZXW1YTB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZXW61TB"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZXW6Y1B"), 0, result));
+    EXPECT_TRUE(!decode8Chars(ByteArray("MZXW6YT1"), 0, result));
 }
 
-std::vector<ByteArray> Base32CoderTests::getClearTextTests()
+std::vector<ByteArray> getClearTextTests()
 {
     std::vector<ByteArray> result;
 
@@ -117,7 +119,7 @@ std::vector<ByteArray> Base32CoderTests::getClearTextTests()
     return result;
 }
 
-std::vector<ByteArray> Base32CoderTests::getEncodedTextTests()
+std::vector<ByteArray> getEncodedTextTests()
 {
     std::vector<ByteArray> result;
 

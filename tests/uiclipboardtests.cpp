@@ -1,8 +1,10 @@
-#include "uiclipboardtests.h"
+#include <testsuitebase.h>
 
 #include "uiclipboard.h"
 
-void UiClipboardTests::coverageTests()
+EMPTY_TEST_SUITE(UiClipboardTests);
+
+TEST_F(UiClipboardTests, CoverageTests)
 {
     UiClipboard clipboard;
 

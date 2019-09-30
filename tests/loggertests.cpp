@@ -1,12 +1,13 @@
-#include "loggertests.h"
+#include <testsuitebase.h>
 
-#include <QtTest>
 #include "logger.h"
 
-void LoggerTests::miscTests()
+EMPTY_TEST_SUITE(LoggerTests);
+
+TEST_F(LoggerTests, MiscTests)
 {
     // Get the QML singleton.
-    QVERIFY(nullptr != Logger::getQmlSingleton(nullptr, nullptr));
+    EXPECT_TRUE(nullptr != Logger::getQmlSingleton(nullptr, nullptr));
 
     Logger::getInstance()->log(QString("test qstring"));
     Logger::getInstance()->logWarning(QString("test warning qstring"));

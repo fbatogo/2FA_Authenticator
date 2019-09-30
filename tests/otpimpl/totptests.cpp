@@ -1,21 +1,22 @@
-#include "totptests.h"
+#include <testsuitebase.h>
 
-#include <QtTest>
-#include "../otpimpl/totp.h"
-#include "../otpimpl/sha1hash.h"
-#include "../otpimpl/hmac.h"
+#include "otpimpl/totp.h"
+#include "otpimpl/sha1hash.h"
+#include "otpimpl/hmac.h"
 
 #include <QDebug>
 
-void totpTests::totpInvalidHmacTest()
+EMPTY_TEST_SUITE(TotpTests);
+
+TEST_F(TotpTests, TotpInvalidHmacTest)
 {
     Totp invalidTotp;
     ByteArray invalidKey;
 
-    QCOMPARE(invalidTotp.calculate(invalidKey, 20, 0), std::string(""));
+    EXPECT_EQ(invalidTotp.calculate(invalidKey, 20, 0), std::string(""));
 }
 
-void totpTests::totpTestCase1()
+TEST_F(TotpTests, TotpTestCase1)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -25,10 +26,10 @@ void totpTests::totpTestCase1()
 
     result = totp.calculate(key, 59, 30, 8);
     qDebug("Expected : 94287082    Got : %s", result.c_str());
-    QCOMPARE(std::string("94287082"), result);
+    EXPECT_EQ(std::string("94287082"), result);
 }
 
-void totpTests::totpTestCase2()
+TEST_F(TotpTests, TotpTestCase2)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -38,10 +39,10 @@ void totpTests::totpTestCase2()
 
     result = totp.calculate(key, 1111111109, 30, 8);
     qDebug("Expected : 07081804    Got : %s", result.c_str());
-    QCOMPARE(std::string("07081804"), result);
+    EXPECT_EQ(std::string("07081804"), result);
 }
 
-void totpTests::totpTestCase3()
+TEST_F(TotpTests, TotpTestCase3)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -51,10 +52,10 @@ void totpTests::totpTestCase3()
 
     result = totp.calculate(key, 1111111111, 30, 8);
     qDebug("Expected : 14050471    Got : %s", result.c_str());
-    QCOMPARE(std::string("14050471"), result);
+    EXPECT_EQ(std::string("14050471"), result);
 }
 
-void totpTests::totpTestCase4()
+TEST_F(TotpTests, TotpTestCase4)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -64,10 +65,10 @@ void totpTests::totpTestCase4()
 
     result = totp.calculate(key, 1234567890, 30, 8);
     qDebug("Expected : 89005924    Got : %s", result.c_str());
-    QCOMPARE(std::string("89005924"), result);
+    EXPECT_EQ(std::string("89005924"), result);
 }
 
-void totpTests::totpTestCase5()
+TEST_F(TotpTests, TotpTestCase5)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -77,10 +78,10 @@ void totpTests::totpTestCase5()
 
     result = totp.calculate(key, 2000000000, 30, 8);
     qDebug("Expected : 69279037    Got : %s", result.c_str());
-    QCOMPARE(std::string("69279037"), result);
+    EXPECT_EQ(std::string("69279037"), result);
 }
 
-void totpTests::totpTestCase6()
+TEST_F(TotpTests, TotpTestCase6)
 {
     std::shared_ptr<HashTypeBase> hashToUse = std::shared_ptr<HashTypeBase>(new Sha1Hash());
     std::shared_ptr<Hmac> hmacToUse = std::shared_ptr<Hmac>(new Hmac(hashToUse));
@@ -90,7 +91,7 @@ void totpTests::totpTestCase6()
 
     result = totp.calculate(key, 20000000000, 30, 8);
     qDebug("Expected : 65353130    Got : %s", result.c_str());
-    QCOMPARE(std::string("65353130"), result);
+    EXPECT_EQ(std::string("65353130"), result);
 }
 
 #if 0   // Test vectors from RFC6238 at https://tools.ietf.org/html/rfc6238

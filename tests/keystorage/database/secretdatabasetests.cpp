@@ -1,10 +1,10 @@
-#include "secretdatabasetests.h"
+#include <testsuitebase.h>
 
-#include <QTest>
-#include <QFileInfo>
-#include "../keystorage/keyentry.h"
+#include "keystorage/keyentry.h"
 
 #define TEST_DB "test.db"
+
+#if 0
 
 // Make sure we have a database open and ready to go.
 void SecretDatabaseTests::initTestCase()
@@ -172,3 +172,4 @@ void SecretDatabaseTests::miscTests()
     // Assign from a different SecretDatabase to another value.
     copiedDb = testDatabase;
 }
+#endif

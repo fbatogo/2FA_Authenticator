@@ -1,10 +1,5 @@
 QT += quick sql multimedia svg
 
-# To enable unit tests, add CONFIG+=unittests, or QT+=testlib
-unittests {
-    QT *= testlib
-}
-
 # If we aren't building on Windows, use the x11 extras.
 !win32 {
     #DEFINES += NO_ZBAR
@@ -25,12 +20,9 @@ asan {
     QMAKE_LFLAGS += -fsanitize=address
 }
 
-contains(QT, testlib) {
+unittests {
     message(Will use qDebug for logging...)
     DEFINES += USE_QDEBUG
-
-    # Make sure we build against the QTest library.
-    CONFIG += qtestlib
 
     linux {
         QMAKE_CFLAGS += -ftest-coverage -fprofile-arcs
@@ -38,8 +30,16 @@ contains(QT, testlib) {
         QMAKE_LFLAGS += -ftest-coverage -fprofile-arcs
     }
 
-    # Include our test runner/helper.
-    include(tests/QtTestRunner/QtTestRunner.pri)
+    # Include the Google Test sources.
+    include(tests/gtest.pri)
+
+    # Include the test source files.
+    include(tests/tests.pri)
+
+    CONFIG -= qml_debug
+} else {
+    # Use our 'normal' main.cpp in the build.
+    SOURCES += main.cpp
 }
 
 # The following define makes your compiler emit warnings if you use
@@ -127,18 +127,6 @@ QML_IMPORT_PATH =
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
-
-
-# If we are building in the unit tests, we need to tweak a few files.
-contains(QT, testlib) {
-    # Include the test source files.
-    include(tests/tests.pri)
-
-    CONFIG -= qml_debug
-} else {
-    # Use our 'normal' main.cpp in the build.
-    SOURCES += main.cpp
-}
 
 # Uncomment and rebuild to use address sanitizer.
 #QMAKE_CFLAGS += -fsanitize=address -fno-omit-frame-pointer

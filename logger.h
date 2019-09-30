@@ -19,6 +19,7 @@ public:
     static Logger *getInstance();
     static QObject *getQmlSingleton(QQmlEngine *engine, QJSEngine *scriptEngine);
 
+    void setLogFile(const QString &logFilePathAndName);
     Q_INVOKABLE void setLogToFile(bool shouldLogToFile);
 
     Q_INVOKABLE void log(const QString &logline);
@@ -33,6 +34,7 @@ private:
 
     Logger();
 
+    QString mLogFilename;
     QFile mLogFile;
     QTextStream mLogStream;
     QMutex mMutex;
