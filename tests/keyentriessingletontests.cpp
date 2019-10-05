@@ -193,4 +193,3 @@ TEST_F(KeyEntriesSingletonTests, OpenCloseTests)
     EXPECT_TRUE(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test"));
     EXPECT_TRUE(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test 2"));
 }
-

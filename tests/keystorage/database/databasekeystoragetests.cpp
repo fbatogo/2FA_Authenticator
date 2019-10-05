@@ -119,3 +119,4 @@ TEST_F(DatabaseKeyStorageTests, E2ETests)
     EXPECT_TRUE(dbStorageTest.getAllKeys(allKeys));
     EXPECT_EQ((size_t)0, allKeys.size());
 }
+

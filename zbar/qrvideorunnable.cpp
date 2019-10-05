@@ -3,9 +3,7 @@
 #include "qrvideorunnable.h"
 
 #include "logger.h"
-#ifndef NO_ZBAR
 #include <zbar.h>
-#endif // NO_ZBAR
 #include <iostream>
 #include "qrcodefilter.h"
 #include "qrcodestringparser.h"

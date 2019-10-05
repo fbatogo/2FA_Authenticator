@@ -1,10 +1,9 @@
+#if 0
 #include <testsuitebase.h>
 
 #include "keystorage/keyentry.h"
 
 #define TEST_DB "test.db"
-
-#if 0
 
 // Make sure we have a database open and ready to go.
 void SecretDatabaseTests::initTestCase()

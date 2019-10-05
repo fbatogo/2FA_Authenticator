@@ -88,5 +88,4 @@ TEST_F(QRCodeStringParserTests, QRCodeFullSetStringWithAmpTests)
     EXPECT_EQ(test->parameterByKey("digits"), QString("6"));
     EXPECT_EQ(test->parameterByKey("period"), QString("30"));
 }
-
 #endif

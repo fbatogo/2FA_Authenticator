@@ -2,7 +2,7 @@ QT += quick sql multimedia svg
 
 # If we aren't building on Windows, use the x11 extras.
 !win32 {
-    #DEFINES += NO_ZBAR
+    #DEFINES *= NO_ZBAR
     QT += x11extras
 } else {
     # On Windows, we don't currently support zbar.
@@ -53,6 +53,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+!contains(DEFINES, NO_ZBAR) {
+    SOURCES += \
+        zbar/qrcodefilter.cpp \
+        zbar/qrvideorunnable.cpp
+
+    HEADERS += \
+        zbar/qrcodefilter.h \
+        zbar/qrvideorunnable.h \
+        zbar/myqzbarimage.h
+}
+
 SOURCES += \
     container/bytearray.cpp \
     keystorage/keyentry.cpp \
@@ -63,9 +74,6 @@ SOURCES += \
     otp/otphandler.cpp \
     uiclipboard.cpp \
     utils.cpp \
-    zbar/qrcodefilter.cpp \
-    zbar/qrvideorunnable.cpp \
-    zbar/qrcodestringparser.cpp \
     otpimpl/hotp.cpp \
     otpimpl/hmac.cpp \
     otpimpl/sha1impl.c \
@@ -76,6 +84,7 @@ SOURCES += \
     otpimpl/sha256hash.cpp \
     otpimpl/sha512hash.cpp \
     otpimpl/sha2.c \
+#    zbar/qrcodestringparser.cpp \
     settingshandler.cpp \
     keystorage/database/secretdatabase.cpp \
     generalinfosingleton.cpp \
@@ -92,9 +101,6 @@ HEADERS += \
     otp/otphandler.h \
     uiclipboard.h \
     utils.h \
-    zbar/qrcodefilter.h \
-    zbar/qrvideorunnable.h \
-    zbar/qrcodestringparser.h \
     otpimpl/hotp.h \
     otpimpl/hmac.h \
     otpimpl/sha1impl.h \
@@ -103,7 +109,7 @@ HEADERS += \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
     otpimpl/hexdecoder.h \
-    zbar/myqzbarimage.h \
+#    zbar/qrcodestringparser.h \
     otpimpl/sha256hash.h \
     otpimpl/sha512hash.h \
     otpimpl/sha2.h \
