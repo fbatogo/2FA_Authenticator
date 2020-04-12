@@ -29,7 +29,9 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<GeneralInfoSingleton>("Rollin.GeneralInfoSingleton", 1, 0, "GeneralInfoSingleton", GeneralInfoSingleton::getQmlSingleton);
     qmlRegisterSingletonType<KeyEntriesSingleton>("Rollin.KeyEntriesSingleton", 1, 0, "KeyEntriesSingleton", KeyEntriesSingleton::getQmlSingleton);
 
+#ifndef NO_ZBAR
     qmlRegisterSingletonType<QRCodeStringParser>("Rollin.QRCodeSingleton", 1, 0, "QRCodeSingleton", QRCodeStringParser::getQmlSingleton);
+#endif // NO_ZBAR
 
     qmlRegisterSingletonType<SettingsHandler>("Rollin.SettingsHandler", 1, 0, "SettingsHandler", SettingsHandler::getQmlSingleton);
 

@@ -56,12 +56,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 !contains(DEFINES, NO_ZBAR) {
     SOURCES += \
         zbar/qrcodefilter.cpp \
-        zbar/qrvideorunnable.cpp
+        zbar/qrvideorunnable.cpp \
+        zbar/qrcodestringparser.cpp
 
     HEADERS += \
         zbar/qrcodefilter.h \
         zbar/qrvideorunnable.h \
-        zbar/myqzbarimage.h
+        zbar/myqzbarimage.h \
+        zbar/qrcodestringparser.h
 }
 
 SOURCES += \
@@ -84,7 +86,6 @@ SOURCES += \
     otpimpl/sha256hash.cpp \
     otpimpl/sha512hash.cpp \
     otpimpl/sha2.c \
-    #zbar/qrcodestringparser.cpp \
     settingshandler.cpp \
     keystorage/database/secretdatabase.cpp \
     generalinfosingleton.cpp \
@@ -109,7 +110,6 @@ HEADERS += \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
     otpimpl/hexdecoder.h \
-    #zbar/qrcodestringparser.h \
     otpimpl/sha256hash.h \
     otpimpl/sha512hash.h \
     otpimpl/sha2.h \
