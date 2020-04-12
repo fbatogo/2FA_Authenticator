@@ -84,7 +84,7 @@ SOURCES += \
     otpimpl/sha256hash.cpp \
     otpimpl/sha512hash.cpp \
     otpimpl/sha2.c \
-#    zbar/qrcodestringparser.cpp \
+    #zbar/qrcodestringparser.cpp \
     settingshandler.cpp \
     keystorage/database/secretdatabase.cpp \
     generalinfosingleton.cpp \
@@ -109,7 +109,7 @@ HEADERS += \
     otpimpl/totp.h \
     otpimpl/base32coder.h \
     otpimpl/hexdecoder.h \
-#    zbar/qrcodestringparser.h \
+    #zbar/qrcodestringparser.h \
     otpimpl/sha256hash.h \
     otpimpl/sha512hash.h \
     otpimpl/sha2.h \
@@ -144,6 +144,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    TODO \
     resources/licenses.txt
 
 message($$QT_VERSION)

@@ -54,6 +54,8 @@ TEST_F(KeyEntriesSingletonTests, E2ETests)
 
     // Get the entry at index 0, which should be the same as what we have.
     if (foundKey != KeyEntriesSingleton::getInstance()->at(0)) {
+        // Make sure the file is closed or later tests will fail.
+        EXPECT_TRUE(KeyEntriesSingleton::getInstance()->close());
         FAIL() << "Key entry at index 0 isn't what we expected!";
         return;
     }
@@ -73,6 +75,8 @@ TEST_F(KeyEntriesSingletonTests, E2ETests)
     // Find the key entry by identifier again.
     foundKey = KeyEntriesSingleton::getInstance()->fromIdentifier("Test Key");
     if (nullptr == foundKey) {
+        // Make sure the file is closed or later tests will fail.
+        EXPECT_TRUE(KeyEntriesSingleton::getInstance()->close());
         FAIL() << "Unable to locate the 'Test Key'!";
         return;
     }
@@ -129,6 +133,9 @@ TEST_F(KeyEntriesSingletonTests, E2ETests)
 
     // Get all of the keys again.  The count should be 0.
     EXPECT_EQ((int)0, KeyEntriesSingleton::getInstance()->count());
+
+    // Make sure the file is closed or later tests will fail.
+    EXPECT_TRUE(KeyEntriesSingleton::getInstance()->close());
 }
 
 TEST_F(KeyEntriesSingletonTests, OpenCloseTests)
@@ -158,10 +165,10 @@ TEST_F(KeyEntriesSingletonTests, OpenCloseTests)
     // Then, close the key entry backing store.
     EXPECT_TRUE(KeyEntriesSingleton::getInstance()->close());
 
-    EXPECT_TRUE(!KeyEntriesSingleton::getInstance()->isOpen());
+    EXPECT_FALSE(KeyEntriesSingleton::getInstance()->isOpen());
 
     // Try to add another key entry.  (Should fail.)
-    EXPECT_TRUE(!KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test 2", "Open/Close Test Issuer 2", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
+    EXPECT_FALSE(KeyEntriesSingleton::getInstance()->addKeyEntry("Open/Close Test 2", "Open/Close Test Issuer 2", "3332333435363738393031323334353637383930", KEYENTRY_KEYTYPE_HEX, KEYENTRY_OTPTYPE_HOTP, 6, KEYENTRY_ALG_SHA256, 30, 0));
 
     // Try to read it back (should return nullptr)
     testEntry = KeyEntriesSingleton::getInstance()->fromIdentifier("Open/Close Test 2");
@@ -192,4 +199,7 @@ TEST_F(KeyEntriesSingletonTests, OpenCloseTests)
     // Clean up the entries so later tests don't have to worry about them.
     EXPECT_TRUE(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test"));
     EXPECT_TRUE(KeyEntriesSingleton::getInstance()->deleteKeyEntry("Open/Close Test 2"));
+
+    // Close the store, or else later tests will fail.
+    EXPECT_TRUE(KeyEntriesSingleton::getInstance()->close());
 }

@@ -38,10 +38,13 @@ protected:
     }
 };
 
-TEST_F(SecretDatabaseTests, AddDatabaseEntryKeyEntryTest)
+TEST_F(SecretDatabaseTests, AddGetAndUpdateDatabaseEntryKeyEntryTest)
 {
     KeyEntry toWrite;
     KeyEntry readBack;
+    std::vector<KeyEntry> allEntries;
+    KeyEntry currentEntry;
+    KeyEntry newEntry;
 
     // Make sure our toWrite value is invalid to start with.
     EXPECT_EQ(toWrite.valid(), false);
@@ -74,12 +77,6 @@ TEST_F(SecretDatabaseTests, AddDatabaseEntryKeyEntryTest)
     EXPECT_EQ(readBack.keyType(), KEYENTRY_KEYTYPE_BASE32);
     EXPECT_EQ(readBack.otpType(), KEYENTRY_OTPTYPE_HOTP);
     EXPECT_EQ(readBack.outNumberCount(), (unsigned int)7);
-}
-
-TEST_F(SecretDatabaseTests, GetAllEntriesTest)
-{
-    std::vector<KeyEntry> allEntries;
-    KeyEntry currentEntry;
 
     // Attempt to read all of the entries.
     EXPECT_TRUE(getAll(allEntries));
@@ -104,12 +101,6 @@ TEST_F(SecretDatabaseTests, GetAllEntriesTest)
             FAIL() << "Unexpected entry in the database!";
         }
     }
-}
-
-TEST_F(SecretDatabaseTests, UpdateDatabaseEntryTest)
-{
-    KeyEntry readBack;
-    KeyEntry newEntry;
 
     // try to get an empty identifier.
     EXPECT_TRUE(!getByIdentifier("", readBack));

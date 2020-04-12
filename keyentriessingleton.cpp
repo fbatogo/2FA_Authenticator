@@ -76,6 +76,11 @@ void KeyEntriesSingleton::clear()
  */
 bool KeyEntriesSingleton::open()
 {
+    if (isOpen()) {
+        // It is already open, just return true.
+        return true;
+    }
+
     if (!mKeyStorage.initStorage()) {
         LOG_ERROR("Unable to initialize the key storage!");
         return false;
